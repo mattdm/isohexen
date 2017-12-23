@@ -1,0 +1,6 @@
+[package]
+name = "island"
+version = "0.0.1"
+authors = ["Matthew Miller <mattdm@mattdm.org>"]
+
+[dependencies]

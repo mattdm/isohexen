@@ -14,25 +14,31 @@ use sdl2::pixels::Color;
 use std::time;
 use std::thread;
 
+fn drawabunchofhexes(canvas: &mut sdl2::render::WindowCanvas, block_texture: &sdl2::render::Texture) {
+    for y in 0..21 {
+        for x in 0..12 {
+            canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(64+x*96,48+y*32,64,48)).expect("Render failed");
+        }
+        for x in 0..12 {
+            canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(112+x*96,64+y*32,64,48)).expect("Render failed");
+        }
+    }
+}
 
 
-pub fn gameloop(canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
-
+pub fn gameloop(mut canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
 
     let texture_creator = canvas.texture_creator();
     let block_texture = texture_creator.load_texture("/home/mattdm/misc/island/images/hexblocks.png").unwrap();
 
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
-
-    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(608,368,64,48)).expect("Render failed");
-    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(656,384,64,48)).expect("Render failed");
-    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(608,400,64,48)).expect("Render failed");
-
     canvas.present();
     
-    let mut i = 0;
-    
+    let mut event_ticker = time::Instant::now();
+    let mut frame_ticker = event_ticker;
+    let mut tnow = event_ticker;
+
     'mainloop: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -40,26 +46,32 @@ pub fn gameloop(canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'mainloop
                 },
-                Event::KeyDown { keycode: Some(Keycode::Space), .. } => {
-                    i=i+1;
-                    if i>5 {
-                        i=0
-                    };
-                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(608,368,64,48)).expect("Render failed");
-                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(656,384,64,48)).expect("Render failed");
-                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(608,400,64,48)).expect("Render failed");
-                    canvas.present();
-                },
                 _ => {}
             }
         }
         
         // The rest of the game loop goes here...
-        
-        
-        
+
+        // Approximately 25fps        
+        let next_tick = frame_ticker + time::Duration::from_millis(40);
+        let now = time::Instant::now();
+        if now >= next_tick {
+            drawabunchofhexes(&mut canvas, &block_texture);
+            canvas.present();
+            println!("draw");
+            frame_ticker = next_tick;
+        }
 
 
-        thread::sleep(time::Duration::from_millis(10));
+        // but sleep around 10ms for event loop, because that's responsive enough
+        let next_tick = event_ticker + time::Duration::from_millis(10);
+        let now = time::Instant::now();
+        println!("{:7}", now.duration_since(tnow).subsec_nanos()/1000);
+        tnow = now;
+        if now < next_tick {
+            thread::sleep(next_tick-now);
+            println!("sleep")
+        }
+        event_ticker = next_tick;
     }
 }

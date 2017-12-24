@@ -52,8 +52,8 @@ pub fn gameloop(mut canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sd
         
         // The rest of the game loop goes here...
 
-        // Approximately 25fps        
-        let next_tick = frame_ticker + time::Duration::from_millis(40);
+        // Approximately 20fps        
+        let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now();
         if now >= next_tick {
             drawabunchofhexes(&mut canvas, &block_texture);

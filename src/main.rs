@@ -2,7 +2,7 @@ extern crate sdl2;
 
 //use std::thread;
 
-mod gameloop;
+mod interface;
 
 
 pub fn main() {
@@ -18,6 +18,6 @@ pub fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    gameloop::gameloop(&mut canvas,&mut event_pump)
+    interface::gameloop(&mut canvas,&mut event_pump)
 
 }

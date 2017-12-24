@@ -25,9 +25,9 @@ pub fn gameloop(canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
 
-    canvas.copy(&block_texture, Rect::new(0,0,256,256), Rect::new(608,368,64,64)).expect("Render failed");
-    canvas.copy(&block_texture, Rect::new(0,0,256,256), Rect::new(656,384,64,64)).expect("Render failed");
-    canvas.copy(&block_texture, Rect::new(0,0,256,256), Rect::new(608,400,64,64)).expect("Render failed");
+    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(608,368,64,48)).expect("Render failed");
+    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(656,384,64,48)).expect("Render failed");
+    canvas.copy(&block_texture, Rect::new(0,0,128,96), Rect::new(608,400,64,48)).expect("Render failed");
 
     canvas.present();
     
@@ -45,9 +45,9 @@ pub fn gameloop(canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::
                     if i>5 {
                         i=0
                     };
-                    canvas.copy(&block_texture, Rect::new(i*256,0,256,256), Rect::new(608,368,64,64)).expect("Render failed");
-                    canvas.copy(&block_texture, Rect::new(i*256,0,256,256), Rect::new(656,384,64,64)).expect("Render failed");
-                    canvas.copy(&block_texture, Rect::new(i*256,0,256,256), Rect::new(608,400,64,64)).expect("Render failed");
+                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(608,368,64,48)).expect("Render failed");
+                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(656,384,64,48)).expect("Render failed");
+                    canvas.copy(&block_texture, Rect::new(i*128,0,128,96), Rect::new(608,400,64,48)).expect("Render failed");
                     canvas.present();
                 },
                 _ => {}

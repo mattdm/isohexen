@@ -15,7 +15,10 @@ pub fn main() {
         .build()
         .unwrap();
  
-    let mut canvas = window.into_canvas().build().unwrap();
+    let mut canvas = window.into_canvas()
+         .target_texture()
+         .present_vsync()
+        .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     interface::gameloop(&mut canvas,&mut event_pump)

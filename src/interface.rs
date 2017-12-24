@@ -6,6 +6,8 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
+use sdl2::render;
+
 use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 
@@ -14,7 +16,9 @@ use sdl2::pixels::Color;
 use std::time;
 use std::thread;
 
-fn drawabunchofhexes(canvas: &mut sdl2::render::WindowCanvas, block_texture: &sdl2::render::Texture) {
+fn drawabunchofhexes(canvas: &mut render::WindowCanvas, block_texture: &render::Texture) {
+    canvas.set_draw_color(Color::RGB(0,32,128));
+    canvas.clear();
     for y in 0..21 {
         for x in 0..12 {
             canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(64+x*96,48+y*32,64,48)).expect("Render failed");
@@ -26,15 +30,18 @@ fn drawabunchofhexes(canvas: &mut sdl2::render::WindowCanvas, block_texture: &sd
 }
 
 
-pub fn gameloop(mut canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
+pub fn gameloop(mut canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
 
     let texture_creator = canvas.texture_creator();
     let block_texture = texture_creator.load_texture("/home/mattdm/misc/island/images/hexblocks.png").unwrap();
+    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1280, 800).unwrap();
 
-    canvas.set_draw_color(Color::RGB(0,32,128));
-    canvas.clear();
-    canvas.present();
-    
+    // fill the background
+    canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
+        drawabunchofhexes(texture_canvas, &block_texture);
+    });
+
+
     let mut event_ticker = time::Instant::now();
     let mut frame_ticker = event_ticker;
     let mut tnow = event_ticker;
@@ -56,7 +63,7 @@ pub fn gameloop(mut canvas: &mut sdl2::render::WindowCanvas, event_pump: &mut sd
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now();
         if now >= next_tick {
-            drawabunchofhexes(&mut canvas, &block_texture);
+            canvas.copy(&background_texture, None, None).expect("Render failed");
             canvas.present();
             println!("draw");
             frame_ticker = next_tick;

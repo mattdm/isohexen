@@ -16,6 +16,10 @@ use sdl2::pixels::Color;
 use std::time;
 use std::thread;
 
+use hexmap;
+
+
+/*
 fn drawabunchofhexes(canvas: &mut render::WindowCanvas, block_texture: &render::Texture) {
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
@@ -28,9 +32,33 @@ fn drawabunchofhexes(canvas: &mut render::WindowCanvas, block_texture: &render::
         }
     }
 }
+*/
+
+fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap) {
+    canvas.set_draw_color(Color::RGB(0,32,128));
+    canvas.clear();
+    let mut y = 128;
+    for row in map.tiles.iter() {
+        let mut offset = false;
+        let mut x = 128;
+        for col in row.iter() {
+           let texturerow = match col {
+               &hexmap::TerrainKind::Stone => 0
+           };
+           if offset {
+               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y+16,64,48)).expect("Render failed");
+           } else {
+               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y,64,48)).expect("Render failed");
+           }
+           x=x+48;
+           offset=!offset;
+        }
+        y=y+48;
+    }
+}
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, islandmap: &mut hexmap::Hexmap) {
 
     let texture_creator = canvas.texture_creator();
     let block_texture = texture_creator.load_texture("/home/mattdm/misc/island/images/hexblocks.png").unwrap();
@@ -38,7 +66,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // fill the background
     canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-        drawabunchofhexes(texture_canvas, &block_texture);
+        drawmap(texture_canvas, &block_texture, &islandmap);
     }).unwrap();
 
 

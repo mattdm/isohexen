@@ -3,7 +3,7 @@ extern crate sdl2;
 //use std::thread;
 
 mod interface;
-
+mod hexmap;
 
 pub fn main() {
 
@@ -21,6 +21,8 @@ pub fn main() {
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    interface::gameloop(&mut canvas,&mut event_pump)
+    let mut islandmap = hexmap::Hexmap::new();
+
+    interface::gameloop(&mut canvas,&mut event_pump, &mut islandmap)
 
 }

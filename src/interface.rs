@@ -44,7 +44,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     let mut event_ticker = time::Instant::now();
     let mut frame_ticker = event_ticker;
-    let mut tnow = event_ticker;
 
     'mainloop: loop {
         for event in event_pump.poll_iter() {
@@ -65,7 +64,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         if now >= next_tick {
             canvas.copy(&background_texture, None, None).expect("Render failed");
             canvas.present();
-            println!("draw");
             frame_ticker = next_tick;
         }
 
@@ -73,11 +71,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         // but sleep around 10ms for event loop, because that's responsive enough
         let next_tick = event_ticker + time::Duration::from_millis(10);
         let now = time::Instant::now();
-        println!("{:7}", now.duration_since(tnow).subsec_nanos()/1000);
-        tnow = now;
         if now < next_tick {
             thread::sleep(next_tick-now);
-            println!("sleep")
         }
         event_ticker = next_tick;
     }

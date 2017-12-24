@@ -30,7 +30,7 @@ fn drawabunchofhexes(canvas: &mut render::WindowCanvas, block_texture: &render::
 }
 
 
-pub fn gameloop(mut canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
 
     let texture_creator = canvas.texture_creator();
     let block_texture = texture_creator.load_texture("/home/mattdm/misc/island/images/hexblocks.png").unwrap();
@@ -39,7 +39,7 @@ pub fn gameloop(mut canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::Ev
     // fill the background
     canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
         drawabunchofhexes(texture_canvas, &block_texture);
-    });
+    }).unwrap();
 
 
     let mut event_ticker = time::Instant::now();

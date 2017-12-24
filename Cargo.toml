@@ -3,5 +3,7 @@ name = "island"
 version = "0.0.1"
 authors = ["Matthew Miller <mattdm@mattdm.org>"]
 
-[dependencies]
-piston_window = "0.70.0"
+[dependencies.sdl2]
+version = "0.31.0"
+default-features = false
+features = ["image"]

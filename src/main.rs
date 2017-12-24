@@ -11,7 +11,7 @@ pub fn main() {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem.window("Little Island", 1280, 800)
-        .position_centered()
+        //.fullscreen_desktop()
         .build()
         .unwrap();
  

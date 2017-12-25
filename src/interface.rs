@@ -60,12 +60,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
     */
     for rank in 0..13 {
         let map = map.get_ranked_map();
-        let sx=640;
-        let sy=400;
+        let sx=200;
+        let sy=200;
         
         for &(offset,hex) in map.iter() {
             match hex { // fixme -- don't draw here. just set texturerow
-                &hexmap::TerrainKind::Stone => canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(sx+offset.0*32,sy+offset.1*32,64,48)).expect("Render failed"),
+                &hexmap::TerrainKind::Stone => canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(sx+offset.0*48,sy+offset.1*16,64,48)).expect("Render failed"),
                 &hexmap::TerrainKind::Ocean => println!("I dunno how to do nothing"),
             }
         }

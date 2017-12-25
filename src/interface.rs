@@ -37,36 +37,16 @@ fn drawabunchofhexes(canvas: &mut render::WindowCanvas, block_texture: &render::
 fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap) {
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
-    let mut y = 128;
-    let mut sx: i32 = 616;
-    /*
-    for row in map.tiles.iter() {
-        let mut offset = false;
-        let mut x = 128;
-        for col in row.iter() {
-           let texturerow = match col {
-               &hexmap::TerrainKind::Stone => 0
-           };
-           if offset {
-               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y+16,64,48)).expect("Render failed");
-           } else {
-               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y,64,48)).expect("Render failed");
-           }
-           x=x+48;
-           offset=!offset;
-        }
-        y=y+48;
-    }
-    */
-    for rank in 0..13 {
+    let sx=200;
+    let sy=200;
+
+    for _ in 0..13 {
         let map = map.get_ranked_map();
-        let sx=200;
-        let sy=200;
         
         for &(offset,hex) in map.iter() {
             match hex { // fixme -- don't draw here. just set texturerow
                 &hexmap::TerrainKind::Stone => canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(sx+offset.0*48,sy+offset.1*16,64,48)).expect("Render failed"),
-                &hexmap::TerrainKind::Ocean => println!("I dunno how to do nothing"),
+                &hexmap::TerrainKind::Ocean => ()
             }
         }
     }

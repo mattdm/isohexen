@@ -47,7 +47,7 @@ impl Hexmap {
     pub fn get_ranked_map(&self) -> Vec<((i32,i32),&TerrainKind)> {
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
         
-        for rank in (-self.radius+1)..(self.radius+2) {
+        for rank in (-self.radius+1)..(self.radius*2-3) {
            for i in 0..self.radius+1 {
               // hex is -self.radius+i*2,rank-i
               let offset=(i*2,rank*2);

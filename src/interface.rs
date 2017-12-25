@@ -59,14 +59,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
     }
     */
     for rank in 0..13 {
-        let row = map.getrank(rank);
-        let mut offset = false;
-        let mut x: i32 = sx-(rank*24);
-        for col in row.iter() {
-           let texturerow = match col {
-               &&hexmap::TerrainKind::Stone => 0,
-               &&hexmap::TerrainKind::Ocean => -1 // FIXME -- skip instead
-           };
+        let map = map.get_ranked_map();
+        let sx=640;
+        let sy=400;
+        
+        for (
+                   };
            if texturerow == -1 {
                continue;
            }

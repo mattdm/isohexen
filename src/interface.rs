@@ -63,21 +63,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
         let sx=640;
         let sy=400;
         
-        for (
-                   };
-           if texturerow == -1 {
-               continue;
-           }
-           if offset {
-               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y+16,64,48)).expect("Render failed");
-           } else {
-               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y,64,48)).expect("Render failed");
-           }
-           x=x+48;
-           offset=!offset;
+        for &(offset,hex) in map.iter() {
+            match hex { // fixme -- don't draw here. just set texturerow
+                &hexmap::TerrainKind::Stone => canvas.copy(&block_texture, Rect::new(0,0,256,192), Rect::new(sx+offset.0*32,sy+offset.1*32,64,48)).expect("Render failed"),
+                &hexmap::TerrainKind::Ocean => println!("I dunno how to do nothing"),
+            }
         }
-        y=y+48;
-    
     }
 }
 

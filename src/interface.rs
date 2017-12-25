@@ -38,6 +38,8 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
     let mut y = 128;
+    let mut sx: i32 = 616;
+    /*
     for row in map.tiles.iter() {
         let mut offset = false;
         let mut x = 128;
@@ -54,6 +56,30 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
            offset=!offset;
         }
         y=y+48;
+    }
+    */
+    for rank in 0..13 {
+        let row = map.getrank(rank);
+        let mut offset = false;
+        let mut x: i32 = sx-(rank*24);
+        for col in row.iter() {
+           let texturerow = match col {
+               &&hexmap::TerrainKind::Stone => 0,
+               &&hexmap::TerrainKind::Ocean => -1 // FIXME -- skip instead
+           };
+           if texturerow == -1 {
+               continue;
+           }
+           if offset {
+               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y+16,64,48)).expect("Render failed");
+           } else {
+               canvas.copy(&block_texture, Rect::new(0,texturerow,256,192), Rect::new(x,y,64,48)).expect("Render failed");
+           }
+           x=x+48;
+           offset=!offset;
+        }
+        y=y+48;
+    
     }
 }
 

@@ -22,7 +22,7 @@ pub fn main() {
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut islandmap = hexmap::Hexmap::new(7);
+    let mut islandmap = hexmap::Hexmap::new(4);
 
     interface::gameloop(&mut canvas,&mut event_pump, &mut islandmap)
 

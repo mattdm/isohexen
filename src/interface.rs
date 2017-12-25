@@ -23,8 +23,8 @@ use hexmap;
 fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap) {
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
-    let sx=200;
-    let sy=200;
+    let sx=640;
+    let sy=400;
 
     canvas.copy(&block_texture, Rect::new(0,0,64,48), Rect::new(sx,sy,64,48)).expect("Render failed");
     let map = map.get_ranked_map();
@@ -36,7 +36,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
         };
             
         if tilerow.is_some() {
-            canvas.copy(&block_texture, Rect::new(0,tilerow.unwrap()*48,64,48), Rect::new(sx+offset.0*64,sy+offset.1*32,64,48)).expect("Render failed");
+            canvas.copy(&block_texture, Rect::new(0,tilerow.unwrap()*48,64,48), Rect::new(sx+offset.0*48,sy+offset.1*16,64,48)).expect("Render failed");
         }
     }
 }

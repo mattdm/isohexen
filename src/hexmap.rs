@@ -18,24 +18,14 @@ impl Hexmap {
 
     pub fn new(radius: i32) -> Hexmap {
         let mut h = HashMap::new();
-        // hexagon!
-        let lower =0-radius;
-        let upper =radius+1;
-        
-        let mut s = 0;
-        let mut e = upper;
-        
-        for q in lower..upper {
-            for r in s..e {
-                h.insert((q,r), TerrainKind::Stone);
-            }
-            if q<0 {
-                s=s-1;
-            } else {
-                e=e-1;
-            }
-        }
-        h.insert((0,0),TerrainKind::Ocean);
+
+        h.insert(( 0,-3),TerrainKind::Stone);
+        h.insert(( 3,-3),TerrainKind::Stone);
+        h.insert(( 3, 0),TerrainKind::Stone);
+        h.insert(( 0, 3),TerrainKind::Stone);
+        h.insert((-3,-3),TerrainKind::Stone);
+        h.insert((-3, 0),TerrainKind::Stone);
+        h.insert(( 0, 0),TerrainKind::Stone);
         
         let m = Hexmap {
             radius,
@@ -47,25 +37,21 @@ impl Hexmap {
     pub fn get_ranked_map(&self) -> Vec<((i32,i32),&TerrainKind)> {
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
         
-        for rank in (-self.radius+1)..(self.radius*2-3) {
-           for i in 0..self.radius+1 {
-              // hex is -self.radius+i*2,rank-i
-              let offset=(i*2,rank*2);
-              if let Some(hex) = self.hexes.get(&(-self.radius+i*2,rank-i)) {
-                  v.push((offset,hex));
-              } else {
-                  v.push((offset,&TerrainKind::Ocean));
-              }
-           }
-           for i in 0..self.radius {
-               // hex is -self.radius+1+i*2,rank-i
-               let offset=(i*2+1,rank*2+1);
-               if let Some(hex) = self.hexes.get(&(-self.radius+1+i*2,rank-i)) {
+        let mut zigzag=0;
+        for r in (-self.radius+1)..(self.radius) {
+            if r & 1 == 1 {  // odd row
+                zigzag=1;
+            } else {
+                zigzag=0;
+            }
+            for q in (-self.radius+1)..(self.radius) {
+               let offset=(q*2+zigzag,r);
+               if let Some(hex) = self.hexes.get(&(q,r)) {
                    v.push((offset,hex));
                } else {
                    v.push((offset,&TerrainKind::Ocean));
                }
-           }
+            }
         }
         v
     }

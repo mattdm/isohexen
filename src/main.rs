@@ -9,6 +9,7 @@ pub fn main() {
 
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
+    let _image_context = sdl2::image::init(sdl2::image::INIT_PNG).unwrap();
 
     let window = video_subsystem.window("Little Island", 1280, 800)
         //.fullscreen_desktop()
@@ -16,8 +17,8 @@ pub fn main() {
         .unwrap();
  
     let mut canvas = window.into_canvas()
-         .target_texture()
-         .present_vsync()
+        .target_texture()
+        .present_vsync()
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 

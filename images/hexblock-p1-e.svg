@@ -17,8 +17,8 @@
    sodipodi:docname="hexblock-p1-e.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    inkscape:export-filename="/home/mattdm/misc/island/images/hexblock-p1-e.png"
-   inkscape:export-xdpi="192"
-   inkscape:export-ydpi="192">
+   inkscape:export-xdpi="48.000004"
+   inkscape:export-ydpi="48.000004">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8.5000007"
-     inkscape:cx="36.647061"
+     inkscape:cx="64"
      inkscape:cy="47.999996"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -209,7 +209,7 @@
        inkscape:connector-curvature="0"
        id="path1398"
        d="m 33.866666,267.36668 v 8.41527 l -1.322917,-1.72406 0,-7.02639 z"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:none;stroke-width:0.06614583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
+       style="fill:#d0d0d0;fill-opacity:1;stroke:none;stroke-width:0.06614583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
     <path
        sodipodi:nodetypes="ccccc"
        inkscape:connector-curvature="0"

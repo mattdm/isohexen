@@ -17,8 +17,8 @@
    sodipodi:docname="hexblock-p3-sw.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    inkscape:export-filename="/home/mattdm/misc/island/images/hexblock-p3-sw.png"
-   inkscape:export-xdpi="192"
-   inkscape:export-ydpi="192">
+   inkscape:export-xdpi="48.000004"
+   inkscape:export-ydpi="48.000004">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8.5000007"
-     inkscape:cx="36.647061"
+     inkscape:cx="9.2941221"
      inkscape:cy="47.999996"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -215,7 +215,7 @@
        inkscape:connector-curvature="0"
        id="path1394"
        d="m 1.3229166,274.05789 15.6104164,3.89212 v 2.11666 L 0,275.78195 Z"
-       style="fill:#e0e0e0;fill-opacity:1;stroke:none;stroke-width:0.06614583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
+       style="fill:#d0d0d0;fill-opacity:1;stroke:none;stroke-width:0.06614583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
     <path
        style="fill:#a0a0a0;fill-opacity:1;stroke:none;stroke-width:0.06614583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        d="m 32.543749,274.05789 -15.610416,3.89212 v 2.11666 l 16.933333,-4.28472 z"

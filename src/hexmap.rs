@@ -27,7 +27,7 @@ impl Hexmap {
             for q in -radius+1..radius {
                 let z = -q-r;
                 match z.abs().max(r.abs().max(q.abs())) {
-                    0 => h.insert((r,q),TerrainKind::Stone),
+                    0 => h.insert((r,q),TerrainKind::Ocean),
                     1 => h.insert((r,q),TerrainKind::Stone),
                     2 => h.insert((r,q),TerrainKind::Stone),
                     3 => h.insert((r,q),TerrainKind::Stone),                

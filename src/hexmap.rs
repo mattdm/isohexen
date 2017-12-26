@@ -56,15 +56,19 @@ impl Hexmap {
     pub fn get_ranked(&self) -> Vec<((i32,i32),&TerrainKind)> {
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
         
+        // FIXME: there's some way to simplify the
+        // math with Q an S which I just haven't figured out
+        let mut slant=self.radius-1;
         for r in -self.radius+1..self.radius {
             for q in  -self.radius+1..self.radius {
-                let offset=(q,r);
+                let offset=(q*2+slant,r);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
             }
+            slant=slant+1;
         }
         v
     }

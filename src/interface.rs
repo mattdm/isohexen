@@ -26,17 +26,19 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
     let sx=640;
     let sy=400;
 
-    canvas.copy(&block_texture, Rect::new(0,0,64,48), Rect::new(sx,sy,64,48)).expect("Render failed");
-    let map = map.get_ranked_map();
+    let map = map.get_ranked();
 
     for &(offset,hex) in map.iter() {
+    
         let tilerow = match hex { // fixme -- don't draw here. just set texturerow
             &hexmap::TerrainKind::Stone => Some(0),
-            &hexmap::TerrainKind::Ocean => None,
+            &hexmap::TerrainKind::Sand  => Some(1),
+            &hexmap::TerrainKind::Dirt  => Some(2),
+            &hexmap::TerrainKind::Grass => Some(3),
+            &hexmap::TerrainKind::Ocean => None, 
         };
-            
         if tilerow.is_some() {
-            canvas.copy(&block_texture, Rect::new(0,tilerow.unwrap()*48,64,48), Rect::new(sx+offset.0*48,sy+offset.1*16,64,48)).expect("Render failed");
+            canvas.copy(&block_texture, Rect::new(0,tilerow.unwrap()*48,64,48), Rect::new(sx+offset.0*32,sy+offset.1*24,64,48)).expect("Render failed");
         }
     }
 }

@@ -2,7 +2,6 @@ extern crate sdl2;
 
 // The event loop handles... events -- and also basic drawing.
 
-
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
@@ -16,6 +15,7 @@ use sdl2::pixels::Color;
 
 use std::time;
 use std::thread;
+use std::path;
 
 use hexmap;
 
@@ -53,7 +53,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
 
     let texture_creator = canvas.texture_creator();
-    let block_texture = texture_creator.load_texture("/home/mattdm/misc/island/images/hexblocks.png").unwrap();
+    let block_texture = texture_creator.load_texture(path::Path::new("images/hexblocks.png")).unwrap();
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1280, 800).unwrap();
     
     // fill the background

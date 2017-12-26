@@ -23,7 +23,7 @@ use hexmap;
 fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap) {
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
-    let sx=640;
+    let sx=400;
     let sy=400;
 
     let map = map.get_ranked();

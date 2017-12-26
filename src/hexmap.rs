@@ -58,17 +58,16 @@ impl Hexmap {
         
         // FIXME: there's some way to simplify the
         // math with Q an S which I just haven't figured out
-        let mut slant=self.radius-1;
         for r in -self.radius+1..self.radius {
-            for q in  -self.radius+1..self.radius {
-                let offset=(q*2+slant,r);
+            for q in -self.radius+1..self.radius {
+                let offset=(q*2+r+(self.radius-1)*2,r);
+                //println!("{} : {} : {} ",q,r,slant);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
             }
-            slant=slant+1;
         }
         v
     }

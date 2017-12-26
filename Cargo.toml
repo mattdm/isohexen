@@ -1,0 +1,9 @@
+[package]
+name = "island"
+version = "0.1.0"
+authors = ["Matthew Miller <mattdm@mattdm.org>"]
+
+[dependencies.sdl2]
+version = "0.31.0"
+default-features = false
+features = ["image"]

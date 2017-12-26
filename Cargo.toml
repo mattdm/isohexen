@@ -1,6 +1,6 @@
 [package]
 name = "island"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Matthew Miller <mattdm@mattdm.org>"]
 
 [dependencies.sdl2]

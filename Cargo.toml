@@ -2,6 +2,12 @@
 name = "isohexen"
 version = "0.1.0"
 authors = ["Matthew Miller <mattdm@mattdm.org>"]
+publish = false
+repository = "https://github.com/mattdm/isohexen"
+readme = "README.md"
+keywords = ["isometric", "hex-tiles", "simple"]
+categories = ["game-engines"]
+license= "GPL-3.0"
 
 [dependencies.sdl2]
 version = "0.31.0"

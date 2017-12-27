@@ -1,11 +1,6 @@
 Engine
 ======
 
-Immediate Thoughts
-------------------
-
-Function for underlying screen redraw (used when rotating)
-
 Short Term
 ----------
 
@@ -15,13 +10,13 @@ Short Term
 - island generation routine
 - Add objects (start with boxes)
 - add grass and trees
-- make tiles prettier
+- make tiles prettier (Clear water?)
 - make struct holding information like orientation and stuff
   rather than dumping in an unattached variable in the event
   loop
 - read texture tile metadata (position, size) from text file
 - fixme: decide where orientation enum 
-datatype lives
+  datatype lives
 
 Medium Term
 -----------
@@ -31,6 +26,7 @@ Medium Term
 - figure out how to make the water pretty
 - read terrain _type_ from text file rather than hard-coding
 - split engine from game
+- transition hexes (from one terrain type to another)
 
 Longer Term
 -----------

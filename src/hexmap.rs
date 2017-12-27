@@ -52,6 +52,7 @@ impl Hexmap {
                     8 => if r%2==0 { TerrainKind::Sand } else { TerrainKind::Stone },
                     _ => TerrainKind::Ocean,
                 });
+                h.insert((0,-8), TerrainKind::Dirt);
                 
             }
         }
@@ -67,28 +68,29 @@ impl Hexmap {
 
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),&TerrainKind)> {
         match orientation {
-            Direction::E  => self.get_ranked_e(),
+            Direction::E  => self.get_ranked_horizontal(1),
             Direction::SE => self.get_ranked_se(),
             Direction::SW => unreachable!(),
-            Direction::W  => unreachable!(),
+            Direction::W  => self.get_ranked_horizontal(-1),
             Direction::NW => unreachable!(),
             Direction::NE => unreachable!()
         }    
-    
     }
     
-    fn get_ranked_e(&self) -> Vec<((i32,i32),&TerrainKind)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
     
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
         // for orientation East (top-left corner to bottom-right corner)
+        // or West (flip = -1)
+        
         for y in 0..self.size {
-            let r=y-(self.size/2);
+            let r=flip*(y-(self.size/2));
             for x in 0..self.size {
-                let q=x-(self.size/2);
-                let offset=(q*2+r,r);
+                let q=flip*(x-(self.size/2));
+                let offset=(flip*(q*2+r),r*flip);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {

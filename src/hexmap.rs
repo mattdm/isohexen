@@ -10,7 +10,7 @@ pub enum TerrainKind {
 
 
 // these are the pointy-topped-hexagon directions
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Direction {
     E,
     SE,
@@ -53,7 +53,8 @@ impl Hexmap {
                     _ => TerrainKind::Ocean,
                 });
                 h.insert((0,-8), TerrainKind::Dirt);
-                
+                h.insert((6,8), TerrainKind::Dirt);
+                h.insert((-6,-8), TerrainKind::Stone);
             }
         }
         
@@ -91,6 +92,7 @@ impl Hexmap {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(flip*(q*2+r),r*flip);
+                println!("{},{} : {},{} ({:?})",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
@@ -108,14 +110,12 @@ impl Hexmap {
 
         // for orientation SouthEast, top row down
         for y in 0..self.size*2 {
-            // FIXME: does rust have a trinary operator? that'd look
-            // cleaner here
             // start pointy, get broad, back to pointy
             let w=self.size-(y-self.size).abs();
             for x in 0..w {
                 let r=y-x;
-                let q=x-r;
-                let offset=(q*2+r,r);
+                let q=x-r; 
+                let offset=(x*2,y-self.size);
                 println!("{},{} : {},{} ({:?})",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));

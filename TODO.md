@@ -30,6 +30,7 @@ Longer Term
   - ai evolution simulation (plant / herbivore / carnivore)
   - civ-like city builder
   - roguelike generative hack-and-slash RPG
+- add flat-top hex orientation (and six more directions)
 
 Game
 ====

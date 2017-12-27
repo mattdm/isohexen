@@ -53,8 +53,10 @@ impl Hexmap {
                     _ => TerrainKind::Ocean,
                 });
                 h.insert((0,-8), TerrainKind::Dirt);
-                h.insert((6,8), TerrainKind::Dirt);
+                h.insert(( 6, 8), TerrainKind::Sand);
                 h.insert((-6,-8), TerrainKind::Stone);
+                h.insert(( 6, 6), TerrainKind::Dirt);
+                h.insert((-6,-6), TerrainKind::Dirt);
             }
         }
         
@@ -92,7 +94,6 @@ impl Hexmap {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(flip*(q*2+r),r*flip);
-                println!("{},{} : {},{} ({:?})",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
@@ -111,17 +112,17 @@ impl Hexmap {
         // for orientation SouthEast, top row down
         for y in 0..self.size*2 {
             // start pointy, get broad, back to pointy
-            let w=self.size-(y-self.size).abs();
+            let w=self.size-(y-self.size).abs()+1;
             for x in 0..w {
-                let r=y-x;
-                let q=x-r; 
-                let offset=(x*2,y-self.size);
+                let r=y-x-self.size/2;
+                let q=(y-self.size/2)-r-self.size/2; 
+                let offset=(x*2-w+1,y-self.size+1);
                 println!("{},{} : {},{} ({:?})",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
-                }
+                } 
             }
             println!("---");
         }

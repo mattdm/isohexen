@@ -30,7 +30,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
     let center_x=640-32;
     let center_y=400-24;
 
-    let map = map.get_ranked();
+    let map = map.get_ranked(hexmap::Direction::E);
 
     for &(offset,hex) in map.iter() {
     

@@ -17,6 +17,7 @@ Short Term
 - read texture tile metadata (position, size) from text file
 - fixme: decide where orientation enum 
   datatype lives
+- animate rotation
 
 Medium Term
 -----------

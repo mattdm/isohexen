@@ -10,6 +10,7 @@ Short Term
 - island generation routine
 - Add objects (start with boxes)
 - add grass and trees
+- make tiles prettier
 
 Medium Term
 -----------

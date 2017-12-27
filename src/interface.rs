@@ -21,7 +21,7 @@ use hexmap;
 
 
 fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap) {
-    canvas.set_draw_color(Color::RGB(0,32,128));
+    canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
     // FIXME: don't hardcode values

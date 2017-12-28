@@ -5,7 +5,7 @@ pub enum TerrainKind {
     Dirt,
     Sand,
     Stone,
-    Grass,
+    Grass, // FIXME: this should be a decoration rather than a terrain type
     Ocean
 }
 
@@ -20,6 +20,32 @@ pub enum Direction {
     NW,
     NE
 }
+
+impl Direction {
+    pub fn clockwise(&self) -> Direction {
+        match self {
+            &Direction::E  => Direction::SE,
+            &Direction::SE => Direction::SW,
+            &Direction::SW => Direction::W,
+            &Direction::W  => Direction::NW,
+            &Direction::NW => Direction::NE,
+            &Direction::NE => Direction::E,
+        }
+    }
+    pub fn counterclockwise(&self) -> Direction {
+        match self {
+            &Direction::E  => Direction::NE,
+            &Direction::SE => Direction::E,
+            &Direction::SW => Direction::SE,
+            &Direction::W  => Direction::SW,
+            &Direction::NW => Direction::W,
+            &Direction::NE => Direction::NW,
+        }
+    }
+
+}
+
+
 
 pub struct Hexmap {
     size: i32,

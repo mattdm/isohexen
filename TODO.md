@@ -4,7 +4,6 @@ Engine
 Short Term
 ----------
 
-- Rotate around center
 - Compass Rose
 - hex stacks
 - island generation routine
@@ -18,6 +17,7 @@ Short Term
 - fixme: decide where orientation enum 
   datatype lives
 - animate rotation
+- add a struct to hold all the textures together, too
 
 Medium Term
 -----------

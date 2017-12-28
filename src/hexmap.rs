@@ -78,10 +78,10 @@ impl Hexmap {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1), //works
             Direction::SE => self.get_ranked_diagonal(1),   //works
-            Direction::SW => self.get_ranked_diagonal(1),  //fail
+            Direction::SW => self.get_ranked_vertical(1),  //fail
             Direction::W  => self.get_ranked_horizontal(-1),//works
             Direction::NW => self.get_ranked_diagonal(-1),   //fail
-            Direction::NE => self.get_ranked_diagonal(-1),  //fail
+            Direction::NE => self.get_ranked_vertical(-1),  //fail
         }    
     }
     
@@ -98,15 +98,15 @@ impl Hexmap {
             let r=flip*(y-(self.size/2));
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
-                let offset=(flip*(q*2+r),r*flip);
+                let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
                 //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
-                    print!(" {:?}",hex);
+                    //print!(" {:?}",hex);
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
-                println!("");
+                //println!("");
             }
         }
         v
@@ -116,21 +116,23 @@ impl Hexmap {
     
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
 
-        // This looks super-complicated but basically it's
-        // https://www.redblobgames.com/grids/hexagons/#map-storage
-        // for orientation East (top-left corner to bottom-right corner)
-        // or West (flip = -1)
-        
+        // Same as above, but we're going through columns
+        // first instead of rows (effectively a 90° rotation from
+        // the other function
+                
         for y in 0..self.size {
-            let r=flip*(y-(self.size/2));
+            let q=flip*(y-(self.size/2));
             for x in 0..self.size {
-                let q=flip*(x-(self.size/2));
-                let offset=(flip*(q*2+r),r*flip);
+                let r=x-(self.size/2);
+                let offset=(q*flip,flip*(r*2+q));
+                //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
+                    //print!(" {:?}",hex);
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
+                //println!("");
             }
         }
         v
@@ -145,7 +147,7 @@ impl Hexmap {
         for y in 0..self.size*2 {
             // start pointy, get broad, back to pointy
             let w=self.size-((y-self.size).abs()-1);
-            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. 
+            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. but it does.
                 let r=flip*(y-x-self.size/2);
                 let q=flip*(y-self.size/2-flip*r-self.size/2);
                 let offset=(x*2-y,y-self.size+1);

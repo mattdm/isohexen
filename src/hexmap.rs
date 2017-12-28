@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum TerrainKind {
     Dirt,
     Sand,
     Stone,
+    Grass,
     Ocean
 }
 
@@ -54,11 +55,16 @@ impl Hexmap {
                 });
             }
         }
-        h.insert((0,-8), TerrainKind::Dirt);
+        h.insert((0,-8), TerrainKind::Ocean);
         h.insert(( 6, 8), TerrainKind::Sand);
         h.insert((-6,-8), TerrainKind::Stone);
         h.insert(( 6, 6), TerrainKind::Dirt);
         h.insert((-6,-6), TerrainKind::Dirt);
+        h.insert((0,1), TerrainKind::Sand);
+        h.insert((1,0), TerrainKind::Dirt);
+        h.insert((1,1), TerrainKind::Ocean);
+        h.insert((-2,1), TerrainKind::Ocean);
+        h.insert((-3,-3), TerrainKind::Grass);
 
         let m = Hexmap {
             size,
@@ -70,16 +76,43 @@ impl Hexmap {
 
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),&TerrainKind)> {
         match orientation {
-            Direction::E  => self.get_ranked_horizontal(1),
-            Direction::SE => self.get_ranked_diagonal(1),
-            Direction::SW => unreachable!(), // self.get_ranked_vertical(1),
-            Direction::W  => self.get_ranked_horizontal(-1),
-            Direction::NW => self.get_ranked_diagonal(-1),
-            Direction::NE => unreachable!(), // self.get_ranked_vertical(-1),
+            Direction::E  => self.get_ranked_horizontal(1), //works
+            Direction::SE => self.get_ranked_diagonal(1),   //works
+            Direction::SW => self.get_ranked_diagonal(1),  //fail
+            Direction::W  => self.get_ranked_horizontal(-1),//works
+            Direction::NW => self.get_ranked_diagonal(-1),   //fail
+            Direction::NE => self.get_ranked_diagonal(-1),  //fail
         }    
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),&TerrainKind)> {
+    
+        let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
+
+        // This looks super-complicated but basically it's
+        // https://www.redblobgames.com/grids/hexagons/#map-storage
+        // for orientation East (top-left corner to bottom-right corner)
+        // or West (flip = -1)
+        
+        for y in 0..self.size {
+            let r=flip*(y-(self.size/2));
+            for x in 0..self.size {
+                let q=flip*(x-(self.size/2));
+                let offset=(flip*(q*2+r),r*flip);
+                //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
+                if let Some(hex) = self.hexes.get(&(q,r)) {
+                    v.push((offset,hex));
+                    print!(" {:?}",hex);
+                } else {
+                    v.push((offset,&TerrainKind::Ocean));
+                }
+                println!("");
+            }
+        }
+        v
+    }
+
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
     
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
 
@@ -115,7 +148,7 @@ impl Hexmap {
             for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. 
                 let r=flip*(y-x-self.size/2);
                 let q=flip*(y-self.size/2-flip*r-self.size/2);
-                let offset=(x*2-y,y-self.size+1	);
+                let offset=(x*2-y,y-self.size+1);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {

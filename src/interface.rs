@@ -41,6 +41,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
             &hexmap::TerrainKind::Stone => Some(0),
             &hexmap::TerrainKind::Sand  => Some(1),
             &hexmap::TerrainKind::Dirt  => Some(2),
+            &hexmap::TerrainKind::Grass  => Some(3),
             &hexmap::TerrainKind::Ocean => None, 
         };
         let texturecol = match orientation {
@@ -95,26 +96,32 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                    direction, so let's use Q and R for rotation. */
                 Event::KeyUp { keycode: Some(Keycode::D), .. } => {
                     orientation = hexmap::Direction::E; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::X), .. } => {
                     orientation = hexmap::Direction::SE; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::Z), .. } => {
                     orientation = hexmap::Direction::SW; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::A), .. } => {
                     orientation = hexmap::Direction::W; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::W), .. } => {
                     orientation = hexmap::Direction::NW; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::E), .. } => {
                     orientation = hexmap::Direction::NE; // FIXME: rotate instead of hard code
+                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 _ => {}

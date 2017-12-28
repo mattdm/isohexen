@@ -71,11 +71,11 @@ impl Hexmap {
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),&TerrainKind)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),
-            Direction::SE => self.get_ranked_se(),
-            Direction::SW => unreachable!(),
+            Direction::SE => self.get_ranked_diagonal(1),
+            Direction::SW => unreachable!(), // self.get_ranked_vertical(1),
             Direction::W  => self.get_ranked_horizontal(-1),
-            Direction::NW => unreachable!(),
-            Direction::NE => unreachable!()
+            Direction::NW => self.get_ranked_diagonal(-1),
+            Direction::NE => unreachable!(), // self.get_ranked_vertical(-1),
         }    
     }
     
@@ -103,26 +103,26 @@ impl Hexmap {
         v
     }
 
-    fn get_ranked_se(&self) -> Vec<((i32,i32),&TerrainKind)> {
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
     
         let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
 
         // for orientation SouthEast, top row down
+        // flip for NW. Kind of ugly. Could be prettier.
         for y in 0..self.size*2 {
             // start pointy, get broad, back to pointy
             let w=self.size-((y-self.size).abs()-1);
-            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper mi
-                let r=y-x-self.size/2;
-                let q=(y-self.size/2)-r-self.size/2; 
-                let offset=(x*2-y,y-self.size+1);
-                println!("SW {} {},{} : {},{} ({:?})",w,x,y,q,r,offset);
+            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. 
+                let r=flip*(y-x-self.size/2);
+                let q=flip*(y-self.size/2-flip*r-self.size/2);
+                let offset=(x*2-y,y-self.size+1	);
+                println!("SW {} {} {},{} : {},{} ({:?})",w,flip,x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 } 
             }
-            println!("---");
         }
         v
     }

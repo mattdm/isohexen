@@ -76,12 +76,12 @@ impl Hexmap {
 
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),&TerrainKind)> {
         match orientation {
-            Direction::E  => self.get_ranked_horizontal(1), //works
-            Direction::SE => self.get_ranked_diagonal(1),   //works
-            Direction::SW => self.get_ranked_vertical(1),  //fail
-            Direction::W  => self.get_ranked_horizontal(-1),//works
-            Direction::NW => self.get_ranked_diagonal(-1),   //fail
-            Direction::NE => self.get_ranked_vertical(-1),  //fail
+            Direction::E  => self.get_ranked_horizontal(1),
+            Direction::SE => self.get_ranked_diagonal(1),
+            Direction::SW => self.get_ranked_vertical(1),
+            Direction::W  => self.get_ranked_horizontal(-1),
+            Direction::NW => self.get_ranked_diagonal(-1),
+            Direction::NE => self.get_ranked_vertical(-1),
         }    
     }
     
@@ -119,12 +119,11 @@ impl Hexmap {
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
         // the other function
-                
         for y in 0..self.size {
             let q=flip*(y-(self.size/2));
             for x in 0..self.size {
-                let r=x-(self.size/2);
-                let offset=(q*flip,flip*(r*2+q));
+                let r=flip*(x-(self.size/2));
+                let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
                 //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
@@ -135,6 +134,7 @@ impl Hexmap {
                 //println!("");
             }
         }
+                
         v
     }
 

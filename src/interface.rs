@@ -53,7 +53,6 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
             hexmap::Direction::NE => 5,
         };
 
-        //println!("{:?} {:?}",orientation,offset);
         if texturerow.is_some() {
             // fixme: also don't hardcode texture width/height
             canvas.copy(&block_texture, Rect::new(texturecol*64,texturerow.unwrap()*48,64,48), Rect::new(center_x+offset.0*32,center_y+offset.1*24,64,48)).expect("Render failed");
@@ -97,13 +96,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyUp { keycode: Some(Keycode::Q), .. } |
                 Event::KeyUp { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
-                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 Event::KeyUp { keycode: Some(Keycode::R), .. } |
                 Event::KeyUp { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
-                    println!("{:?}", orientation);
                     background_refresh_needed = true;
                 },
                 _ => {}

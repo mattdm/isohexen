@@ -12,7 +12,7 @@ pub fn main() {
     let _image_context = sdl2::image::init(sdl2::image::INIT_PNG).unwrap();
 
     let window = video_subsystem.window("Little Island", 1280, 800)
-        //.fullscreen_desktop()
+        .fullscreen_desktop()
         .build()
         .unwrap();
  

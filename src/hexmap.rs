@@ -125,14 +125,11 @@ impl Hexmap {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
-                    //print!(" {:?}",hex);
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
-                //println!("");
             }
         }
         v
@@ -150,14 +147,11 @@ impl Hexmap {
             for x in 0..self.size {
                 let r=flip*(x-(self.size/2));
                 let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                //print!("[{},{}] -> <{},{}> @ {:?}",x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
-                    //print!(" {:?}",hex);
                 } else {
                     v.push((offset,&TerrainKind::Ocean));
                 }
-                //println!("");
             }
         }
                 

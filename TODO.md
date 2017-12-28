@@ -16,8 +16,11 @@ Short Term
 - read texture tile metadata (position, size) from text file
 - fixme: decide where orientation enum 
   datatype lives
+- function for drawing backgroud rather than ugly block of code
+  in game loop
 - animate rotation
 - add a struct to hold all the textures together, too
+
 
 Medium Term
 -----------

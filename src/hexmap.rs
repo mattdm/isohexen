@@ -116,7 +116,6 @@ impl Hexmap {
                 let r=flip*(y-x-self.size/2);
                 let q=flip*(y-self.size/2-flip*r-self.size/2);
                 let offset=(x*2-y,y-self.size+1	);
-                println!("SW {} {} {},{} : {},{} ({:?})",w,flip,x,y,q,r,offset);
                 if let Some(hex) = self.hexes.get(&(q,r)) {
                     v.push((offset,hex));
                 } else {

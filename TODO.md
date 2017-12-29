@@ -4,7 +4,6 @@ Engine
 Short Term
 ----------
 
-- Compass Rose
 - hex stacks
 - island generation routine
 - Add objects (start with boxes)

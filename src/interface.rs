@@ -4,6 +4,7 @@ extern crate sdl2;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::mouse::MouseButton;
 
 use sdl2::render;
 
@@ -32,6 +33,18 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
 
     let map = map.get_ranked(orientation);
 
+    let texturecol = match orientation {
+        hexmap::Direction::E  => 0,
+        hexmap::Direction::SE => 1,
+        hexmap::Direction::SW => 2,
+        hexmap::Direction::W  => 3,
+        hexmap::Direction::NW => 4,
+        hexmap::Direction::NE => 5,
+    };
+
+
+
+
     for &(offset,hex) in map.iter() {
     
         // long term improvement: read this from a 
@@ -44,20 +57,17 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
             &hexmap::TerrainKind::Grass  => Some(3),
             &hexmap::TerrainKind::Ocean => None, 
         };
-        let texturecol = match orientation {
-            hexmap::Direction::E  => 0,
-            hexmap::Direction::SE => 1,
-            hexmap::Direction::SW => 2,
-            hexmap::Direction::W  => 3,
-            hexmap::Direction::NW => 4,
-            hexmap::Direction::NE => 5,
-        };
-
         if texturerow.is_some() {
             // fixme: also don't hardcode texture width/height
             canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24,64,48)).expect("Render failed");
         }
     }
+    
+    // FIXME: I _think_ this should be part of an "interface" layer, not the background.
+    // (But I might be wrong)
+    // FIXME: same deal about hardcoding the location here
+    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1096,648,256,192)).expect("Render failed");
+    
 
 }
 
@@ -101,6 +111,18 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyUp { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
                     background_refresh_needed = true;
+                },
+                Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
+                    if mx > 1096 && my > 648 {
+                        orientation = orientation.counterclockwise();
+                        background_refresh_needed = true;
+                    }
+                },
+                Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
+                    if mx > 1096 && my > 648 {
+                        orientation = orientation.clockwise();
+                        background_refresh_needed = true;
+                    }
                 },
                 _ => {}
             }

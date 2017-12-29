@@ -20,7 +20,12 @@ Short Term
   in game loop
 - animate rotation
 - add a struct to hold all the textures together, too
-
+- note to self: I'm imagining the main loop to have these draw layers:
+  - background
+  - decorations
+  - objects
+  - actors
+  - ui
 
 Medium Term
 -----------

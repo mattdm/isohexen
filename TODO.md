@@ -29,8 +29,10 @@ Short Term
 Medium Term
 -----------
 - Scroll around map
+ - vague ideas about map size and screen size
 - minimap?
 - commit to fullscreen
+ - deal with multiple aspect ratios and stuff
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
 - lava? obsidian?

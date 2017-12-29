@@ -20,7 +20,7 @@ use std::path;
 use hexmap;
 
 
-fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, map: &hexmap::Hexmap, orientation: hexmap::Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &hexmap::Hexmap, orientation: hexmap::Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
@@ -55,7 +55,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, block_texture: &render::Texture, m
 
         if texturerow.is_some() {
             // fixme: also don't hardcode texture width/height
-            canvas.copy(&block_texture, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24,64,48)).expect("Render failed");
+            canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24,64,48)).expect("Render failed");
         }
     }
 
@@ -66,7 +66,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
 
     let texture_creator = canvas.texture_creator();
-    let block_texture = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
+    let sprite_sheet = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1280, 800).unwrap();
     
     // fill the background
@@ -114,7 +114,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-                    drawmap(texture_canvas, &block_texture, &islandmap, orientation);
+                    drawmap(texture_canvas, &sprite_sheet, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
             }

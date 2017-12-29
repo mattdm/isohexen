@@ -4,7 +4,6 @@ Engine
 Short Term
 ----------
 
-- hex stacks
 - island generation routine
 - Add objects (start with boxes)
 - add grass and trees
@@ -30,6 +29,8 @@ Medium Term
 -----------
 - Scroll around map
  - vague ideas about map size and screen size
+- better data structure for hex stacks, 'cause the current thing is
+   unreadably ugly
 - minimap?
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
@@ -39,6 +40,7 @@ Medium Term
 - read terrain _type_ from text file rather than hard-coding
 - split engine from game
 - transition hexes (from one terrain type to another)
+- shadows
 
 Longer Term
 -----------

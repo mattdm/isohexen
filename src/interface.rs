@@ -49,16 +49,20 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
         // than hard-coding.
         
         if hexstack.is_some() {
-            let texturerow = match hexstack.unwrap().get(0).unwrap() {
-                &hexmap::TerrainKind::Stone => Some(0),
-                &hexmap::TerrainKind::Sand  => Some(1),
-                &hexmap::TerrainKind::Dirt  => Some(2),
-                &hexmap::TerrainKind::Grass  => Some(3),
-                &hexmap::TerrainKind::Ocean => None, 
-            };
-            if texturerow.is_some() {
-                // fixme: also don't hardcode texture width/height
-                canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24,64,48)).expect("Render failed");
+            let mut elevation=0;
+            for tile in hexstack.unwrap().iter() {
+                let texturerow = match tile {
+                    &hexmap::TerrainKind::Stone => Some(0),
+                    &hexmap::TerrainKind::Sand  => Some(1),
+                    &hexmap::TerrainKind::Dirt  => Some(2),
+                    &hexmap::TerrainKind::Grass  => Some(3),
+                    &hexmap::TerrainKind::Ocean => None, 
+                };
+                if texturerow.is_some() {
+                    // fixme: also don't hardcode texture width/height
+                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*20,64,48)).expect("Render failed");
+                }
+                elevation += 1;
             }
         }
     }

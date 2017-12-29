@@ -84,11 +84,11 @@ impl Hexmap {
         h.insert((-6,-8), vec![TerrainKind::Stone]);
         h.insert(( 6, 6), vec![TerrainKind::Dirt]);
         h.insert((-6,-6), vec![TerrainKind::Dirt]);
-        h.insert((0,1), vec![TerrainKind::Sand]);
-        h.insert((1,0), vec![TerrainKind::Dirt]);
+        h.insert((0,1), vec![TerrainKind::Sand, TerrainKind::Sand, TerrainKind::Sand]);
+        h.insert((1,0), vec![TerrainKind::Dirt, TerrainKind::Dirt, TerrainKind::Dirt]);
         h.insert((1,1), vec![TerrainKind::Ocean]);
         h.insert((-2,1), vec![TerrainKind::Ocean]);
-        h.insert((-3,-3), vec![TerrainKind::Grass]);
+        h.insert((-3,-3), vec![TerrainKind::Grass, TerrainKind::Grass ]);
 
         let m = Hexmap {
             size,

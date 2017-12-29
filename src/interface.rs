@@ -114,13 +114,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     background_refresh_needed = true;
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
-                    if mx > 1096 && my > 648 {
+                    if mx > 1024 && my > 688 {
                         orientation = orientation.counterclockwise();
                         background_refresh_needed = true;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
-                    if mx > 1096 && my > 648 {
+                    if mx > 1024 && my > 688 {
                         orientation = orientation.clockwise();
                         background_refresh_needed = true;
                     }

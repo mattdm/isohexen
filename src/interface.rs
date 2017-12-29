@@ -103,13 +103,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 /* Planning to use AWEDXZ for panning in approriate
                    direction, so let's use Q and R for rotation. */
-                Event::KeyUp { keycode: Some(Keycode::Q), .. } |
-                Event::KeyUp { keycode: Some(Keycode::PageUp), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::Q), .. } |
+                Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
                     background_refresh_needed = true;
                 },
-                Event::KeyUp { keycode: Some(Keycode::R), .. } |
-                Event::KeyUp { keycode: Some(Keycode::PageDown), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::R), .. } |
+                Event::KeyDown { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
                     background_refresh_needed = true;
                 },

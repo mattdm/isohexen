@@ -32,6 +32,8 @@ Medium Term
 - minimap?
 - commit to fullscreen
 - figure out how to make the water pretty
+- terrain water -- rivers (possibly also lakes, for larger maps)
+- lava? obsidian?
 - read terrain _type_ from text file rather than hard-coding
 - split engine from game
 - transition hexes (from one terrain type to another)

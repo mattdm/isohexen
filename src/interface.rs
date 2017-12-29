@@ -63,10 +63,11 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
         }
     }
     
+    // Draw compass rose.    
     // FIXME: I _think_ this should be part of an "interface" layer, not the background.
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
-    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1096,648,256,192)).expect("Render failed");
+    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1024,688,256,96)).expect("Render failed");
     
 
 }

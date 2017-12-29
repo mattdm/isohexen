@@ -46,13 +46,11 @@ impl Direction {
 }
 
 
-
 pub struct Hexmap {
     size: i32,
     // FIXME: use point for location?
-    // FIXME: make a Hexstack struct with piles of terrain
     // FIXME: put offset in the hexstack to pass around?
-    pub hexes: HashMap<(i32,i32),TerrainKind>,
+    pub hexes: HashMap<(i32,i32),Vec<TerrainKind>>,
 }
 
 impl Hexmap {
@@ -66,7 +64,7 @@ impl Hexmap {
         for r in -(size/2)..(size/2)+1 {
             for q in -(size/2)..(size/2)+1 {
                 let z = -q-r;
-                h.insert((r,q),
+                h.insert((r,q),vec![
                 match z.abs().max(r.abs().max(q.abs())) {
                     0 => TerrainKind::Ocean,
                     1 => TerrainKind::Stone,
@@ -78,19 +76,19 @@ impl Hexmap {
                     7 => if q%2==0 { TerrainKind::Sand } else { TerrainKind::Dirt }
                     8 => if r%2==0 { TerrainKind::Sand } else { TerrainKind::Stone },
                     _ => TerrainKind::Ocean,
-                });
+                }]);
             }
         }
-        h.insert((0,-8), TerrainKind::Ocean);
-        h.insert(( 6, 8), TerrainKind::Sand);
-        h.insert((-6,-8), TerrainKind::Stone);
-        h.insert(( 6, 6), TerrainKind::Dirt);
-        h.insert((-6,-6), TerrainKind::Dirt);
-        h.insert((0,1), TerrainKind::Sand);
-        h.insert((1,0), TerrainKind::Dirt);
-        h.insert((1,1), TerrainKind::Ocean);
-        h.insert((-2,1), TerrainKind::Ocean);
-        h.insert((-3,-3), TerrainKind::Grass);
+            h.insert((0,-8), vec![TerrainKind::Ocean]);
+        h.insert(( 6, 8), vec![TerrainKind::Sand]);
+        h.insert((-6,-8), vec![TerrainKind::Stone]);
+        h.insert(( 6, 6), vec![TerrainKind::Dirt]);
+        h.insert((-6,-6), vec![TerrainKind::Dirt]);
+        h.insert((0,1), vec![TerrainKind::Sand]);
+        h.insert((1,0), vec![TerrainKind::Dirt]);
+        h.insert((1,1), vec![TerrainKind::Ocean]);
+        h.insert((-2,1), vec![TerrainKind::Ocean]);
+        h.insert((-3,-3), vec![TerrainKind::Grass]);
 
         let m = Hexmap {
             size,
@@ -100,7 +98,7 @@ impl Hexmap {
     }
 
 
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),&TerrainKind)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),
             Direction::SE => self.get_ranked_diagonal(1),
@@ -111,9 +109,9 @@ impl Hexmap {
         }    
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),&TerrainKind)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<TerrainKind>>)> {
     
-        let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -125,19 +123,15 @@ impl Hexmap {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                if let Some(hex) = self.hexes.get(&(q,r)) {
-                    v.push((offset,hex));
-                } else {
-                    v.push((offset,&TerrainKind::Ocean));
-                }
+                v.push((offset,self.hexes.get(&(q,r))));
             }
         }
         v
     }
 
-    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
     
-        let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
 
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
@@ -147,20 +141,16 @@ impl Hexmap {
             for x in 0..self.size {
                 let r=flip*(x-(self.size/2));
                 let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                if let Some(hex) = self.hexes.get(&(q,r)) {
-                    v.push((offset,hex));
-                } else {
-                    v.push((offset,&TerrainKind::Ocean));
-                }
+                v.push((offset,self.hexes.get(&(q,r))));
             }
         }
                 
         v
     }
 
-    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),&TerrainKind)> {
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
     
-        let mut v: (Vec<((i32,i32),&TerrainKind)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
 
         // for orientation SouthEast, top row down
         // flip for NW. Kind of ugly. Could be prettier.
@@ -171,11 +161,7 @@ impl Hexmap {
                 let r=flip*(y-x-self.size/2);
                 let q=flip*(y-self.size/2-flip*r-self.size/2);
                 let offset=(x*2-y,y-self.size+1);
-                if let Some(hex) = self.hexes.get(&(q,r)) {
-                    v.push((offset,hex));
-                } else {
-                    v.push((offset,&TerrainKind::Ocean));
-                } 
+                v.push((offset,self.hexes.get(&(q,r))));
             }
         }
         v

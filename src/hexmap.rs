@@ -79,7 +79,7 @@ impl Hexmap {
                 }]);
             }
         }
-            h.insert((0,-8), vec![TerrainKind::Ocean]);
+        h.insert((0,-8), vec![TerrainKind::Stone, TerrainKind::Stone, TerrainKind::Dirt, TerrainKind::Dirt, TerrainKind::Sand]);
         h.insert(( 6, 8), vec![TerrainKind::Sand]);
         h.insert((-6,-8), vec![TerrainKind::Stone]);
         h.insert(( 6, 6), vec![TerrainKind::Dirt]);

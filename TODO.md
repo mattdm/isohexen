@@ -17,7 +17,6 @@ Short Term
   datatype lives
 - function for drawing backgroud rather than ugly block of code
   in game loop
-- animate rotation
 - add a struct to hold all the textures together, too
 - note to self: I'm imagining the main loop to have these draw layers:
   - background
@@ -52,6 +51,8 @@ Medium Term
 - transition hexes (from one terrain type to another)
 - shadows
 - proper error handling for all of those unwrap()s
+- animate rotation (hard because it needs to be in 3d... or at least
+   pseudo-3d)
 
 Longer Term
 -----------

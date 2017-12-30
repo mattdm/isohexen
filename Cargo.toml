@@ -1,6 +1,6 @@
 [package]
 name = "isohexen"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Matthew Miller <mattdm@mattdm.org>"]
 publish = false
 repository = "https://github.com/mattdm/isohexen"

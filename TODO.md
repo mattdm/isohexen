@@ -28,7 +28,6 @@ Short Term
 - get sensible about integer datatypes instead of randomly using i32 for no
     good reason
 - diagonal drawing routine shifted with even map size
-- dark-side earth and grass graphics too dark
 
 Medium Term
 -----------

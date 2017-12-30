@@ -56,7 +56,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
                     &hexmap::TerrainKind::Sand  => Some(1),
                     &hexmap::TerrainKind::Dirt  => Some(2),
                     &hexmap::TerrainKind::Grass  => Some(3),
-                    &hexmap::TerrainKind::Ocean => None, 
+                    //&hexmap::TerrainKind::Ocean => None, 
                 };
                 if texturerow.is_some() {
                     // fixme: also don't hardcode texture width/height
@@ -97,6 +97,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // like zoom and stuff too
     let mut orientation=hexmap::Direction::E; // FIXME: use a diagonal to start?
     let mut background_refresh_needed = true;
+    
+    islandmap.generate(17);
 
     'mainloop: loop {
         for event in event_pump.poll_iter() {

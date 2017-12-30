@@ -9,7 +9,7 @@ pub enum TerrainKind {
     Sand,
     Stone,
     Grass, // FIXME: this should be a decoration rather than a terrain type
-    Ocean
+    //Ocean
 }
 
 
@@ -47,7 +47,7 @@ impl Direction {
     }
 }
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct Hexpoint {
     pub x: i32,
     pub y: i32,
@@ -55,12 +55,59 @@ pub struct Hexpoint {
 }
 
 impl Hexpoint {
+    
     pub fn new(x: i32, y: i32) -> Hexpoint {
         Hexpoint {
             x,
             y,
             z: -x-y,
         }
+    }
+    
+    pub fn neighbor(&self,direction: Direction) -> Hexpoint{
+        match direction {
+            Direction::E  => Hexpoint::new(self.x+1,self.y  ),
+            Direction::SE => Hexpoint::new(self.x  ,self.y+1),
+            Direction::SW => Hexpoint::new(self.x-1,self.y+1),
+            Direction::W  => Hexpoint::new(self.x-1,self.y  ),
+            Direction::NW => Hexpoint::new(self.x  ,self.y-1),
+            Direction::NE => Hexpoint::new(self.x+1,self.y-1),
+        }
+    }
+    
+    pub fn ring_number(&self) -> i32 {
+	self.x.abs().max(self.y.abs().max(self.z.abs()))
+    }
+    
+    pub fn ring(&self) -> Vec<Hexpoint> {
+        let mut v = Vec::new();
+        let r = self.ring_number();
+        
+        // top
+        for i in 0..r {
+            v.push(Hexpoint::new(i,-r));
+        } 
+        // top-right
+        for i in 0..r {
+            v.push(Hexpoint::new(r,-r+i));
+        }
+        // bottom-right
+        for i in 0..r {
+            v.push(Hexpoint::new(r-i,i));
+        }
+        // bottom
+        for i in 0..r {
+            v.push(Hexpoint::new(-i,r));
+        } 
+        // bottom-left
+        for i in 0..r {
+            v.push(Hexpoint::new(-r,r-i));
+        }
+        // top-left
+        for i in 0..r {
+            v.push(Hexpoint::new(i-r,-i));
+        }
+        v
     }
 }
 
@@ -86,29 +133,34 @@ impl Hexmap {
         let mut rng = rand::thread_rng();
         
         h.insert(Hexpoint::new(0,0), vec![TerrainKind::Stone;rng.gen::<usize>()%5+5]);
-        
-        /*
-        // FIXME: note that even-numbered maps are rouned up
-        for r in -(size/2)..(size/2)+1 {
-            for q in -(size/2)..(size/2)+1 {
-                let z = -q-r;
-                h.insert((r,q),vec![
-                match z.abs().max(r.abs().max(q.abs())) {
-                    0 => TerrainKind::Ocean,
-                    1 => TerrainKind::Stone,
-                    2 => TerrainKind::Stone,
-                    3 => TerrainKind::Stone,                
-                    4 => TerrainKind::Dirt,                
-                    5 => TerrainKind::Dirt,                
-                    6 => TerrainKind::Sand,                
-                    7 => if q%2==0 { TerrainKind::Sand } else { TerrainKind::Dirt }
-                    8 => if r%2==0 { TerrainKind::Sand } else { TerrainKind::Stone },
-                    _ => TerrainKind::Ocean,
-                }]);
+        for i in 1..3 {
+            for t in Hexpoint::new(i,0).ring() {
+                h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+4]);
             }
         }
-        */
-
+        for i in 3..7 {
+            for t in Hexpoint::new(i,0).ring() {
+                h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
+                h.get_mut(&t).unwrap().push(TerrainKind::Dirt);
+                if rng.gen::<usize>()%3 > 0 {
+                    h.get_mut(&t).unwrap().push(TerrainKind::Grass);
+                }
+            }
+        }
+        for i in 7..9 {
+            for t in Hexpoint::new(i,0).ring() {
+                h.insert(t, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+            }
+        }
+        for i in 9..11 {
+            for t in Hexpoint::new(i,0).ring() {
+                if rng.gen::<usize>()%3 > 0 {
+                    h.insert(t, vec![TerrainKind::Sand]);
+                }
+            }
+        }
+        
+        
         self.size = size;
         self.hexes = h;
     }

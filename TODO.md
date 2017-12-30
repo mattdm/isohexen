@@ -24,6 +24,8 @@ Short Term
   - objects
   - actors
   - ui
+- get sensible about integer datatypes instead of randomly using i32 for no
+    good reason
 
 Medium Term
 -----------

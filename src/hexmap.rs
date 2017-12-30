@@ -1,4 +1,7 @@
+extern crate rand;
+
 use std::collections::HashMap;
+use rand::Rng;
 
 #[derive(Copy, Clone, Debug)]
 pub enum TerrainKind {
@@ -42,15 +45,30 @@ impl Direction {
             &Direction::NE => Direction::NW,
         }
     }
-
 }
 
+#[derive(PartialEq, Eq, Hash)]
+pub struct Hexpoint {
+    pub x: i32,
+    pub y: i32,
+    z: i32,
+}
+
+impl Hexpoint {
+    pub fn new(x: i32, y: i32) -> Hexpoint {
+        Hexpoint {
+            x,
+            y,
+            z: -x-y,
+        }
+    }
+}
 
 pub struct Hexmap {
     size: i32,
     // FIXME: use point for location?
     // FIXME: put offset in the hexstack to pass around?
-    pub hexes: HashMap<(i32,i32),Vec<TerrainKind>>,
+    pub hexes: HashMap<Hexpoint,Vec<TerrainKind>>,
 }
 
 impl Hexmap {
@@ -65,7 +83,11 @@ impl Hexmap {
 
     pub fn generate(&mut self,size: i32) {
         let mut h = HashMap::new();
+        let mut rng = rand::thread_rng();
         
+        h.insert(Hexpoint::new(0,0), vec![TerrainKind::Stone;rng.gen::<usize>()%5+5]);
+        
+        /*
         // FIXME: note that even-numbered maps are rouned up
         for r in -(size/2)..(size/2)+1 {
             for q in -(size/2)..(size/2)+1 {
@@ -85,16 +107,7 @@ impl Hexmap {
                 }]);
             }
         }
-        h.insert((0,-8), vec![TerrainKind::Stone, TerrainKind::Stone, TerrainKind::Dirt, TerrainKind::Dirt, TerrainKind::Sand]);
-        h.insert(( 6, 8), vec![TerrainKind::Sand]);
-        h.insert((-6,-8), vec![TerrainKind::Stone]);
-        h.insert(( 6, 6), vec![TerrainKind::Dirt]);
-        h.insert((-6,-6), vec![TerrainKind::Dirt]);
-        h.insert((0,1), vec![TerrainKind::Sand, TerrainKind::Sand, TerrainKind::Sand]);
-        h.insert((1,0), vec![TerrainKind::Dirt, TerrainKind::Dirt, TerrainKind::Dirt]);
-        h.insert((1,1), vec![TerrainKind::Ocean]);
-        h.insert((-2,1), vec![TerrainKind::Ocean]);
-        h.insert((-3,-3), vec![TerrainKind::Grass, TerrainKind::Grass ]);
+        */
 
         self.size = size;
         self.hexes = h;
@@ -126,7 +139,7 @@ impl Hexmap {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }
         v
@@ -144,7 +157,7 @@ impl Hexmap {
             for x in 0..self.size {
                 let r=flip*(x-(self.size/2));
                 let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }
                 
@@ -164,7 +177,7 @@ impl Hexmap {
                 let r=flip*(y-x-self.size/2);
                 let q=flip*(y-self.size/2-flip*r-self.size/2);
                 let offset=(x*2-y,y-self.size+1);
-                v.push((offset,self.hexes.get(&(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }
         v

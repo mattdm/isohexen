@@ -1,4 +1,5 @@
 extern crate sdl2;
+extern crate rand;
 
 //use std::thread;
 
@@ -22,7 +23,7 @@ pub fn main() {
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut islandmap = hexmap::Hexmap::new(); // FIXME: why size here?
+    let mut islandmap = hexmap::Hexmap::new();
 
     interface::gameloop(&mut canvas,&mut event_pump, &mut islandmap)
 

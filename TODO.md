@@ -43,6 +43,8 @@ Medium Term
 - terrain water -- rivers (possibly also lakes, for larger maps)
 - lava? obsidian?
 - read terrain _type_ from text file rather than hard-coding
+- possibly separate sides and top of hexes, so they can more easily be
+  variable height
 - split engine from game
 - transition hexes (from one terrain type to another)
 - shadows

@@ -61,7 +61,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
                 };
                 if texturerow.is_some() {
                     // fixme: also don't hardcode texture width/height
-                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*192,256,192), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*20,64,48)).expect("Render failed");
+                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768+texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*12,64,40)).expect("Render failed");
                 }
                 elevation += 1;
             }
@@ -72,7 +72,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     // FIXME: I _think_ this should be part of an "interface" layer, not the background.
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
-    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1664,968,256,96)).expect("Render failed");
+    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,192), Rect::new(1664,968,256,96)).expect("Render failed");
     
 
 }

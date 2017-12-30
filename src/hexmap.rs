@@ -129,16 +129,17 @@ impl Hexmap {
     }
 
     pub fn generate(&mut self) {
-        let mut h = HashMap::new();
+        self.hexes = HashMap::new();
+        
         let mut rng = rand::thread_rng();
         
         // center peak
         let center_tile= Hexpoint::new(0,0);
-        h.insert(center_tile, vec![TerrainKind::Stone;rng.gen::<usize>()%8+16]);
+        self.hexes.insert(center_tile, vec![TerrainKind::Stone;rng.gen::<usize>()%8+16]);
         
         // core ring
         for t in Hexpoint::new(1,0).ring() {
-            h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+16]);
+            self.hexes.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+16]);
         }
         
         // mountain "arms"
@@ -156,10 +157,10 @@ impl Hexmap {
         for armdir in armdirs {
             // note -- this will become a recursive function once I figure out what I want it to do
             let a1_tile=center_tile.neighbor(*armdir);
-            let a1_height=h[&a1_tile].len();
-            h.insert(a1_tile.neighbor(*armdir),                   vec![TerrainKind::Grass;rng.gen::<usize>()%4+a1_height/4*3]);
-            h.insert(a1_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
-            h.insert(a1_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
+            let a1_height=self.hexes[&a1_tile].len();
+            self.hexes.insert(a1_tile.neighbor(*armdir),                   vec![TerrainKind::Grass;rng.gen::<usize>()%4+a1_height/4*3]);
+            self.hexes.insert(a1_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
+            self.hexes.insert(a1_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
             let mut a2_tile =  Hexpoint::new(0,0); // temporary
             
             if rng.gen_weighted_bool(2) { //coin flip
@@ -169,10 +170,10 @@ impl Hexmap {
             } else {
                 a2_tile = a1_tile.neighbor(armdir.counterclockwise());
             }
-            let a2_height=h[&a2_tile].len();
-            h.insert(a2_tile.neighbor(*armdir),                   vec![TerrainKind::Sand;rng.gen::<usize>()%4+a2_height/4*3]);
-            h.insert(a2_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
-            h.insert(a2_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
+            let a2_height=self.hexes[&a2_tile].len();
+            self.hexes.insert(a2_tile.neighbor(*armdir),                   vec![TerrainKind::Sand;rng.gen::<usize>()%4+a2_height/4*3]);
+            self.hexes.insert(a2_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
+            self.hexes.insert(a2_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
             
         };
         
@@ -180,38 +181,38 @@ impl Hexmap {
         /*
         for i in 4..7 {
             for t in Hexpoint::new(i,0).ring() {
-                h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
-                h.get_mut(&t).unwrap().push(TerrainKind::Dirt);
+                self.hexes.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
+                self.hexes.get_mut(&t).unwrap().push(TerrainKind::Dirt);
                 if rng.gen::<usize>()%3 > 0 {
-                    h.get_mut(&t).unwrap().push(TerrainKind::Grass);
+                    self.hexes.get_mut(&t).unwrap().push(TerrainKind::Grass);
                 }
             }
         }
         for i in 7..10 {
             for t in Hexpoint::new(i,0).ring() {
-                h.insert(t, vec![TerrainKind::Stone]);
-                h.get_mut(&t).unwrap().push(TerrainKind::Dirt);
+                self.hexes.insert(t, vec![TerrainKind::Stone]);
+                self.hexes.get_mut(&t).unwrap().push(TerrainKind::Dirt);
                 if rng.gen::<usize>()%3 > 0 {
-                    h.get_mut(&t).unwrap().push(TerrainKind::Grass);
+                    self.hexes.get_mut(&t).unwrap().push(TerrainKind::Grass);
                 }
             }
         }
         for i in 10..12 {
             for t in Hexpoint::new(i,0).ring() {
-                h.insert(t, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                self.hexes.insert(t, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
             }
         }
         for i in 12..13 {
             for t in Hexpoint::new(i,0).ring() {
                 if rng.gen::<usize>()%3 > 0 {
-                    h.insert(t, vec![TerrainKind::Sand]);
+                    self.hexes.insert(t, vec![TerrainKind::Sand]);
                 }
             }
         }
         for i in 13..15 {
             for t in Hexpoint::new(i,0).ring() {
                 if rng.gen::<usize>()%4 == 0 {
-                    h.insert(t, vec![TerrainKind::Sand]);
+                    self.hexes.insert(t, vec![TerrainKind::Sand]);
                 }
             }
         }
@@ -219,9 +220,7 @@ impl Hexmap {
         
         
         self.size = 29;
-        self.hexes = h;
     }
-
 
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
         match orientation {

@@ -132,12 +132,52 @@ impl Hexmap {
         let mut h = HashMap::new();
         let mut rng = rand::thread_rng();
         
-        h.insert(Hexpoint::new(0,0), vec![TerrainKind::Stone;rng.gen::<usize>()%5+5]);
-        for i in 1..4 {
-            for t in Hexpoint::new(i,0).ring() {
-                h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+4]);
-            }
+        // center peak
+        let center_tile= Hexpoint::new(0,0);
+        h.insert(center_tile, vec![TerrainKind::Stone;rng.gen::<usize>()%8+16]);
+        
+        // core ring
+        for t in Hexpoint::new(1,0).ring() {
+            h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+16]);
         }
+        
+        // mountain "arms"
+        let mut dirs = [Direction::E,Direction::SE,Direction::SW,Direction::W,Direction::NW,Direction::NE];
+        rng.shuffle(&mut dirs);
+        // this gives us a weighted chance of number of arms, tending towards 3
+        //let armdirs = dirs.get(0..1).unwrap();
+        let armdirs = match rng.gen::<usize>()%12 {
+            0    => dirs.get(0..1).unwrap(),
+            1|2|3|4 => dirs.get(0..2).unwrap(),
+            5|6|7|8|9|10 => dirs.get(0..3).unwrap(),
+            11 => dirs.get(0..4).unwrap(),
+            _ => unreachable!(),
+        };
+        for armdir in armdirs {
+            // note -- this will become a recursive function once I figure out what I want it to do
+            let a1_tile=center_tile.neighbor(*armdir);
+            let a1_height=h[&a1_tile].len();
+            h.insert(a1_tile.neighbor(*armdir),                   vec![TerrainKind::Grass;rng.gen::<usize>()%4+a1_height/4*3]);
+            h.insert(a1_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
+            h.insert(a1_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
+            let mut a2_tile =  Hexpoint::new(0,0); // temporary
+            
+            if rng.gen_weighted_bool(2) { //coin flip
+                a2_tile = a1_tile.neighbor(*armdir);
+            } else if rng.gen_weighted_bool(2) { // another coin flip
+                a2_tile = a1_tile.neighbor(armdir.clockwise());    
+            } else {
+                a2_tile = a1_tile.neighbor(armdir.counterclockwise());
+            }
+            let a2_height=h[&a2_tile].len();
+            h.insert(a2_tile.neighbor(*armdir),                   vec![TerrainKind::Sand;rng.gen::<usize>()%4+a2_height/4*3]);
+            h.insert(a2_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
+            h.insert(a2_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
+            
+        };
+        
+        
+        /*
         for i in 4..7 {
             for t in Hexpoint::new(i,0).ring() {
                 h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
@@ -175,6 +215,7 @@ impl Hexmap {
                 }
             }
         }
+        */
         
         
         self.size = 29;

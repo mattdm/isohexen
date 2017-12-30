@@ -29,7 +29,7 @@ Short Term
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
 - fix: diagonal drawing routine shifted with even map size
-
+- move island generation routine to its own module
 
 Medium Term
 -----------

@@ -45,6 +45,7 @@ Medium Term
 - split engine from game
 - transition hexes (from one terrain type to another)
 - shadows
+- proper error handling for all of those unwrap()s
 
 Longer Term
 -----------

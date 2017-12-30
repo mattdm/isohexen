@@ -38,6 +38,7 @@ Medium Term
 - minimap?
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
+ - proper position of mouse clicks in different screen sizes
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
 - lava? obsidian?

@@ -55,11 +55,17 @@ pub struct Hexmap {
 
 impl Hexmap {
 
-    pub fn new(size: i32) -> Hexmap {
+    pub fn new() -> Hexmap {
+        let m = Hexmap {
+            size: 0,
+            hexes: HashMap::new()
+        };
+        m
+    }
+
+    pub fn generate(&mut self,size: i32) {
         let mut h = HashMap::new();
         
-        // FIXME: generate map in game engine rather than fake data below.
-
         // FIXME: note that even-numbered maps are rouned up
         for r in -(size/2)..(size/2)+1 {
             for q in -(size/2)..(size/2)+1 {
@@ -90,11 +96,8 @@ impl Hexmap {
         h.insert((-2,1), vec![TerrainKind::Ocean]);
         h.insert((-3,-3), vec![TerrainKind::Grass, TerrainKind::Grass ]);
 
-        let m = Hexmap {
-            size,
-            hexes: h
-        };
-        m
+        self.size = size;
+        self.hexes = h;
     }
 
 

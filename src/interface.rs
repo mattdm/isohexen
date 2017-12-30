@@ -129,6 +129,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         background_refresh_needed = true;
                     }
                 },
+                Event::KeyDown { keycode: Some(Keycode::G), .. } => {
+                    islandmap.generate(17);
+                    background_refresh_needed = true;
+                },
+
                 _ => {}
             }
         }

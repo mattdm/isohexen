@@ -7,6 +7,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 
 use sdl2::render;
+use sdl2::video;
 
 use sdl2::image::LoadTexture;
 //use sdl2::image::{LoadTexture, INIT_PNG};
@@ -134,6 +135,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::G), .. } => {
                     islandmap.generate();
                     background_refresh_needed = true;
+                },
+                Event::KeyDown { keycode: Some(Keycode::F), .. } => {
+                    match canvas.window_mut().fullscreen_state() {
+                        video::FullscreenType::Off => canvas.window_mut().set_fullscreen(video::FullscreenType::Desktop),
+                        video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off),
+                        video::FullscreenType::True => unreachable!(),
+                    };
                 },
 
                 _ => {}

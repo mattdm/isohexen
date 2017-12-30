@@ -28,8 +28,8 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     // FIXME: don't hardcode values
     
     // these should be actual center minus half a hex
-    let center_x=640-32;
-    let center_y=400-24;
+    let center_x=960-32;
+    let center_y=540-24;
 
     let map = map.get_ranked(orientation);
 
@@ -71,7 +71,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     // FIXME: I _think_ this should be part of an "interface" layer, not the background.
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
-    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1024,688,256,96)).expect("Render failed");
+    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768,256,192), Rect::new(1664,968,256,96)).expect("Render failed");
     
 
 }
@@ -82,7 +82,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     let texture_creator = canvas.texture_creator();
     let sprite_sheet = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
-    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1280, 800).unwrap();
+    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();
     
     // fill the background
 
@@ -120,13 +120,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     background_refresh_needed = true;
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
-                    if mx > 1024 && my > 688 {
+                    if mx > 1112 && my > 688 {
                         orientation = orientation.counterclockwise();
                         background_refresh_needed = true;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
-                    if mx > 1024 && my > 688 {
+                    if mx > 1112 && my > 688 {
                         orientation = orientation.clockwise();
                         background_refresh_needed = true;
                     }

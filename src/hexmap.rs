@@ -133,12 +133,12 @@ impl Hexmap {
         let mut rng = rand::thread_rng();
         
         h.insert(Hexpoint::new(0,0), vec![TerrainKind::Stone;rng.gen::<usize>()%5+5]);
-        for i in 1..3 {
+        for i in 1..4 {
             for t in Hexpoint::new(i,0).ring() {
                 h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+4]);
             }
         }
-        for i in 3..5 {
+        for i in 4..7 {
             for t in Hexpoint::new(i,0).ring() {
                 h.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
                 h.get_mut(&t).unwrap().push(TerrainKind::Dirt);
@@ -147,7 +147,7 @@ impl Hexmap {
                 }
             }
         }
-        for i in 5..7 {
+        for i in 7..10 {
             for t in Hexpoint::new(i,0).ring() {
                 h.insert(t, vec![TerrainKind::Stone]);
                 h.get_mut(&t).unwrap().push(TerrainKind::Dirt);
@@ -156,19 +156,19 @@ impl Hexmap {
                 }
             }
         }
-        for i in 7..9 {
+        for i in 10..12 {
             for t in Hexpoint::new(i,0).ring() {
                 h.insert(t, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
             }
         }
-        for i in 9..11 {
+        for i in 12..13 {
             for t in Hexpoint::new(i,0).ring() {
                 if rng.gen::<usize>()%3 > 0 {
                     h.insert(t, vec![TerrainKind::Sand]);
                 }
             }
         }
-        for i in 11..13 {
+        for i in 13..15 {
             for t in Hexpoint::new(i,0).ring() {
                 if rng.gen::<usize>()%4 == 0 {
                     h.insert(t, vec![TerrainKind::Sand]);
@@ -177,7 +177,7 @@ impl Hexmap {
         }
         
         
-        self.size = 27;
+        self.size = 29;
         self.hexes = h;
     }
 

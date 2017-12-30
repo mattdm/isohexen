@@ -3,7 +3,7 @@ extern crate rand;
 use std::collections::HashMap;
 use rand::Rng;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum TerrainKind {
     Dirt,
     Sand,

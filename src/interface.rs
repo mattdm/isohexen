@@ -60,8 +60,10 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
                     //&hexmap::TerrainKind::Ocean => None, 
                 };
                 if texturerow.is_some() {
-                    // fixme: also don't hardcode texture width/height
-                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,768+texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*12,64,40)).expect("Render failed");
+                    // FIXME: don't hardcode texture width/height
+                    // FIXME: make elevation multiplier a parameter. 8 means columns are smooth
+                    // and higher values give different looks. 10 and 12 are good.	
+                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*12,64,40)).expect("Render failed");
                 }
                 elevation += 1;
             }

@@ -27,7 +27,10 @@ Short Term
   - ui
 - get sensible about integer datatypes instead of randomly using i32 for no
     good reason
-- diagonal drawing routine shifted with even map size
+- add slight border to one side and top of tiles so they don't visually
+    merge together when they shouldn't
+- fix: diagonal drawing routine shifted with even map size
+
 
 Medium Term
 -----------

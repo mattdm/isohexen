@@ -98,7 +98,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=hexmap::Direction::E; // FIXME: use a diagonal to start?
     let mut background_refresh_needed = true;
     
-    islandmap.generate(17);
+    islandmap.generate();
 
     'mainloop: loop {
         for event in event_pump.poll_iter() {
@@ -132,7 +132,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::G), .. } => {
-                    islandmap.generate(17);
+                    islandmap.generate();
                     background_refresh_needed = true;
                 },
 

@@ -4,10 +4,11 @@ Engine
 Short Term
 ----------
 
-- island generation routine
-- Add objects (start with boxes)
 - add grass and trees
+- Add objects (start with boxes)
 - make tiles prettier (Clear water?)
+- make island generation routine use areas of earth and grass
+  rather than going by rings
 - make struct holding information like orientation and stuff
   rather than dumping in an unattached variable in the event
   loop
@@ -26,6 +27,8 @@ Short Term
   - ui
 - get sensible about integer datatypes instead of randomly using i32 for no
     good reason
+- diagonal drawing routine shifted with even map size
+- dark-side earth and grass graphics too dark
 
 Medium Term
 -----------

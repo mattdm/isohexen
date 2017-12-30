@@ -154,7 +154,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
         // Approximately 20fps        
         let next_tick = frame_ticker + time::Duration::from_millis(50);
-        let now = time::Instant::now();
+        let now = time::Instant::now(); // fixme: better to call this only once per loop, but
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {

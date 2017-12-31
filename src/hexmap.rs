@@ -1,6 +1,7 @@
 extern crate rand;
 
 use std::collections::HashMap;
+use std::cmp;
 use std::ops::Sub;
 use std::ops::Add;
 use rand::Rng;
@@ -111,6 +112,19 @@ impl Hexpoint {
         }
         v
     }
+    
+    pub fn direction_to(&self, other: Hexpoint) -> Direction {
+        match other-*self {
+            Hexpoint {x:  1, y:  0, z: -1} => Direction::E,
+            Hexpoint {x:  0, y:  1, z: -1} => Direction::SE,
+            Hexpoint {x: -1, y:  1, z:  0} => Direction::SW,
+            Hexpoint {x: -1, y:  0, z:  1} => Direction::W,
+            Hexpoint {x:  0, y: -1, z:  1} => Direction::NW,
+            Hexpoint {x:  1, y: -1, z:  0} => Direction::NE,
+            _ => unreachable!(),
+        }
+    }
+
 }
 
 impl Sub for Hexpoint {
@@ -161,49 +175,48 @@ impl Hexmap {
         let mut rng = rand::thread_rng();
         
         // center peak
-        let center_tile= Hexpoint::new(0,0);
-        self.hexes.insert(center_tile, vec![TerrainKind::Stone;rng.gen::<usize>()%8+16]);
+        let center_tile = Hexpoint::new(0,0);
+        let center_height = rng.gen::<isize>()%12+24;
+        self.hexes.insert(center_tile, vec![TerrainKind::Stone;center_height as usize]);
         
-        // core ring
-        for t in Hexpoint::new(1,0).ring() {
-            self.hexes.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%4+16]);
-        }
-        
-        // mountain "arms"
-        let mut dirs = [Direction::E,Direction::SE,Direction::SW,Direction::W,Direction::NW,Direction::NE];
-        rng.shuffle(&mut dirs);
-        // this gives us a weighted chance of number of arms, tending towards 3
-        //let armdirs = dirs.get(0..1).unwrap();
-        let armdirs = match rng.gen::<usize>()%12 {
-            0    => dirs.get(0..1).unwrap(),
-            1|2|3|4 => dirs.get(0..2).unwrap(),
-            5|6|7|8|9|10 => dirs.get(0..3).unwrap(),
-            11 => dirs.get(0..4).unwrap(),
-            _ => unreachable!(),
-        };
-        for armdir in armdirs {
-            // note -- this will become a recursive function once I figure out what I want it to do
-            let a1_tile=center_tile.neighbor(*armdir);
-            println!("{:?}",center_tile-a1_tile);
-            let a1_height=self.hexes[&a1_tile].len();
-            self.hexes.insert(a1_tile.neighbor(*armdir),                   vec![TerrainKind::Grass;rng.gen::<usize>()%4+a1_height/4*3]);
-            self.hexes.insert(a1_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
-            self.hexes.insert(a1_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
-            let mut a2_tile =  Hexpoint::new(0,0); // temporary
-            
-            if rng.gen_weighted_bool(2) { //coin flip
-                a2_tile = a1_tile.neighbor(*armdir);
-            } else if rng.gen_weighted_bool(2) { // another coin flip
-                a2_tile = a1_tile.neighbor(armdir.clockwise());    
-            } else {
-                a2_tile = a1_tile.neighbor(armdir.counterclockwise());
+        // mountain arms
+        for arm in Hexpoint::new(1,0).ring() { // This might be better as recursive, but
+                                               // rust and recursion don't seem to be friends.
+            let mut height = center_height;     // maybe... something with pushing onto vectors?
+            let mut parent = center_tile;
+            let mut tile = arm; 
+            while height > 2 {
+                // change height -3 + random(0..5), max 1
+                height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
+                self.hexes.insert(tile, vec![TerrainKind::Stone;height as usize]);
+                // FIXME: this is spaghetti mess.
+                if rng.gen_weighted_bool(6) {
+                    break;
+                }
+                let mut next=tile.neighbor(parent.direction_to(tile));
+                if rng.gen_weighted_bool(2) {
+                    if rng.gen_weighted_bool(2) {
+                        next=tile.neighbor(parent.direction_to(tile).clockwise());
+                    } else {
+                        next=tile.neighbor(parent.direction_to(tile).counterclockwise())
+                    }
+                    
+                }
+                parent = tile;
+                tile = next;
+                //println!("{:?}",tile);
+                //println!("------");
+                /*
+                match rng.gen::<usize>()%6 {
+                    0    => break;
+                    1|2|3|4 => 
+                    5|6|7|8|9|10 => dirs.get(0..3).unwrap(),
+                    11 => dirs.get(0..4).unwrap(),
+                    _ => unreachable!(),
+                };
+                */
             }
-            let a2_height=self.hexes[&a2_tile].len();
-            self.hexes.insert(a2_tile.neighbor(*armdir),                   vec![TerrainKind::Sand;rng.gen::<usize>()%4+a2_height/4*3]);
-            self.hexes.insert(a2_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
-            self.hexes.insert(a2_tile.neighbor(armdir.counterclockwise()), vec![TerrainKind::Stone;rng.gen::<usize>()%4+a2_height/2]);
-            
-        };
+        }
         
         
         /*
@@ -247,14 +260,9 @@ impl Hexmap {
         */
         
         
-        self.size = 29;
+        self.size = 31;
     }
     
-    fn gen_mountain_arm(&self, tile: Hexpoint, parent: Hexpoint ) { //height, or parent tile?
-    
-    
-    }
-
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),

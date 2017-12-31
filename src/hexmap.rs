@@ -258,7 +258,12 @@ impl Hexmap {
                         }
                     }
                     // half of average of inward heights.
-                    let height = cmp::max(1,neighbor_height/(cmp::max(1,neighbor_count*2)));
+                    let mut height = cmp::max(1,neighbor_height/(cmp::max(1,neighbor_count*2)));
+                    // add some variation
+                    if height > 2 {
+                        height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
+                    }
+                    
                     
                     // FIXME: 7, 11, and 16 are magic numbers (scale to size parameter)
                     if ring > 11 {

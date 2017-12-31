@@ -8,7 +8,7 @@ Short Term
 - Add objects (start with boxes)
 - make tiles prettier (Clear water?)
 - make island generation routine use areas of earth and grass
-  rather than going by rings
+  rather than going by rings - need function for inside neighbors
 - make struct holding information like orientation and stuff
   rather than dumping in an unattached variable in the event
   loop
@@ -61,6 +61,8 @@ Longer Term
 
 - go from island to generic map stuff
 - un-hardcode terrain types? or, make more. one or the other :)
+- move island generation and the specific island terrain types
+   an add-on
 - target games:
   - island survival (rimworld + sims + minecraft)
   - ai evolution simulation (plant / herbivore / carnivore)

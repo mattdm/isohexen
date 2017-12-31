@@ -86,6 +86,19 @@ impl Hexpoint {
              Hexpoint::new(self.x  ,self.y-1),
              Hexpoint::new(self.x+1,self.y-1)]
     }
+
+    pub fn inward_neighbors(&self) -> Vec<Hexpoint>{
+    
+        // This could be optimized in many ways, but 
+        // I don't think it's a bottleneck anywhere...
+        let mut v=Vec::new();
+        for n in self.neighbors() {
+            if n.ring_number() == self.ring_number() -1 {
+                v.push(n);
+            }
+        }
+        v
+    }
     
     pub fn ring_number(&self) -> i32 {
 	self.x.abs().max(self.y.abs().max(self.z.abs()))
@@ -218,33 +231,38 @@ impl Hexmap {
         }
         
         // fill in dirt between the arms of the mountain
-        for ring in 1..10 {
+        for ring in 1..12 { // FIXME: scale based on passed-in size parameter
             for tile in Hexpoint::new(ring,0).ring() {
             // TODO: dirt to average height of neighbors (including the unfilled "0" ones in 
             //   outer rings. also no grass on top if one of the neighbors is a height 1 stone.
-            // FIXME: ugly!
                 if self.hexes.get(&tile).is_none() {
                 
-                    // TODO if ring > 7, chance of sand (increasing)
-                    self.hexes.insert(tile, vec![TerrainKind::Dirt]);
-                    self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                     let mut neighbor_height = 0;
-                    for neighbor in tile.neighbors() {
-                        if self.hexes.get(&neighbor).is_some() {
-                            neighbor_height += self.hexes.get(&neighbor).unwrap().len();
+                    let mut neighbor_count = 0;
+                    let mut inner_sand = false;
+                    for neighbor in tile.inward_neighbors() {
+                        neighbor_height += self.hexes.get(&neighbor).unwrap().len();
+                        neighbor_count += 1;
+                        if self.hexes.get(&neighbor).unwrap()[0] == TerrainKind::Sand {
+                            inner_sand = true;
                         }
                     }
-                    // divided by 6 would be average of the surroundings, but making this a slightly
-                    // lower slope...
-                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::min(12,cmp::max(rng.gen::<usize>()%(10-ring as usize)+1,neighbor_height/5))]);
-                    self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
+                    // half of average of inward heights.
+                    let height = cmp::max(1,neighbor_height/(neighbor_count*2));
+                    
+                    println!("{}",height);
+                    // FIXME: 17 is a magic number.
+                    if ring > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
+                        self.hexes.insert(tile, vec![TerrainKind::Sand;height+rng.gen::<usize>()%3]);
+                    } else {
+                        self.hexes.insert(tile, vec![TerrainKind::Dirt;height]);
+                        self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
+                    }
                 }
             }
         }
 
-        
-        
-        for ring in 10..12 {
+        for ring in 12..15 {
             for tile in Hexpoint::new(ring,0).ring() {
                 if self.hexes.get(&tile).is_none() {
                     self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);

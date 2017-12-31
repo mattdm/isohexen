@@ -55,6 +55,7 @@ Medium Term
 - proper error handling for all of those unwrap()s
 - animate rotation (hard because it needs to be in 3d... or at least
    pseudo-3d)
+- tides!
 
 Longer Term
 -----------

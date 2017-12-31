@@ -242,7 +242,7 @@ impl Hexmap {
                     let mut neighbor_height = 0;
                     let mut neighbor_count = 0;
                     let mut inner_sand = false;
-                    let mut inner_ocean = false;
+                    let mut inner_ocean = 0;
                     
                     // get average height of inward neighbors
                     for neighbor in tile.inward_neighbors() {
@@ -254,7 +254,7 @@ impl Hexmap {
                                         inner_sand = true;
                                     }
                                 }
-                            None => inner_ocean = true,
+                            None => inner_ocean += 1,
                         }
                     }
                     // half of average of inward heights.
@@ -263,11 +263,13 @@ impl Hexmap {
                     // FIXME: 7, 11, and 16 are magic numbers (scale to size parameter)
                     if ring > 11 {
                         // outer ring: water and height 1 or 2 sand
-                        if inner_ocean {
+                        // if both inner neighbors are water, leave this as water.
+                        // otherwise, chance of sand
+                        if inner_ocean == 1 {
                             if rng.gen_weighted_bool(3) {
                                 self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
                             }
-                        } else {
+                        } else if inner_ocean == 0 {
                             if ! rng.gen_weighted_bool(4) {
                                 self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
                             }

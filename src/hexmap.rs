@@ -77,6 +77,15 @@ impl Hexpoint {
             Direction::NE => Hexpoint::new(self.x+1,self.y-1),
         }
     }
+
+    pub fn neighbors(&self) -> Vec<Hexpoint>{
+        vec![Hexpoint::new(self.x+1,self.y  ),
+             Hexpoint::new(self.x  ,self.y+1),
+             Hexpoint::new(self.x-1,self.y+1),
+             Hexpoint::new(self.x-1,self.y  ),
+             Hexpoint::new(self.x  ,self.y-1),
+             Hexpoint::new(self.x+1,self.y-1)]
+    }
     
     pub fn ring_number(&self) -> i32 {
 	self.x.abs().max(self.y.abs().max(self.z.abs()))
@@ -213,8 +222,17 @@ impl Hexmap {
             for tile in Hexpoint::new(ring,0).ring() {
             // TODO: dirt to average height of neighbors (including the unfilled "0" ones in 
             //   outer rings. also no grass on top if one of the neighbors is a height 1 stone.
+            // FIXME: ugly!
                 if self.hexes.get(&tile).is_none() {
                     self.hexes.insert(tile, vec![TerrainKind::Dirt]);
+                    self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
+                    let mut neighbor_height = 0;
+                    for neighbor in tile.neighbors() {
+                        if self.hexes.get(&neighbor).is_some() {
+                            neighbor_height += self.hexes.get(&neighbor).unwrap().len();
+                        }
+                    }
+                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::max(1,neighbor_height/6)]);
                     self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                 }
             }
@@ -230,11 +248,15 @@ impl Hexmap {
                 }
             }
         }
-        for i in 10..12 {
-            for t in Hexpoint::new(i,0).ring() {
-                self.hexes.insert(t, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+        */
+        for ring in 10..12 {
+            for tile in Hexpoint::new(ring,0).ring() {
+                if self.hexes.get(&tile).is_none() {
+                    self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                }
             }
         }
+        /*
         for i in 12..13 {
             for t in Hexpoint::new(i,0).ring() {
                 if rng.gen::<usize>()%3 > 0 {

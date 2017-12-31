@@ -209,6 +209,8 @@ impl Hexmap {
             let mut tile = arm; 
 
             // FIXME: this is spaghetti mess.
+            // FIXME: recursive version had possibility of arms branching (fractal-style!)
+            // and we lost that... add back.
             while height > 2 {
                 // change height -3 + random(0..5), max 1
                 height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
@@ -223,7 +225,6 @@ impl Hexmap {
                     } else {
                         next=tile.neighbor(parent.direction_to(tile).counterclockwise())
                     }
-                    
                 }
                 parent = tile;
                 tile = next;

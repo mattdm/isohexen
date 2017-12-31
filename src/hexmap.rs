@@ -1,6 +1,8 @@
 extern crate rand;
 
 use std::collections::HashMap;
+use std::ops::Sub;
+use std::ops::Add;
 use rand::Rng;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -111,6 +113,31 @@ impl Hexpoint {
     }
 }
 
+impl Sub for Hexpoint {
+    type Output = Hexpoint;
+
+    fn sub(self, other: Hexpoint) -> Hexpoint {
+        Hexpoint {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
+impl Add for Hexpoint {
+    type Output = Hexpoint;
+    
+    fn add(self, other: Hexpoint) -> Hexpoint {
+        Hexpoint {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+}
+
+
 pub struct Hexmap {
     size: i32,
     // FIXME: use point for location?
@@ -157,6 +184,7 @@ impl Hexmap {
         for armdir in armdirs {
             // note -- this will become a recursive function once I figure out what I want it to do
             let a1_tile=center_tile.neighbor(*armdir);
+            println!("{:?}",center_tile-a1_tile);
             let a1_height=self.hexes[&a1_tile].len();
             self.hexes.insert(a1_tile.neighbor(*armdir),                   vec![TerrainKind::Grass;rng.gen::<usize>()%4+a1_height/4*3]);
             self.hexes.insert(a1_tile.neighbor(armdir.clockwise()),        vec![TerrainKind::Dirt;rng.gen::<usize>()%4+a1_height/2]);
@@ -220,6 +248,11 @@ impl Hexmap {
         
         
         self.size = 29;
+    }
+    
+    fn gen_mountain_arm(&self, tile: Hexpoint, parent: Hexpoint ) { //height, or parent tile?
+    
+    
     }
 
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {

@@ -185,7 +185,7 @@ impl Hexmap {
         
         // center peak
         let center_tile = Hexpoint::new(0,0);
-        let center_height = rng.gen::<isize>()%12+24;
+        let center_height = rng.gen::<isize>()%12+24; // FIXME: magic numbers!
         self.hexes.insert(center_tile, vec![TerrainKind::Stone;center_height as usize]);
         
         // mountain arms
@@ -236,7 +236,7 @@ impl Hexmap {
                     }
                     // divided by 6 would be average of the surroundings, but making this a slightly
                     // lower slope...
-                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::max(1,neighbor_height/5)]);
+                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::min(12,cmp::max(rng.gen::<usize>()%(10-ring as usize)+1,neighbor_height/5))]);
                     self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                 }
             }

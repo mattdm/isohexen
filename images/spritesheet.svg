@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="127.99897"
-     inkscape:cy="1276.4699"
+     inkscape:zoom="0.5"
+     inkscape:cx="534.18975"
+     inkscape:cy="731.38662"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -243,7 +243,7 @@
      inkscape:label="Layer 1">
     <g
        id="g2019"
-       transform="translate(0,203.2)">
+       transform="matrix(1,0,0,0.49999987,0,199.29998)">
       <g
          transform="matrix(1.3333338,0,0,1,-11.288899,-254.00004)"
          id="g88900"

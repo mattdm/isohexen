@@ -74,7 +74,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     // FIXME: I _think_ this should be part of an "interface" layer, not the background.
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
-    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,192), Rect::new(1664,968,256,96)).expect("Render failed");
+    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,96), Rect::new(1664,968,256,96)).expect("Render failed");
     
 
 }

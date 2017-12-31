@@ -218,12 +218,14 @@ impl Hexmap {
         }
         
         // fill in dirt between the arms of the mountain
-        for ring in 1..7 {
+        for ring in 1..10 {
             for tile in Hexpoint::new(ring,0).ring() {
             // TODO: dirt to average height of neighbors (including the unfilled "0" ones in 
             //   outer rings. also no grass on top if one of the neighbors is a height 1 stone.
             // FIXME: ugly!
                 if self.hexes.get(&tile).is_none() {
+                
+                    // TODO if ring > 7, chance of sand (increasing)
                     self.hexes.insert(tile, vec![TerrainKind::Dirt]);
                     self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                     let mut neighbor_height = 0;
@@ -232,23 +234,16 @@ impl Hexmap {
                             neighbor_height += self.hexes.get(&neighbor).unwrap().len();
                         }
                     }
-                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::max(1,neighbor_height/6)]);
+                    // divided by 6 would be average of the surroundings, but making this a slightly
+                    // lower slope...
+                    self.hexes.insert(tile, vec![TerrainKind::Dirt;cmp::max(1,neighbor_height/5)]);
                     self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                 }
             }
         }
+
         
-        /*
-        for i in 7..10 {
-            for t in Hexpoint::new(i,0).ring() {
-                self.hexes.insert(t, vec![TerrainKind::Stone]);
-                self.hexes.get_mut(&t).unwrap().push(TerrainKind::Dirt);
-                if rng.gen::<usize>()%3 > 0 {
-                    self.hexes.get_mut(&t).unwrap().push(TerrainKind::Grass);
-                }
-            }
-        }
-        */
+        
         for ring in 10..12 {
             for tile in Hexpoint::new(ring,0).ring() {
                 if self.hexes.get(&tile).is_none() {

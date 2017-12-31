@@ -7,8 +7,6 @@ Short Term
 - add grass and trees
 - Add objects (start with boxes)
 - make tiles prettier (Clear water?)
-- make island generation routine use areas of earth and grass
-  rather than going by rings - need function for inside neighbors
 - make struct holding information like orientation and stuff
   rather than dumping in an unattached variable in the event
   loop

@@ -185,11 +185,12 @@ impl Hexmap {
             let mut height = center_height;     // maybe... something with pushing onto vectors?
             let mut parent = center_tile;
             let mut tile = arm; 
+
+            // FIXME: this is spaghetti mess.
             while height > 2 {
                 // change height -3 + random(0..5), max 1
                 height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
                 self.hexes.insert(tile, vec![TerrainKind::Stone;height as usize]);
-                // FIXME: this is spaghetti mess.
                 if rng.gen_weighted_bool(6) {
                     break;
                 }
@@ -204,31 +205,22 @@ impl Hexmap {
                 }
                 parent = tile;
                 tile = next;
-                //println!("{:?}",tile);
-                //println!("------");
-                /*
-                match rng.gen::<usize>()%6 {
-                    0    => break;
-                    1|2|3|4 => 
-                    5|6|7|8|9|10 => dirs.get(0..3).unwrap(),
-                    11 => dirs.get(0..4).unwrap(),
-                    _ => unreachable!(),
-                };
-                */
             }
         }
         
-        
-        /*
-        for i in 4..7 {
-            for t in Hexpoint::new(i,0).ring() {
-                self.hexes.insert(t, vec![TerrainKind::Stone;rng.gen::<usize>()%2+1]);
-                self.hexes.get_mut(&t).unwrap().push(TerrainKind::Dirt);
-                if rng.gen::<usize>()%3 > 0 {
-                    self.hexes.get_mut(&t).unwrap().push(TerrainKind::Grass);
+        // fill in dirt between the arms of the mountain
+        for ring in 1..7 {
+            for tile in Hexpoint::new(ring,0).ring() {
+            // TODO: dirt to average height of neighbors (including the unfilled "0" ones in 
+            //   outer rings. also no grass on top if one of the neighbors is a height 1 stone.
+                if self.hexes.get(&tile).is_none() {
+                    self.hexes.insert(tile, vec![TerrainKind::Dirt]);
+                    self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                 }
             }
         }
+        
+        /*
         for i in 7..10 {
             for t in Hexpoint::new(i,0).ring() {
                 self.hexes.insert(t, vec![TerrainKind::Stone]);

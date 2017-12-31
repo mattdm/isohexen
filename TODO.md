@@ -30,6 +30,7 @@ Short Term
     merge together when they shouldn't
 - fix: diagonal drawing routine shifted with even map size
 - move island generation routine to its own module
+- change island generation routine to work with variable sizes
 
 Medium Term
 -----------
@@ -44,6 +45,7 @@ Medium Term
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
 - lava? obsidian?
+- snow!
 - read terrain _type_ from text file rather than hard-coding
 - possibly separate sides and top of hexes, so they can more easily be
   variable height

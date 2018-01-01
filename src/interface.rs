@@ -65,8 +65,8 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
                     // and higher values give different looks. 10 and 12 are good.	
                     canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
                     // palm tree test kludge
-                    if texturerow==Some(1) {
-                        canvas.copy(&sprite_sheet, Rect::new(0,640,256,256), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8-64,128,128)).expect("Render failed");
+                    if elevation==0 && texturerow==Some(1) && offset.0 & 2 == 0  && offset.1 & 2 == 0{
+                        canvas.copy(&sprite_sheet, Rect::new(0,640,256,256), Rect::new(center_x+offset.0*32-24,center_y+offset.1*24-elevation*8-108,128,128)).expect("Render failed");
                     }
                 }
                 elevation += 1;

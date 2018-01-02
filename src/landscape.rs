@@ -18,7 +18,6 @@ pub enum TerrainKind {
 
 pub struct Hexmap {
     size: i32,
-    // FIXME: use point for location?
     // FIXME: put offset in the hexstack to pass around?
     pub hexes: HashMap<Hexpoint,Vec<TerrainKind>>,
 }

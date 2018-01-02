@@ -80,15 +80,20 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
 }
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, islandmap: &mut landscape::Hexmap) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
 
 
     let texture_creator = canvas.texture_creator();
+
+    // load the sprite atlas
     let sprite_sheet = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();
+
+    // create the map. in the future, we probably want some game-setup
+    // function first before we go right into the game loop
+    let mut islandmap = landscape::Hexmap::new();
     
     // fill the background
-
     canvas.set_draw_color(Color::RGB(0,32,128));
     canvas.clear();
     canvas.present();

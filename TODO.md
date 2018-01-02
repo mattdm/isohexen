@@ -68,6 +68,10 @@ Medium Term
 - read terrain _type_ from text file rather than hard-coding
 - possibly separate sides and top of hexes, so they can more easily be
   variable height
+- make a game setup function rather than dumping that at the beginning
+    of the event loop
+- architectural decision re universal event loop with different states
+  _or_ different loops for game menu and game itself
 - split engine from game
 - moving things: actors!
   - people (first cut: wander randomly)

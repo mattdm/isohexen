@@ -22,6 +22,8 @@ pub fn main() {
         .present_vsync()
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
+    
+    println!("{:?}", canvas.info());
 
     let mut islandmap = hexmap::Hexmap::new();
 

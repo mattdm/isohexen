@@ -5,18 +5,35 @@ Short Term
 ----------
 
 - add grass and trees
- - still 50/50 on whether grass is better as terrain tile or decoration
+  - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
- - split hexmap.rs into hexgeometry.rs and landscape.rs
-   - move getranked functions to hexgeometry, and have that return a
-     list of hex r,q and draw offset x,y
-   - while I'm at it, regularize use of r,q and x,y (and i,j)
+  - split hexmap.rs into hexgeometry.rs and landscape.rs
+    - move getranked functions to hexgeometry, and have that return a
+      list of hex r,q and draw offset x,y
+    - while I'm at it, regularize use of r,q and x,y (and i,j)
+    - instead of one call to draw the background map, do
+      - draw map (tiles, depth sorted)
+      - draw objects (decorations, items, and actors -- depth sorted)
+      - draw ui (compass rose)
+  - need a things.rs
+    - generate palm trees onto sand 
+    - generate apple trees onto grass
+      - possibly generate grass onto dirt? if so, are trees at a different
+        "elevation"?
+    - generate pine trees onto mountains
+      - um, snow?
 - I'm thinking the island should be about 100 hexes across rather than
   30-ish. This implies need to implement zooming and scrolling sooner
   rather than later. Maybe 60-ish will do, so just half size?
-  - bigger map (start with smaller tiles)
-  - zooming
-  - scrolling
+  - texture width is 16384 on both of my laptops; that gives 256 tiles at 64
+    wide without any shenanigans. (So 128 wide seems very manageable.)
+  - anyway, do this:
+    - bigger map (start with smaller tiles)
+    - zooming
+     - prescale graphics tiles to different resolutions because SDL's
+       render 
+    - scrolling
+    - change island generation routine to work with variable sizes
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - Add objects (start with boxes?)
 - make tiles prettier (Clear water?)
@@ -29,30 +46,22 @@ Short Term
 - function for drawing backgroud rather than ugly block of code
   in game loop
 - add a struct to hold all the textures together, too
-- note to self: I'm imagining the main loop to have these draw layers:
-  - background
-  - decorations
-  - objects
-  - actors
-  - ui
 - get sensible about integer datatypes instead of randomly using i32 for no
     good reason
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
 - fix: diagonal drawing routine shifted with even map size
-- move island generation routine to its own module
-- change island generation routine to work with variable sizes
+
 
 Medium Term
 -----------
-- Scroll around map
- - vague ideas about map size and screen size
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
 - minimap?
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
  - proper position of mouse clicks in different screen sizes
+- coconut trees! apple trees with and without apples.
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
 - lava? obsidian?
@@ -61,6 +70,15 @@ Medium Term
 - possibly separate sides and top of hexes, so they can more easily be
   variable height
 - split engine from game
+- moving things: actors!
+  - people (first cut: wander randomly)
+  - monkeys
+  - turtles 
+  - alpacas 
+  - mountain lions? (or, island too small?)
+  - fish / dolphins / sharks
+- buildings. think I'm going to go for hex-sized huts rather than
+   wall-building. Maybe leave room for both?
 - transition hexes (from one terrain type to another)
 - shadows
 - proper error handling for all of those unwrap()s

@@ -19,10 +19,10 @@ use std::time;
 use std::thread;
 use std::path;
 
-use hexmap;
+use hexgeometry;
+use landscape;
 
-
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &hexmap::Hexmap, orientation: hexmap::Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Hexmap, orientation: hexgeometry::Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
@@ -35,12 +35,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     let map = map.get_ranked(orientation);
 
     let texturecol = match orientation {
-        hexmap::Direction::E  => 0,
-        hexmap::Direction::SE => 1,
-        hexmap::Direction::SW => 2,
-        hexmap::Direction::W  => 3,
-        hexmap::Direction::NW => 4,
-        hexmap::Direction::NE => 5,
+        hexgeometry::Direction::E  => 0,
+        hexgeometry::Direction::SE => 1,
+        hexgeometry::Direction::SW => 2,
+        hexgeometry::Direction::W  => 3,
+        hexgeometry::Direction::NW => 4,
+        hexgeometry::Direction::NE => 5,
     };
 
     for &(offset,hexstack) in map.iter() {
@@ -53,11 +53,11 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
             let mut elevation=0;
             for tile in hexstack.unwrap().iter() {
                 let texturerow = match tile {
-                    &hexmap::TerrainKind::Stone => Some(0),
-                    &hexmap::TerrainKind::Sand  => Some(1),
-                    &hexmap::TerrainKind::Dirt  => Some(2),
-                    &hexmap::TerrainKind::Grass  => Some(3),
-                    //&hexmap::TerrainKind::Ocean => None, 
+                    &landscape::TerrainKind::Stone => Some(0),
+                    &landscape::TerrainKind::Sand  => Some(1),
+                    &landscape::TerrainKind::Dirt  => Some(2),
+                    &landscape::TerrainKind::Grass  => Some(3),
+                    //&landscape::TerrainKind::Ocean => None, 
                 };
                 if texturerow.is_some() {
                     // FIXME: don't hardcode texture width/height
@@ -80,7 +80,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
 }
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, islandmap: &mut hexmap::Hexmap) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, islandmap: &mut landscape::Hexmap) {
 
 
     let texture_creator = canvas.texture_creator();
@@ -98,7 +98,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
-    let mut orientation=hexmap::Direction::E; // FIXME: use a diagonal to start?
+    let mut orientation=hexgeometry::Direction::E; // FIXME: use a diagonal to start?
     let mut background_refresh_needed = true;
     
     islandmap.generate();

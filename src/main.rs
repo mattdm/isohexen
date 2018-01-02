@@ -4,7 +4,8 @@ extern crate rand;
 //use std::thread;
 
 mod interface;
-mod hexmap;
+mod hexgeometry;
+mod landscape;
 
 pub fn main() {
 
@@ -23,7 +24,7 @@ pub fn main() {
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut islandmap = hexmap::Hexmap::new();
+    let mut islandmap = landscape::Hexmap::new();
 
     interface::gameloop(&mut canvas,&mut event_pump, &mut islandmap)
 

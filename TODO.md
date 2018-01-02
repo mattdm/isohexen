@@ -7,7 +7,7 @@ Short Term
 - add grass and trees
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
-  - split hexmap.rs into hexgeometry.rs and landscape.rs
+  - split hexmap.rs into hexgeometry.rs and landscape.rs (done)
     - move getranked functions to hexgeometry, and have that return a
       list of hex r,q and draw offset x,y
     - while I'm at it, regularize use of r,q and x,y (and i,j)
@@ -41,8 +41,6 @@ Short Term
   rather than dumping in an unattached variable in the event
   loop
 - read texture tile metadata (position, size) from text file
-- fixme: decide where orientation enum 
-  datatype lives
 - function for drawing backgroud rather than ugly block of code
   in game loop
 - add a struct to hold all the textures together, too
@@ -57,6 +55,7 @@ Medium Term
 -----------
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
+- make a Trait for maps and island map be a type which implements that?
 - minimap?
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff

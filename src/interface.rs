@@ -3,6 +3,7 @@ extern crate sdl2;
 // The event loop handles... events -- and also basic drawing.
 
 use sdl2::event::Event;
+use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 
@@ -146,6 +147,20 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
                         video::FullscreenType::True => unreachable!(),
                     };
+                    //canvas.set_viewport(Rect::new(0,0,960,540));
+                },
+                Event::Window {win_event,..} => {
+                    match win_event {
+                        WindowEvent::SizeChanged(wx,_wy) => {
+                            // Keep 16×9 aspect ratio
+                            // FIXME: this doesn't really work (leaves strip of desktop in fullscreen!)
+                            // Nneed to change the copy call instead
+                            canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
+                        },
+                        _ => { /* println!("{:?}",win_event); */ }
+                    }
+                    //println!("{:?}",win_event);
+                
                 },
 
                 _ => {}

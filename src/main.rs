@@ -15,6 +15,7 @@ pub fn main() {
 
     let window = video_subsystem.window("Little Island", 960, 540)
         //.fullscreen_desktop()
+        //.resizable()
         .build()
         .unwrap();
  

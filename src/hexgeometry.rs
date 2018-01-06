@@ -170,7 +170,7 @@ impl Add for Hexpoint {
 pub struct Hexmap {
     size: i32,
     // FIXME: put offset in the hexstack to pass around?
-    pub hexes: HashMap<Hexpoint,Vec<MapThing>>,
+    pub hexes: HashMap<Hexpoint,Vec<&MapThing>>,
 }
 
 impl Hexmap {
@@ -183,7 +183,7 @@ impl Hexmap {
         m
     }
     
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&MapThing>>)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),
             Direction::SE => self.get_ranked_diagonal(1),
@@ -194,9 +194,9 @@ impl Hexmap {
         }    
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<MapThing>>)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<&MapThing>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&MapThing>>)>) = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -214,9 +214,9 @@ impl Hexmap {
         v
     }
 
-    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&MapThing>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&MapThing>>)>) = Vec::new();
 
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
@@ -233,9 +233,9 @@ impl Hexmap {
         v
     }
 
-    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&MapThing>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&MapThing>>)>) = Vec::new();
 
         // for orientation SouthEast, top row down
         // flip for NW. Kind of ugly. Could be prettier.

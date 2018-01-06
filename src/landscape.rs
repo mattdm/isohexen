@@ -33,8 +33,8 @@ pub struct Island {
 
 impl Island {
 
-    pub fn new() -> Hexmap {
-        let m = Hexmap {
+    pub fn new() -> Island {
+        let m = Island {
             size: 0,
             map: Hexmap::new()
         };

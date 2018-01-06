@@ -23,7 +23,7 @@ use std::path;
 use hexgeometry;
 use landscape;
 
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Hexmap, orientation: hexgeometry::Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: hexgeometry::Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
@@ -92,7 +92,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // create the map. in the future, we probably want some game-setup
     // function first before we go right into the game loop
-    let mut islandmap = landscape::Hexmap::new();
+    let mut islandmap = landscape::Island::new();
     
     // start 100 ms ago, so that we go right into drawing at the
     // bottom of the loop    

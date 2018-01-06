@@ -1,6 +1,14 @@
 use std::ops::Sub;
 use std::ops::Add;
 
+use std::collections::HashMap;
+
+// fix -- move to sprite.rs?
+pub trait MapThing {
+    fn get_sprite(&self) -> isize; // FIXME: make actually return sprite
+}
+
+
 // these are the pointy-topped-hexagon directions
 #[derive(Copy, Clone, Debug)]
 pub enum Direction {
@@ -159,3 +167,89 @@ impl Add for Hexpoint {
 }
 
 
+pub struct Hexmap {
+    size: i32,
+    // FIXME: put offset in the hexstack to pass around?
+    pub hexes: HashMap<Hexpoint,Vec<MapThing>>,
+}
+
+impl Hexmap {
+
+    pub fn new() -> Hexmap {
+        let m = Hexmap {
+            size: 0,
+            hexes: HashMap::new()
+        };
+        m
+    }
+    
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+        match orientation {
+            Direction::E  => self.get_ranked_horizontal(1),
+            Direction::SE => self.get_ranked_diagonal(1),
+            Direction::SW => self.get_ranked_vertical(1),
+            Direction::W  => self.get_ranked_horizontal(-1),
+            Direction::NW => self.get_ranked_diagonal(-1),
+            Direction::NE => self.get_ranked_vertical(-1),
+        }    
+    }
+    
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<MapThing>>)> {
+    
+        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+
+        // This looks super-complicated but basically it's
+        // https://www.redblobgames.com/grids/hexagons/#map-storage
+        // for orientation East (top-left corner to bottom-right corner)
+        // or West (flip = -1)
+        
+        for y in 0..self.size {
+            let r=flip*(y-(self.size/2));
+            for x in 0..self.size {
+                let q=flip*(x-(self.size/2));
+                let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+            }
+        }
+        v
+    }
+
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+    
+        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+
+        // Same as above, but we're going through columns
+        // first instead of rows (effectively a 90° rotation from
+        // the other function
+        for y in 0..self.size {
+            let q=flip*(y-(self.size/2));
+            for x in 0..self.size {
+                let r=flip*(x-(self.size/2));
+                let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+            }
+        }
+                
+        v
+    }
+
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<MapThing>>)> {
+    
+        let mut v: (Vec<((i32,i32),Option<&Vec<MapThing>>)>) = Vec::new();
+
+        // for orientation SouthEast, top row down
+        // flip for NW. Kind of ugly. Could be prettier.
+        for y in 0..self.size*2 {
+            // start pointy, get broad, back to pointy
+            let w=self.size-((y-self.size).abs()-1);
+            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. but it does.
+                let r=flip*(y-x-self.size/2);
+                let q=flip*(y-self.size/2-flip*r-self.size/2);
+                let offset=(x*2-y,y-self.size+1);
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+            }
+        }
+        v
+    }
+
+}

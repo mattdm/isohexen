@@ -1,11 +1,13 @@
 extern crate rand;
 
 use rand::Rng;
-use std::collections::HashMap;
+
 use std::cmp;
 
 use hexgeometry::Direction;
 use hexgeometry::Hexpoint;
+use hexgeometry::Hexmap;
+use hexgeometry::MapThing;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum TerrainKind {
@@ -16,24 +18,31 @@ pub enum TerrainKind {
     //Ocean
 }
 
-pub struct Hexmap {
-    size: i32,
-    // FIXME: put offset in the hexstack to pass around?
-    pub hexes: HashMap<Hexpoint,Vec<TerrainKind>>,
+impl MapThing for TerrainKind {
+    fn get_sprite(&self) -> isize {
+        0 // FIXME: return real sprite
+    }
 }
 
-impl Hexmap {
+
+pub struct Island {
+    size: i32,
+    // FIXME: put offset in the hexstack to pass around?
+    pub map: Hexmap,
+}
+
+impl Island {
 
     pub fn new() -> Hexmap {
         let m = Hexmap {
             size: 0,
-            hexes: HashMap::new()
+            map: Hexmap::new()
         };
         m
     }
 
     pub fn generate(&mut self) {
-        self.hexes = HashMap::new();
+        self.map = Hexmap::new();
         
         let mut rng = rand::thread_rng();
         
@@ -55,7 +64,7 @@ impl Hexmap {
             while height > 2 {
                 // change height -3 + random(0..5), max 1
                 height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
-                self.hexes.insert(tile, vec![TerrainKind::Stone;height as usize]);
+                self.map.hexes.insert(tile, vec![TerrainKind::Stone;height as usize]);
                 // One-in-six chance of arm ending here.
                 if rng.gen_weighted_bool(6) {
                     break;
@@ -78,7 +87,7 @@ impl Hexmap {
         for ring in 1..15 { // FIXME: scale based on passed-in size parameter
             for tile in Hexpoint::new(ring,0).ring() {
 
-                if self.hexes.get(&tile).is_none() {
+                if self.map.hexes.get(&tile).is_none() {
                 
                     let mut neighbor_height = 0;
                     let mut neighbor_count = 0;
@@ -87,7 +96,7 @@ impl Hexmap {
                     
                     // get average height of inward neighbors
                     for neighbor in tile.inward_neighbors() {
-                        match self.hexes.get(&neighbor) {
+                        match self.map.hexes.get(&neighbor) {
                             Some(neighbor_hex) => {
                                     neighbor_height += neighbor_hex.len();
                                     neighbor_count += 1;
@@ -113,21 +122,21 @@ impl Hexmap {
                         // otherwise, chance of sand
                         if inner_ocean == 1 {
                             if rng.gen_weighted_bool(3) {
-                                self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                                self.map.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
                             }
                         } else if inner_ocean == 0 {
                             if ! rng.gen_weighted_bool(4) {
-                                self.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                                self.map.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
                             }
                         }
                         
                     } else if ring > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
                         // chance of sand
-                        self.hexes.insert(tile, vec![TerrainKind::Sand;height+rng.gen::<usize>()%3]);
+                        self.map.hexes.insert(tile, vec![TerrainKind::Sand;height+rng.gen::<usize>()%3]);
                     } else {
                         // inland: just dirt and grass
-                        self.hexes.insert(tile, vec![TerrainKind::Dirt;height]);
-                        self.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
+                        self.map.hexes.insert(tile, vec![TerrainKind::Dirt;height]);
+                        self.map.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
                     }
                     
                 }
@@ -138,72 +147,7 @@ impl Hexmap {
     }
     
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
-        match orientation {
-            Direction::E  => self.get_ranked_horizontal(1),
-            Direction::SE => self.get_ranked_diagonal(1),
-            Direction::SW => self.get_ranked_vertical(1),
-            Direction::W  => self.get_ranked_horizontal(-1),
-            Direction::NW => self.get_ranked_diagonal(-1),
-            Direction::NE => self.get_ranked_vertical(-1),
-        }    
+        self.map.get_ranked(orientation)
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<TerrainKind>>)> {
-    
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
-
-        // This looks super-complicated but basically it's
-        // https://www.redblobgames.com/grids/hexagons/#map-storage
-        // for orientation East (top-left corner to bottom-right corner)
-        // or West (flip = -1)
-        
-        for y in 0..self.size {
-            let r=flip*(y-(self.size/2));
-            for x in 0..self.size {
-                let q=flip*(x-(self.size/2));
-                let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
-            }
-        }
-        v
-    }
-
-    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
-    
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
-
-        // Same as above, but we're going through columns
-        // first instead of rows (effectively a 90° rotation from
-        // the other function
-        for y in 0..self.size {
-            let q=flip*(y-(self.size/2));
-            for x in 0..self.size {
-                let r=flip*(x-(self.size/2));
-                let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
-            }
-        }
-                
-        v
-    }
-
-    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
-    
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
-
-        // for orientation SouthEast, top row down
-        // flip for NW. Kind of ugly. Could be prettier.
-        for y in 0..self.size*2 {
-            // start pointy, get broad, back to pointy
-            let w=self.size-((y-self.size).abs()-1);
-            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. but it does.
-                let r=flip*(y-x-self.size/2);
-                let q=flip*(y-self.size/2-flip*r-self.size/2);
-                let offset=(x*2-y,y-self.size+1);
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
-            }
-        }
-        v
-    }
-
 }

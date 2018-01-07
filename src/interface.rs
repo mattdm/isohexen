@@ -7,8 +7,9 @@ use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 
-use sdl2::render;
+
 use sdl2::video;
+use sdl2::render;
 
 use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
@@ -89,6 +90,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // load the sprite atlas
     let sprite_sheet = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
+    
+    // this is what the background gets rendered onto
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();
 
     // create the map. in the future, we probably want some game-setup

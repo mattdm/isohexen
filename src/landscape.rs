@@ -34,11 +34,10 @@ pub struct Island {
 impl Island {
 
     pub fn new() -> Island {
-        let m = Island {
+        Island {
             size: 0,
             map: Hexmap::new()
-        };
-        m
+        }
     }
 
     pub fn generate(&mut self) {

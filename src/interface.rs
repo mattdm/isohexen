@@ -1,7 +1,7 @@
 extern crate sdl2;
 
 // The event loop handles... events -- and also basic drawing.
-
+    
 use sdl2::event::Event;
 use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
@@ -22,6 +22,7 @@ use std::path;
 
 use hexgeometry;
 use landscape;
+use sprite;
 
 fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: hexgeometry::Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));

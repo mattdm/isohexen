@@ -6,6 +6,7 @@ extern crate rand;
 mod interface;
 mod hexgeometry;
 mod landscape;
+mod sprite;
 
 pub fn main() {
 

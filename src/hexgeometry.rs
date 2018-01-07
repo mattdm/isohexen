@@ -3,12 +3,6 @@ use std::ops::Add;
 
 use std::collections::HashMap;
 
-// fix -- move to sprite.rs?
-pub trait MapThing {
-    fn get_sprite(&self) -> isize; // FIXME: make actually return sprite
-}
-
-
 // these are the pointy-topped-hexagon directions
 #[derive(Copy, Clone, Debug)]
 pub enum Direction {

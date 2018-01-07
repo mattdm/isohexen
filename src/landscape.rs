@@ -6,23 +6,9 @@ use std::cmp;
 
 use hexgeometry::Direction;
 use hexgeometry::Hexpoint;
+use hexgeometry::TerrainKind;
 use hexgeometry::Hexmap;
-use hexgeometry::MapThing;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum TerrainKind {
-    Dirt,
-    Sand,
-    Stone,
-    Grass, // FIXME: this should be a decoration rather than a terrain type
-    //Ocean
-}
-
-impl MapThing for TerrainKind {
-    fn get_sprite(&self) -> isize {
-        0 // FIXME: return real sprite
-    }
-}
 
 
 pub struct Island {
@@ -48,7 +34,7 @@ impl Island {
         // center peak
         let center_tile = Hexpoint::new(0,0);
         let center_height = rng.gen::<isize>()%12+24; // FIXME: magic numbers!
-        self.hexes.insert(center_tile, vec![TerrainKind::Stone;center_height as usize]);
+        self.map.hexes.insert(center_tile, vec![TerrainKind::Stone;center_height as usize]);
         
         // mountain arms
         for arm in Hexpoint::new(1,0).ring() { // This might be better as recursive, but

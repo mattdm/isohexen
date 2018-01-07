@@ -21,8 +21,9 @@ use std::thread;
 use std::path;
 
 use hexgeometry;
+use hexgeometry::TerrainKind;
 use landscape;
-use sprite;
+//use sprite;
 
 fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: hexgeometry::Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
@@ -55,11 +56,11 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
             let mut elevation=0;
             for tile in hexstack.unwrap().iter() {
                 let texturerow = match tile {
-                    &landscape::TerrainKind::Stone => Some(0),
-                    &landscape::TerrainKind::Sand  => Some(1),
-                    &landscape::TerrainKind::Dirt  => Some(2),
-                    &landscape::TerrainKind::Grass  => Some(3),
-                    //&landscape::TerrainKind::Ocean => None, 
+                    &TerrainKind::Stone => Some(0),
+                    &TerrainKind::Sand  => Some(1),
+                    &TerrainKind::Dirt  => Some(2),
+                    &TerrainKind::Grass  => Some(3),
+                    //&TerrainKind::Ocean => None, 
                 };
                 if texturerow.is_some() {
                     // FIXME: don't hardcode texture width/height

@@ -11,7 +11,6 @@ use sdl2::render;
 use sdl2::video;
 
 use sdl2::image::LoadTexture;
-//use sdl2::image::{LoadTexture, INIT_PNG};
 use sdl2::rect::Rect;
 
 use sdl2::pixels::Color;

@@ -22,12 +22,13 @@ impl Island {
     pub fn new() -> Island {
         Island {
             size: 0,
-            map: Hexmap::new()
+            map: Hexmap::new(0)
         }
     }
 
     pub fn generate(&mut self) {
-        self.map = Hexmap::new();
+        self.size = 31; // FIXME: make this function scalable
+        self.map = Hexmap::new(self.size);
         
         let mut rng = rand::thread_rng();
         
@@ -128,7 +129,7 @@ impl Island {
             }
         }
 
-        self.size = 31;
+
     }
     
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {

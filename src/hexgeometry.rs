@@ -172,7 +172,7 @@ impl Add for Hexpoint {
     }
 }
 
-
+#[derive(Debug)]
 pub struct Hexmap {
     size: i32,
     // FIXME: put offset in the hexstack to pass around?
@@ -181,12 +181,11 @@ pub struct Hexmap {
 
 impl Hexmap {
 
-    pub fn new() -> Hexmap {
-        let m = Hexmap {
-            size: 0,
+    pub fn new(size: i32) -> Hexmap {
+        Hexmap {
+            size,
             hexes: HashMap::new()
-        };
-        m
+        }
     }
     
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {

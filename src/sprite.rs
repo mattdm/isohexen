@@ -1,6 +1,5 @@
 //use sdl2::rect::Point;
 use std::collections::HashMap;
-use std::path;
 
 use sdl2::render;
 
@@ -11,25 +10,27 @@ pub struct Sprite<'a> {
     //size: Point,
 }
 
-impl Sprite {
+impl<'a> Sprite<'a> {
     pub fn new(id: &str) -> Sprite {
-        id
+        Sprite {
+            id
+        }
     }
 }
 
 
 pub struct SpriteAtlas<'a> {
-    pub sprite: HashMap<&'a str,Sprite>,
-    sprite_sheet: &render::Texture,
+    pub sprite: HashMap<&'a str,Sprite<'a>>,
+    sprite_sheet: &'a render::Texture<'a>,
 }
 
-impl SpriteAtlas {
+impl<'a> SpriteAtlas<'a> {
     // FIXME: instead of hard-coding all this stuff, 
     // read from a description file
-    pub fn new(canvas: &mut render::WindowCanvas) -> SpriteAtlas {
+    pub fn new(sprite_sheet: &'a render::Texture) -> SpriteAtlas<'a> {
         SpriteAtlas {
             sprite: HashMap::new(),
-            sprite_sheet: canvas.texture_creator().load_texture(path::Path::new("images/spritesheet.png")).unwrap(),
+            sprite_sheet,
         }
     }
 }

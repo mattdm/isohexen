@@ -47,6 +47,7 @@ impl<'a> SpriteAtlas<'a> {
         s.sprites.insert("sand" ,Sprite::new("sand",  160, 256, 160));
         s.sprites.insert("dirt" ,Sprite::new("dirt",  320, 256, 160));
         s.sprites.insert("grass",Sprite::new("grass", 480, 256, 160));
+        s.sprites.insert("compass",Sprite::new("compass", 1536, 256, 96));
         s
     }
     

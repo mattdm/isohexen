@@ -57,7 +57,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
     //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,96), Rect::new(1664,968,256,96)).expect("Render failed");
-    
+    sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 }
 

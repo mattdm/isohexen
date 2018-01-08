@@ -8,8 +8,6 @@ Short Term
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
   - split hexmap.rs into hexgeometry.rs and landscape.rs (done)
-    - move getranked functions to hexgeometry, and have that return a
-      list of hex r,q and draw offset x,y
     - while I'm at it, regularize use of r,q and x,y (and i,j)
     - instead of one call to draw the background map, do
       - draw map (tiles, depth sorted)
@@ -34,6 +32,7 @@ Short Term
        render 
     - scrolling
     - change island generation routine to work with variable sizes
+- error handling if texture type not found
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - Add objects (start with boxes?)
 - make tiles prettier (Clear water?)

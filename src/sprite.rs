@@ -38,8 +38,7 @@ impl<'a> SpriteAtlas<'a> {
     // FIXME: instead of hard-coding all this stuff, 
     // read from a description file
     //pub fn new(texture_creator: &'a render::TextureCreator<render::Texture>) -> SpriteAtlas<'a> {
-    pub fn new(canvas: &mut render::Canvas<video::Window>) -> SpriteAtlas<'a> {
-        let texture_creator = canvas.texture_creator();
+    pub fn new(texture_creator: &'a render::TextureCreator<video::WindowContext>) -> SpriteAtlas<'a> {
         let mut s=SpriteAtlas {
             sprites: HashMap::new(),
             sprite_sheet: texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap(),

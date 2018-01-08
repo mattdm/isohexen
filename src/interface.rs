@@ -69,7 +69,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // load the sprite atlas
     //let sprite_atlas = SpriteAtlas::new(&texture_creator);
-    let sprite_atlas = SpriteAtlas::new(canvas);
+    let sprite_atlas = SpriteAtlas::new(&texture_creator);
         
     // this is what the background gets rendered onto
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();

@@ -11,23 +11,18 @@ use sdl2::mouse::MouseButton;
 use sdl2::video;
 use sdl2::render;
 
-use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 
 use sdl2::pixels::Color;
 
 use std::time;
 use std::thread;
-use std::path;
 
-use hexgeometry;
-use hexgeometry::TerrainKind;
 use landscape;
 use direction::Direction;
+use sprite::SpriteAtlas;
 
-//use sprite;
-
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
@@ -39,14 +34,6 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
 
     let map = map.get_ranked(orientation);
 
-    let texturecol = match orientation {
-        Direction::E  => 0,
-        Direction::SE => 1,
-        Direction::SW => 2,
-        Direction::W  => 3,
-        Direction::NW => 4,
-        Direction::NE => 5,
-    };
 
     for &(offset,hexstack) in map.iter() {
     
@@ -57,20 +44,9 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
         if hexstack.is_some() {
             let mut elevation=0;
             for tile in hexstack.unwrap().iter() {
-                //sprite.draw(canvas,orientation,location-rect)
-                let texturerow = match tile {
-                    &TerrainKind::Stone => Some(0),
-                    &TerrainKind::Sand  => Some(1),
-                    &TerrainKind::Dirt  => Some(2),
-                    &TerrainKind::Grass  => Some(3),
-                    //&TerrainKind::Ocean => None, 
-                };
-                if texturerow.is_some() {
-                    // FIXME: don't hardcode texture width/height
-                    // FIXME: make elevation multiplier a parameter. 8 means columns are smooth
-                    // and higher values give different looks. 10 and 12 are good.	
-                    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
-                }
+                //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
+                //fixme: don't hardcode elevation (or scale!)
+                sprite_atlas.draw(canvas, tile, 4, center_x+offset.0*32,center_y+offset.1*24-elevation*8,orientation);
                 elevation += 1;
             }
         }
@@ -80,7 +56,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     // FIXME: I _think_ this should be part of an "interface" layer, not the background.
     // (But I might be wrong)
     // FIXME: same deal about hardcoding the location here
-    canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,96), Rect::new(1664,968,256,96)).expect("Render failed");
+    //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,96), Rect::new(1664,968,256,96)).expect("Render failed");
     
 
 }
@@ -92,8 +68,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let texture_creator = canvas.texture_creator();
 
     // load the sprite atlas
-    let sprite_sheet = texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap();
-    
+    //let sprite_atlas = SpriteAtlas::new(&texture_creator);
+    let sprite_atlas = SpriteAtlas::new(canvas);
+        
     // this is what the background gets rendered onto
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();
 
@@ -182,7 +159,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-                    drawmap(texture_canvas, &sprite_sheet, &islandmap, orientation);
+                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
             }

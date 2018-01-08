@@ -6,20 +6,19 @@ use std::cmp;
 
 use direction::Direction;
 use hexgeometry::Hexpoint;
-use hexgeometry::TerrainKind;
 use hexgeometry::Hexmap;
 
 
 
-pub struct Island {
+pub struct Island<'a> {
     size: i32,
     // FIXME: put offset in the hexstack to pass around?
-    pub map: Hexmap,
+    pub map: Hexmap<'a>,
 }
 
-impl Island {
+impl<'a> Island<'a> {
 
-    pub fn new() -> Island {
+    pub fn new() -> Island<'a> {
         Island {
             size: 0,
             map: Hexmap::new(0)
@@ -35,7 +34,7 @@ impl Island {
         // center peak
         let center_tile = Hexpoint::new(0,0);
         let center_height = rng.gen::<isize>()%12+24; // FIXME: magic numbers!
-        self.map.hexes.insert(center_tile, vec![TerrainKind::Stone;center_height as usize]);
+        self.map.hexes.insert(center_tile, vec!["stone";center_height as usize]);
         
         // mountain arms
         for arm in Hexpoint::new(1,0).ring() { // This might be better as recursive, but
@@ -50,7 +49,7 @@ impl Island {
             while height > 2 {
                 // change height -3 + random(0..5), max 1
                 height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
-                self.map.hexes.insert(tile, vec![TerrainKind::Stone;height as usize]);
+                self.map.hexes.insert(tile, vec!["stone";height as usize]);
                 // One-in-six chance of arm ending here.
                 if rng.gen_weighted_bool(6) {
                     break;
@@ -86,7 +85,7 @@ impl Island {
                             Some(neighbor_hex) => {
                                     neighbor_height += neighbor_hex.len();
                                     neighbor_count += 1;
-                                    if neighbor_hex[0] == TerrainKind::Sand {
+                                    if neighbor_hex[0] == "sand" {
                                         inner_sand = true;
                                     }
                                 }
@@ -108,21 +107,21 @@ impl Island {
                         // otherwise, chance of sand
                         if inner_ocean == 1 {
                             if rng.gen_weighted_bool(3) {
-                                self.map.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                                self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
                             }
                         } else if inner_ocean == 0 {
                             if ! rng.gen_weighted_bool(4) {
-                                self.map.hexes.insert(tile, vec![TerrainKind::Sand;rng.gen::<usize>()%2+1]);
+                                self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
                             }
                         }
                         
                     } else if ring > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
                         // chance of sand
-                        self.map.hexes.insert(tile, vec![TerrainKind::Sand;height+rng.gen::<usize>()%3]);
+                        self.map.hexes.insert(tile, vec!["sand";height+rng.gen::<usize>()%3]);
                     } else {
                         // inland: just dirt and grass
-                        self.map.hexes.insert(tile, vec![TerrainKind::Dirt;height]);
-                        self.map.hexes.get_mut(&tile).unwrap().push(TerrainKind::Grass);
+                        self.map.hexes.insert(tile, vec!["dirt";height]);
+                        self.map.hexes.get_mut(&tile).unwrap().push("grass");
                     }
                     
                 }
@@ -132,7 +131,7 @@ impl Island {
 
     }
     
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
         self.map.get_ranked(orientation)
     }
     

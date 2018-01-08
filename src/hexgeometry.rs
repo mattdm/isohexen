@@ -5,16 +5,6 @@ use std::collections::HashMap;
 
 use direction::Direction;
 
-// FIXME: replace with sprites
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum TerrainKind {
-    Dirt,
-    Sand,
-    Stone,
-    Grass, // FIXME: this should be a decoration rather than a terrain type
-    //Ocean
-}
-
 
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -141,22 +131,21 @@ impl Add for Hexpoint {
 }
 
 #[derive(Debug)]
-pub struct Hexmap {
+pub struct Hexmap<'a> {
     size: i32,
-    // FIXME: put offset in the hexstack to pass around?
-    pub hexes: HashMap<Hexpoint,Vec<TerrainKind>>,
+    pub hexes: HashMap<Hexpoint,Vec<&'a str>>,
 }
 
-impl Hexmap {
+impl<'a> Hexmap<'a> {
 
-    pub fn new(size: i32) -> Hexmap {
+    pub fn new(size: i32) -> Hexmap<'a> {
         Hexmap {
             size,
             hexes: HashMap::new()
         }
     }
     
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),
             Direction::SE => self.get_ranked_diagonal(1),
@@ -167,9 +156,9 @@ impl Hexmap {
         }    
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<TerrainKind>>)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -187,9 +176,9 @@ impl Hexmap {
         v
     }
 
-    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
 
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
@@ -206,9 +195,9 @@ impl Hexmap {
         v
     }
 
-    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<TerrainKind>>)> {
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<TerrainKind>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
 
         // for orientation SouthEast, top row down
         // flip for NW. Kind of ugly. Could be prettier.

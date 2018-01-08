@@ -55,6 +55,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
         if hexstack.is_some() {
             let mut elevation=0;
             for tile in hexstack.unwrap().iter() {
+                //sprite.draw(canvas,orientation,location-rect)
                 let texturerow = match tile {
                     &TerrainKind::Stone => Some(0),
                     &TerrainKind::Sand  => Some(1),

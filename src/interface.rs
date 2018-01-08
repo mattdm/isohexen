@@ -23,9 +23,11 @@ use std::path;
 use hexgeometry;
 use hexgeometry::TerrainKind;
 use landscape;
+use direction::Direction;
+
 //use sprite;
 
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: hexgeometry::Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, map: &landscape::Island, orientation: Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
@@ -38,12 +40,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_sheet: &render::Texture, ma
     let map = map.get_ranked(orientation);
 
     let texturecol = match orientation {
-        hexgeometry::Direction::E  => 0,
-        hexgeometry::Direction::SE => 1,
-        hexgeometry::Direction::SW => 2,
-        hexgeometry::Direction::W  => 3,
-        hexgeometry::Direction::NW => 4,
-        hexgeometry::Direction::NE => 5,
+        Direction::E  => 0,
+        Direction::SE => 1,
+        Direction::SW => 2,
+        Direction::W  => 3,
+        Direction::NW => 4,
+        Direction::NE => 5,
     };
 
     for &(offset,hexstack) in map.iter() {
@@ -106,7 +108,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
-    let mut orientation=hexgeometry::Direction::E; // FIXME: use a diagonal to start?
+    let mut orientation=Direction::E; // FIXME: use a diagonal to start?
     let mut background_refresh_needed = true;
     
     islandmap.generate();

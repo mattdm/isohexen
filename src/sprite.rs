@@ -5,6 +5,8 @@ use std::path;
 use sdl2::render;
 use sdl2::image::LoadTexture;
 
+use direction::Direction;
+
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Sprite<'a> {
     pub id: &'a str,
@@ -45,4 +47,7 @@ impl<'a> SpriteAtlas<'a> {
         s
     }
     
+    pub fn draw(&self, canvas: &mut render::WindowCanvas, sprite_id: &str) {
+        //canvas.copy(&self.sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
+    }
 }

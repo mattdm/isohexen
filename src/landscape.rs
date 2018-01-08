@@ -4,7 +4,7 @@ use rand::Rng;
 
 use std::cmp;
 
-use hexgeometry::Direction;
+use direction::Direction;
 use hexgeometry::Hexpoint;
 use hexgeometry::TerrainKind;
 use hexgeometry::Hexmap;

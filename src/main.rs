@@ -4,6 +4,7 @@ extern crate rand;
 //use std::thread;
 
 mod interface;
+mod direction;
 mod hexgeometry;
 mod landscape;
 mod sprite;

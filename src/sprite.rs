@@ -4,19 +4,20 @@ use std::path;
 
 use sdl2::render;
 use sdl2::image::LoadTexture;
+use sdl2::rect::Rect;
 
 use direction::Direction;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Sprite<'a> {
     pub id: &'a str,
-    y_offset: usize,
-    width: usize,
-    height: usize,
+    y_offset: i32,
+    width: u32,
+    height: u32,
 }
 
 impl<'a> Sprite<'a> {
-    pub fn new(id: &'a str, y_offset: usize, width: usize, height: usize) -> Sprite<'a> {
+    pub fn new(id: &'a str, y_offset: i32, width: u32, height: u32) -> Sprite<'a> {
         Sprite {
             id,
             y_offset,
@@ -47,7 +48,19 @@ impl<'a> SpriteAtlas<'a> {
         s
     }
     
-    pub fn draw(&self, canvas: &mut render::WindowCanvas, sprite_id: &str) {
-        //canvas.copy(&self.sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
+    pub fn draw(&self, canvas: &mut render::WindowCanvas, sprite_id: &str, scale: usize, x: i32, y: i32, orientation: Direction) {
+        let column = match orientation {
+            Direction::E  => 0,
+            Direction::SE => 1,
+            Direction::SW => 2,
+            Direction::W  => 3,
+            Direction::NW => 4,
+            Direction::NE => 5,
+        };
+        let s = self.sprites.get(sprite_id).unwrap(); //FIXME -- error handling if not found!
+        canvas.copy(&self.sprite_sheet,
+                    Rect::new(column*s.width as i32,s.y_offset,s.width,s.height),
+                    Rect::new(x,y,64,40)
+                   ).expect("Render failed");
     }
 }

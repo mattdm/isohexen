@@ -88,6 +88,7 @@ Medium Term
   - alpacas 
   - mountain lions? (or, island too small?)
   - fish / dolphins / sharks
+  - bees! (need flowers. beehives, then, of course)
 - buildings. think I'm going to go for hex-sized huts rather than
    wall-building. Maybe leave room for both?
 - transition hexes (from one terrain type to another)

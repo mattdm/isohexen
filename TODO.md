@@ -7,14 +7,23 @@ Short Term
 - add grass and trees
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
-  - split hexmap.rs into hexgeometry.rs and landscape.rs (done)
-    - while I'm at it, regularize use of r,q and x,y (and i,j)
-    - instead of one call to draw the background map, do
+  - regularize use of r,q and x,y (and i,j)
+    X instead of one call to draw the background map, do
       - draw map (tiles, depth sorted)
       - draw objects (decorations, items, and actors -- depth sorted)
       - draw ui (compass rose)
+    - nope -- that won't work because of the pseudo-3d.
+      - investigate cost of:
+          - drawing everything every time, vs.
+          -  separating largely-static layers (background, decorations) 
+             + having a second pass of drawing potential obstructions:
+               - draw map + decorations
+               - draw items and actors + map & decoration in front of those
+               - draw obstructing 
   - need a things.rs
     - generate palm trees onto sand 
+      - update sprite drawing routine with a per-sprite offset
+    - read in a spritesheet.toml
     - generate apple trees onto grass
       - possibly generate grass onto dirt? if so, are trees at a different
         "elevation"?
@@ -93,6 +102,7 @@ Longer Term
 -----------
 
 - go from island to generic map stuff
+- change generation routine to an embedded script. (rhai? rlua?)
 - un-hardcode terrain types? or, make more. one or the other :)
 - move island generation and the specific island terrain types
    an add-on

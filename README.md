@@ -3,8 +3,8 @@ survival game, drawing inspiration from Rimworld, The Sims, Minecraft, and
 The Settlers (the Amiga game, not Catan — despite the hexes).
 
 It will also be basic engine for that game, which might be extensible to
-other things I feel like playing with. (Maybe something more Civ like? A
-procedural hack-and-slash RPG?)
+other things I feel like playing with. (Maybe something more Civ like?
+Ambitious Master of Magic clone? A procedural hack-and-slash RPG?)
 
 If this ever gets to the point where it might be useful for someone else,
 I'll increase the version to at least 1.0.0. Right now, it definitely isn't.
@@ -19,4 +19,4 @@ by pressing `G`.
 
 See the [TODO list](TODO.md) for plans and vague thoughts.
 
-![State of the Art](screenshots/20171231-0a51f00.png)
+![State of the Art](screenshots/20180108-85d8aba.png)

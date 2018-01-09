@@ -158,13 +158,16 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
         if now >= next_tick {
             if background_refresh_needed {
+                print!("Background refresh time: ");
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
                     drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
+                println!("{}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             canvas.copy(&background_texture, None, None).expect("Render failed");
+            
 
             // FIXME draw animations here
             canvas.present();

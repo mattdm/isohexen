@@ -22,12 +22,10 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction, zoom: i32) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
-    // FIXME: don't hardcode values
-    
     // these should be actual center minus half a hex
     let center_x=960-32;
     let center_y=540-24;
@@ -49,8 +47,9 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
             for tile in hexstack.unwrap().iter() {
                 //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
                 //fixme: don't hardcode elevation (or scale!)
-                //sprite_atlas.draw(canvas, tile, 4, center_x+offset.0*32,center_y+offset.1*24-elevation*8,orientation);
-                sprite_atlas.draw(canvas, tile, 8, center_x+offset.0*16,center_y+offset.1*12-elevation*4,orientation);
+                // zoom is easy!
+                sprite_atlas.draw(canvas, tile, zoom as u32, center_x+offset.0*128/zoom,center_y+offset.1*96/zoom-elevation*32/zoom,orientation);
+
                 elevation += 1;
             }
         }
@@ -94,6 +93,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
     let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
+    let mut zoom=4;
+    
+    
     let mut background_refresh_needed = true;
     
     islandmap.generate();
@@ -116,6 +118,18 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
                     background_refresh_needed = true;
+                },
+                Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
+                    if zoom > 1 {
+                        zoom = zoom/2;
+                        background_refresh_needed = true;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
+                    if zoom < 32 {
+                        zoom = zoom*2;
+                        background_refresh_needed = true;
+                    }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
                     if mx > 1112 && my > 688 {
@@ -167,7 +181,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
+                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation, zoom);
                 }).unwrap();
                 background_refresh_needed = false;
                 println!("Background Refesh Total: {}",(time::Instant::now()-now).subsec_nanos()/1000000);

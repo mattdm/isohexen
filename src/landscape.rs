@@ -26,7 +26,8 @@ impl<'a> Island<'a> {
     }
 
     pub fn generate(&mut self) {
-        self.size = 31; // FIXME: make this function scalable
+        //self.size = 31; // FIXME: make this function scalable
+        self.size= 32;
         self.map = Hexmap::new(self.size);
         
         let mut rng = rand::thread_rng();
@@ -130,6 +131,11 @@ impl<'a> Island<'a> {
         
         // debug rings
         /*
+        for ring in 13..15 { // FIXME: scale based on passed-in size parameter
+            for tile in Hexpoint::new(ring,0).ring() {
+                self.map.hexes.insert(tile, vec!["stone";1]);
+            }
+        }
         for ring in 15..16 { // FIXME: scale based on passed-in size parameter
             for tile in Hexpoint::new(ring,0).ring() {
                 self.map.hexes.insert(tile, vec!["dirt";3]);

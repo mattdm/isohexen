@@ -203,10 +203,10 @@ impl<'a> Hexmap<'a> {
         // flip for NW.
         for y in 0..self.size {
             // start pointy, get broad
-            for x in 1..y+1 {
+            for x in 1..y {
                 let r=flip*(y-self.size/2-x);
                 let q=flip*(y-self.size-flip*r);
-                let offset=(x*2-y-1,y-self.size);
+                let offset=(x*2-y,y-self.size);
                 v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }
@@ -215,7 +215,7 @@ impl<'a> Hexmap<'a> {
             for x in 1..(self.size*2-y) {
                 let r=flip*(self.size/2-x);
                 let q=flip*(y-self.size-flip*r);
-                let offset=(x*2-(self.size*2-y)-1,y-self.size);
+                let offset=(x*2-(self.size*2-y),y-self.size);
                 v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }

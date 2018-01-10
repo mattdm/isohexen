@@ -50,7 +50,7 @@ Short Term
     good reason
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
-- fix: diagonal drawing routine shifted with even map size
+- fix: still some issues with drawing at some island sizes (even/odd issues)
 
 
 Medium Term

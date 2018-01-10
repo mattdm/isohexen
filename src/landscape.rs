@@ -115,7 +115,7 @@ impl<'a> Island<'a> {
                             }
                         }
                         
-                    } else if ring > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
+                    } else if ring  > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
                         // chance of sand
                         self.map.hexes.insert(tile, vec!["sand";height+rng.gen::<usize>()%3]);
                     } else {
@@ -127,6 +127,25 @@ impl<'a> Island<'a> {
                 }
             }
         }
+        
+        // debug rings
+        /*
+        for ring in 15..16 { // FIXME: scale based on passed-in size parameter
+            for tile in Hexpoint::new(ring,0).ring() {
+                self.map.hexes.insert(tile, vec!["dirt";3]);
+            }
+        }
+        for ring in 16..18 { // FIXME: scale based on passed-in size parameter
+            for tile in Hexpoint::new(ring,0).ring() {
+                self.map.hexes.insert(tile, vec!["stone";1]);
+            }
+        }
+        for ring in 18..40 { // FIXME: scale based on passed-in size parameter
+            for tile in Hexpoint::new(ring,0).ring() {
+                self.map.hexes.insert(tile, vec!["grass";1]);
+            }
+        }
+        */
 
 
     }

@@ -7,14 +7,8 @@ Short Term
 - add grass and trees
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
-  - regularize use of r,q and x,y (and i,j)
-    X instead of one call to draw the background map, do
-      - draw map (tiles, depth sorted)
-      - draw objects (decorations, items, and actors -- depth sorted)
-      - draw ui (compass rose)
-    - nope -- that won't work because of the pseudo-3d.
       - investigate cost of:
-          - drawing everything every time, vs.
+          - drawing everything every time (update: ~25ms with tiles alone)
           -  separating largely-static layers (background, decorations) 
              + having a second pass of drawing potential obstructions:
                - draw map + decorations

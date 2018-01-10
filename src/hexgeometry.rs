@@ -200,14 +200,22 @@ impl<'a> Hexmap<'a> {
         let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
 
         // for orientation SouthEast, top row down
-        // flip for NW. Kind of ugly. Could be prettier.
-        for y in 0..self.size*2 {
-            // start pointy, get broad, back to pointy
-            let w=self.size-((y-self.size).abs()-1);
-            for x in 0..w+self.size-3 { // FIXME: erm, I'm not sure why this upper bound works. but it does.
-                let r=flip*(y-x-self.size/2);
-                let q=flip*(y-self.size/2-flip*r-self.size/2);
-                let offset=(x*2-y,y-self.size+1);
+        // flip for NW.
+        for y in 0..self.size {
+            // start pointy, get broad
+            for x in 1..y+1 {
+                let r=flip*(y-self.size/2-x);
+                let q=flip*(y-self.size-flip*r);
+                let offset=(x*2-y-1,y-self.size);
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+            }
+        }
+        for y in self.size..self.size*2+1 {
+            // broad in the middle, get pointy
+            for x in 1..(self.size*2-y) {
+                let r=flip*(self.size/2-x);
+                let q=flip*(y-self.size-flip*r);
+                let offset=(x*2-(self.size*2-y)-1,y-self.size);
                 v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
             }
         }

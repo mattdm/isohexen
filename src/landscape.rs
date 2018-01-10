@@ -33,7 +33,7 @@ impl<'a> Island<'a> {
         
         // center peak
         let center_tile = Hexpoint::new(0,0);
-        let center_height = rng.gen::<isize>()%12+24; // FIXME: magic numbers!
+        let center_height = rng.gen::<usize>()%12+24; // FIXME: magic numbers!
         self.map.hexes.insert(center_tile, vec!["stone";center_height as usize]);
         
         // mountain arms
@@ -48,7 +48,7 @@ impl<'a> Island<'a> {
             // and we lost that... add back.
             while height > 2 {
                 // change height -3 + random(0..5), max 1
-                height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
+                height = cmp::max(1,height + rng.gen::<usize>()%6 - 3);
                 self.map.hexes.insert(tile, vec!["stone";height as usize]);
                 // One-in-six chance of arm ending here.
                 if rng.gen_weighted_bool(6) {

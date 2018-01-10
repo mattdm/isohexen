@@ -14,6 +14,12 @@ Short Term
                - draw map + decorations
                - draw items and actors + map & decoration in front of those
                - draw obstructing 
+                  - when sprite drawn, mark column (and +/- 1) dirty
+                  - on next rows
+                    - if height of object or hex stack reaches
+                      into previous row, draw _and leave dirty mark
+                    - if height does not reach previous row, clear mark
+      - probably: do the draw-everything loop first, then optimize
   - need a things.rs
     - generate palm trees onto sand 
       - update sprite drawing routine with a per-sprite offset
@@ -65,8 +71,12 @@ Medium Term
 - coconut trees! apple trees with and without apples.
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
-- lava? obsidian?
+- clay next to the rivers
+- lava? obsidian? (obsidian is good for sharp tools?)
 - snow!
+- structures:
+  - Q: rimworld-style wall building, or prefab tile-sized buildings?
+    - quarries
 - read terrain _type_ from text file rather than hard-coding
 - possibly separate sides and top of hexes, so they can more easily be
   variable height

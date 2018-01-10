@@ -1,3 +1,7 @@
+// todo: move basically all of this to an external script that lives
+// next to the tiles. ideally, anything that knows what a terrain type 
+// actually *is* lives in a scripting language.
+
 extern crate rand;
 
 use rand::Rng;

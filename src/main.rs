@@ -4,7 +4,10 @@ extern crate rand;
 //use std::thread;
 
 mod interface;
-mod hexmap;
+mod direction;
+mod hexgeometry;
+mod landscape;
+mod sprite;
 
 pub fn main() {
 
@@ -14,6 +17,7 @@ pub fn main() {
 
     let window = video_subsystem.window("Little Island", 960, 540)
         //.fullscreen_desktop()
+        //.resizable()
         .build()
         .unwrap();
  
@@ -23,8 +27,5 @@ pub fn main() {
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut islandmap = hexmap::Hexmap::new();
-
-    interface::gameloop(&mut canvas,&mut event_pump, &mut islandmap)
-
+    interface::gameloop(&mut canvas,&mut event_pump)
 }

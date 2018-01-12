@@ -52,9 +52,11 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
 
                 elevation += 1;
             }
-           if elevation==1 {
-               sprite_atlas.draw(canvas, "tree-palm", zoom as u32, center_x+offset.0*128/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-40,orientation);
-           }
+            // test kludge for the tree sprite
+            if elevation==1 {
+                // FIXME: "draw-offset should be in sprite (but private to that sprite)
+                sprite_atlas.draw(canvas, "tree-palm", zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
+            }
         }
     }
     println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);

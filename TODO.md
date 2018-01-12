@@ -3,7 +3,10 @@ Engine
 
 Short Term
 ----------
-
+- experiment with zoom -- should that be in the draw routine, or should
+  we draw to a big texture and scale down?
+- sprite offset should be hidden in the sprite routine -- maybe all
+  of the zoom scaling should be there?
 - add grass and trees
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees

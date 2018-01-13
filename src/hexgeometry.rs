@@ -133,7 +133,10 @@ impl Add for Hexpoint {
 #[derive(Debug)]
 pub struct Hexmap<'a> {
     size: i32,
+    // FIXME: this ends up making function call types
+    //  *ridiculously* complicated. Need to encapsulate all that.
     pub hexes: HashMap<Hexpoint,Vec<&'a str>>,
+    pub decor: HashMap<Hexpoint,Vec<&'a str>>,
 }
 
 impl<'a> Hexmap<'a> {
@@ -141,11 +144,12 @@ impl<'a> Hexmap<'a> {
     pub fn new(size: i32) -> Hexmap<'a> {
         Hexmap {
             size,
-            hexes: HashMap::new()
+            hexes: HashMap::new(),
+            decor: HashMap::new()
         }
     }
     
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
         match orientation {
             Direction::E  => self.get_ranked_horizontal(1),
             Direction::SE => self.get_ranked_diagonal(1),
@@ -156,9 +160,9 @@ impl<'a> Hexmap<'a> {
         }    
     }
     
-    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<&str>>)> {
+    fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -170,15 +174,15 @@ impl<'a> Hexmap<'a> {
             for x in 0..self.size {
                 let q=flip*(x-(self.size/2));
                 let offset=(((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r)),self.decor.get(&Hexpoint::new(q,r))));
             }
         }
         v
     }
 
-    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
+    fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
 
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
@@ -188,16 +192,16 @@ impl<'a> Hexmap<'a> {
             for x in 0..self.size {
                 let r=flip*(x-(self.size/2));
                 let offset=(-1*((x-(self.size/2))*2+(y-(self.size/2))),y-(self.size/2));
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r)),self.decor.get(&Hexpoint::new(q,r))));
             }
         }
                 
         v
     }
 
-    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
+    fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
 
         // for orientation SouthEast, top row down
         // flip for NW.
@@ -207,7 +211,7 @@ impl<'a> Hexmap<'a> {
                 let r=flip*(y-self.size/2-x);
                 let q=flip*(y-self.size-flip*r);
                 let offset=(x*2-y,y-self.size);
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r)),self.decor.get(&Hexpoint::new(q,r))));
             }
         }
         for y in self.size..self.size*2+1 {
@@ -216,7 +220,7 @@ impl<'a> Hexmap<'a> {
                 let r=flip*(self.size/2-x);
                 let q=flip*(y-self.size-flip*r);
                 let offset=(x*2-(self.size*2-y),y-self.size);
-                v.push((offset,self.hexes.get(&Hexpoint::new(q,r))));
+                v.push((offset,self.hexes.get(&Hexpoint::new(q,r)),self.decor.get(&Hexpoint::new(q,r))));
             }
         }
         v

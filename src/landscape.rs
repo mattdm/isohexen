@@ -117,6 +117,7 @@ impl<'a> Island<'a> {
                         } else if inner_ocean == 0 {
                             if ! rng.gen_weighted_bool(4) {
                                 self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
+                                self.map.decor.insert(tile, vec!["tree-palm"]);
                             }
                         }
                         
@@ -126,41 +127,17 @@ impl<'a> Island<'a> {
                     } else {
                         // inland: just dirt and grass
                         self.map.hexes.insert(tile, vec!["dirt";height]);
-                        self.map.hexes.get_mut(&tile).unwrap().push("grass");
+                        self.map.decor.insert(tile, vec!["grass"]);
                     }
                     
                 }
             }
         }
         
-        // debug rings
-        /*
-        for ring in 13..15 { // FIXME: scale based on passed-in size parameter
-            for tile in Hexpoint::new(ring,0).ring() {
-                self.map.hexes.insert(tile, vec!["stone";1]);
-            }
-        }
-        for ring in 15..16 { // FIXME: scale based on passed-in size parameter
-            for tile in Hexpoint::new(ring,0).ring() {
-                self.map.hexes.insert(tile, vec!["dirt";3]);
-            }
-        }
-        for ring in 16..18 { // FIXME: scale based on passed-in size parameter
-            for tile in Hexpoint::new(ring,0).ring() {
-                self.map.hexes.insert(tile, vec!["stone";1]);
-            }
-        }
-        for ring in 18..40 { // FIXME: scale based on passed-in size parameter
-            for tile in Hexpoint::new(ring,0).ring() {
-                self.map.hexes.insert(tile, vec!["grass";1]);
-            }
-        }
-        */
-
 
     }
     
-    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>)> {
+    pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
         self.map.get_ranked(orientation)
     }
     

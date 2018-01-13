@@ -36,28 +36,31 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     println!("  Got Ranked {:?}: {}",orientation,(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
 
-    for &(offset,hexstack) in map.iter() {
+    for &(offset,hexstack,decorstack) in map.iter() {
     
         // long term improvement: read this from a 
         // text file describing the texture, rather
         // than hard-coding.
         
+        let mut elevation=0;
         if hexstack.is_some() {
-            let mut elevation=0;
             for tile in hexstack.unwrap().iter() {
                 //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
                 //fixme: don't hardcode elevation (or scale!)
                 // zoom is easy!
                 sprite_atlas.draw(canvas, tile, zoom as u32, center_x+offset.0*128/zoom,center_y+offset.1*96/zoom-elevation*32/zoom,orientation);
-
                 elevation += 1;
             }
-            // test kludge for the tree sprite
-            if elevation==1 {
+        }
+        if decorstack.is_some() {
+            for decor in decorstack.unwrap().iter() {
                 // FIXME: "draw-offset should be in sprite (but private to that sprite)
-                sprite_atlas.draw(canvas, "tree-palm", zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
+                //sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
+                sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
+                elevation += 1;
             }
         }
+        
     }
     println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 

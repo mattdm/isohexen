@@ -56,7 +56,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
             for decor in decorstack.unwrap().iter() {
                 // FIXME: "draw-offset should be in sprite (but private to that sprite)
                 //sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
-                sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
+                sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom,orientation);
                 elevation += 1;
             }
         }

@@ -12,16 +12,16 @@ use direction::Direction;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Sprite<'a> {
     pub id: &'a str,
-    y_offset: i32,
+    atlas_y: i32,
     width: u32,
     height: u32,
 }
 
 impl<'a> Sprite<'a> {
-    pub fn new(id: &'a str, y_offset: i32, width: u32, height: u32) -> Sprite<'a> {
+    pub fn new(id: &'a str, atlas_y: i32, width: u32, height: u32) -> Sprite<'a> {
         Sprite {
             id,
-            y_offset,
+            atlas_y,
             width,
             height,
         }
@@ -63,7 +63,7 @@ impl<'a> SpriteAtlas<'a> {
         };
         let s = self.sprites.get(sprite_id).unwrap(); //FIXME -- error handling if not found!
         canvas.copy(&self.sprite_sheet,
-                    Rect::new(column*s.width as i32,s.y_offset,s.width,s.height),
+                    Rect::new(column*s.width as i32,s.atlas_y,s.width,s.height),
                     Rect::new(x,y,s.width/scale,s.height/scale)
                    ).expect("Render failed");
     }

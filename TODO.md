@@ -5,8 +5,6 @@ Short Term
 ----------
 - experiment with zoom -- should that be in the draw routine, or should
   we draw to a big texture and scale down?
-- sprite offset should be hidden in the sprite routine -- maybe all
-  of the zoom scaling should be there?
 - add grass and trees
   - still 50/50 on whether grass is better as terrain tile or decoration
    so start with trees
@@ -25,7 +23,6 @@ Short Term
       - probably: do the draw-everything loop first, then optimize
   - need a things.rs
     - generate palm trees onto sand 
-      - update sprite drawing routine with a per-sprite offset
     - read in a spritesheet.toml
     - generate apple trees onto grass
       - possibly generate grass onto dirt? if so, are trees at a different

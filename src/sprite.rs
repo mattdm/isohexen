@@ -13,15 +13,19 @@ use direction::Direction;
 pub struct Sprite<'a> {
     pub id: &'a str,
     atlas_y: i32,
+    draw_offset_x: i32,
+    draw_offset_y: i32,
     width: u32,
     height: u32,
 }
 
 impl<'a> Sprite<'a> {
-    pub fn new(id: &'a str, atlas_y: i32, width: u32, height: u32) -> Sprite<'a> {
+    pub fn new(id: &'a str, atlas_y: i32, draw_offset_x: i32, draw_offset_y: i32, width: u32, height: u32) -> Sprite<'a> {
         Sprite {
             id,
             atlas_y,
+            draw_offset_x,
+            draw_offset_y,
             width,
             height,
         }
@@ -43,12 +47,12 @@ impl<'a> SpriteAtlas<'a> {
             sprites: HashMap::new(),
             sprite_sheet: texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap(),
         };
-        s.sprites.insert("stone",Sprite::new("stone",   0, 256, 160));
-        s.sprites.insert("sand" ,Sprite::new("sand",  160, 256, 160));
-        s.sprites.insert("dirt" ,Sprite::new("dirt",  320, 256, 160));
-        s.sprites.insert("grass",Sprite::new("grass", 480, 256, 160));
-        s.sprites.insert("tree-palm",Sprite::new("tree-palm", 640, 256, 256));
-        s.sprites.insert("compass",Sprite::new("compass", 1536, 256, 96));
+        s.sprites.insert("stone",Sprite::new("stone",   0, 0, 0, 256, 160));
+        s.sprites.insert("sand" ,Sprite::new("sand",  160, 0, 0, 256, 160));
+        s.sprites.insert("dirt" ,Sprite::new("dirt",  320, 0, 0, 256, 160));
+        s.sprites.insert("grass",Sprite::new("grass", 480, 0, 0, 256, 160));
+        s.sprites.insert("tree-palm",Sprite::new("tree-palm", 640, 16, -160, 256, 256));
+        s.sprites.insert("compass",Sprite::new("compass", 1536, 0, 0, 256, 96));
         s
     }
     
@@ -64,7 +68,7 @@ impl<'a> SpriteAtlas<'a> {
         let s = self.sprites.get(sprite_id).unwrap(); //FIXME -- error handling if not found!
         canvas.copy(&self.sprite_sheet,
                     Rect::new(column*s.width as i32,s.atlas_y,s.width,s.height),
-                    Rect::new(x,y,s.width/scale,s.height/scale)
+                    Rect::new(x+s.draw_offset_x/scale as i32,y+s.draw_offset_y/scale as i32,s.width/scale,s.height/scale)
                    ).expect("Render failed");
     }
 }

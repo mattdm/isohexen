@@ -3,6 +3,7 @@ Engine
 
 Short Term
 ----------
+- sky!
 - read sprite info from spritesheet.toml instead of hardcoding
 - add grass and trees
   - done: palm trees on sand
@@ -33,13 +34,13 @@ Medium Term
    unreadably ugly
 - make a Trait for maps and island map be a type which implements that?
 - minimap?
-- make it so you can hold multiple keys at once to pan
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
  - proper position of mouse clicks in different screen sizes
 - coconut trees! apple trees with and without apples.
 - figure out how to make the water pretty
 - terrain water -- rivers (possibly also lakes, for larger maps)
+- ocean water tiles
 - clay next to the rivers
 - lava? obsidian? (obsidian is good for sharp tools?)
 - snow!
@@ -71,6 +72,9 @@ Medium Term
 - animate rotation (hard because it needs to be in 3d... or at least
    pseudo-3d)
 - tides!
+- time passing
+  - night day
+  - sun, moon in sky
 
 Longer Term
 -----------

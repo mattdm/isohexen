@@ -5,6 +5,7 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
+//use sdl2::keyboard::Scancode;
 use sdl2::mouse::MouseButton;
 
 
@@ -18,6 +19,9 @@ use sdl2::pixels::Color;
 use std::time;
 use std::thread;
 use std::cmp;
+
+use std::collections::HashSet;
+
 
 use landscape;
 use direction::Direction;
@@ -108,6 +112,10 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     islandmap.generate();
 
     'mainloop: loop {
+        let mut keys=HashSet::new();
+        keys = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
+        //println!("{:?}",keys.contains(&Keycode::O));
+
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit {..} |
@@ -129,32 +137,51 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), .. } => {
                     // North West
-                    map_x -= 8;
-                    map_y -= 5;
-                    map_x = cmp::max(map_x,-1024);
-                    map_y = cmp::max(map_y,-1024);
+                    if keys.contains(&Keycode::E) { // straight down
+                        map_y -= 8;
+                        map_y = cmp::max(map_y,-1024);
+                    } else {
+                        map_x -= 8;
+                        map_y -= 5;
+                        map_x = cmp::max(map_x,-1024);
+                        map_y = cmp::max(map_y,-1024);
+                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::E), .. } => {
                     // North East
-                    map_x += 8;
-                    map_y -= 5;
-                    map_x = cmp::min(map_x, 1024);
-                    map_y = cmp::max(map_y,-1024);
+                    if keys.contains(&Keycode::W) { // straight down
+                        map_y -= 8;
+                        map_y = cmp::max(map_y,-1024);
+                    } else {
+                        map_x += 8;
+                        map_y -= 5;
+                        map_x = cmp::min(map_x, 1024);
+                        map_y = cmp::max(map_y,-1024);
+                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
                     // South West
-                    map_x -= 8;
-                    map_y += 5;
-                    map_x = cmp::max(map_x,-1024);
-                    map_y = cmp::min(map_y, 1024);
-
+                    if keys.contains(&Keycode::X) { // straight up
+                        map_y += 8;
+                        map_y = cmp::min(map_y, 1024);
+                    } else {
+                        map_x -= 8;
+                        map_y += 5;
+                        map_x = cmp::max(map_x,-1024);
+                        map_y = cmp::min(map_y, 1024);
+                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::X), .. } => {
                     // South East
-                    map_x += 8;
-                    map_y += 5;
-                    map_x = cmp::min(map_x, 1024);
-                    map_y = cmp::min(map_y, 1024);
+                    if keys.contains(&Keycode::Z) { // straight up
+                        map_y += 8;
+                        map_y = cmp::min(map_y, 1024);
+                    } else {
+                        map_x += 8;
+                        map_y += 5;
+                        map_x = cmp::min(map_x, 1024);
+                        map_y = cmp::min(map_y, 1024);
+                    }
                 },
                 /* Up and down for vertical scroll. Not sure I'll keep this. */
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {

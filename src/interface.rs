@@ -113,12 +113,14 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     break 'mainloop
                 },
                 /* AWEDXZ for panning in hex directions */
-                Event::KeyDown { keycode: Some(Keycode::A), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::A), .. } |
+                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
                     if map_x > -128 {
                         map_x -= 1;
                     }
                 },
-                Event::KeyDown { keycode: Some(Keycode::D), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::D), .. } |
+                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
                     if map_x < 128 {
                         map_x += 1;
                     }

@@ -103,9 +103,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // load the sprite atlas
     let sprite_atlas = SpriteAtlas::new(&texture_creator);
 
-    // this is what the background gets rendered onto 
+    // this is what the scene gets rendered onto 
     // FIXME: put these constants somewhere as constants.
-    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
+    let mut world_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
 
     // create the map. in the future, we probably want some game-setup
     // function first before we go right into the game loop
@@ -124,7 +124,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut zoom=13;
     
     
-    let mut background_refresh_needed = true;
+    let mut world_refresh_needed = true;
     
     islandmap.generate();
 
@@ -219,12 +219,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
-                    background_refresh_needed = true;
+                    world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::R), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
-                    background_refresh_needed = true;
+                    world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
                     if zoom > 24 {
@@ -247,18 +247,18 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
                     if mx > 1112 && my > 688 {
                         orientation = orientation.counterclockwise();
-                        background_refresh_needed = true;
+                        world_refresh_needed = true;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
                     if mx > 1112 && my > 688 {
                         orientation = orientation.clockwise();
-                        background_refresh_needed = true;
+                        world_refresh_needed = true;
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::G), .. } => {
                     islandmap.generate();
-                    background_refresh_needed = true;
+                    world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::F), .. } => {
                     match canvas.window_mut().fullscreen_state() {
@@ -291,21 +291,21 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
         if now >= next_tick {
-            if background_refresh_needed {
-                canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
+            if world_refresh_needed {
+                canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
                     drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
-                background_refresh_needed = false;
+                world_refresh_needed = false;
                 //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
             let visible_h=1080/4*(zoom+3);
-            let background_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
-            let background_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
-            canvas.copy(&background_texture,
-                        Rect::new(background_x as i32, 
-                                  background_y as i32,
+            let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
+            let world_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
+            canvas.copy(&world_texture,
+                        Rect::new(world_x as i32, 
+                                  world_y as i32,
                                   visible_w as u32,
                                   visible_h as u32),
                         None).expect("Render failed");

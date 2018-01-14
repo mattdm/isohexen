@@ -28,9 +28,26 @@ use direction::Direction;
 use sprite::SpriteAtlas;
 
 fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
-    canvas.set_draw_color(Color::RGB(0,112,160));
-    canvas.clear();
 
+    // sea
+    //canvas.set_draw_color(Color::RGB(16,128,160));
+    //canvas.clear();
+    // sky
+    canvas.set_draw_color(Color::RGB(80,176,208));
+    canvas.clear();
+    //canvas.fill_rect(Rect::new(0, 0, 16384, 2688)).unwrap();
+
+    let horizon=2722;
+    for y in 0..34 {    
+        for x in 0..64 {
+            sprite_atlas.draw(canvas, "grass", 1, x*256,y*192+horizon,orientation);
+        }
+        for x in 0..65 {
+            sprite_atlas.draw(canvas, "grass", 1, x*256-128,y*192+horizon+96,orientation);
+        }
+    }
+    
+    
     // these should be actual center minus half a hex
     let center_x=8192-128;
     let center_y=4608-96;
@@ -112,8 +129,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     islandmap.generate();
 
     'mainloop: loop {
-        let mut keys=HashSet::new();
-        keys = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
+        let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
         //println!("{:?}",keys.contains(&Keycode::O));
 
         for event in event_pump.poll_iter() {
@@ -179,6 +195,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     } else {
                         map_x += 8;
                         map_y += 5;
+                     
                         map_x = cmp::min(map_x, 1024);
                         map_y = cmp::min(map_y, 1024);
                     }

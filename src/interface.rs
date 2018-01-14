@@ -81,7 +81,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // load the sprite atlas
     let sprite_atlas = SpriteAtlas::new(&texture_creator);
 
-    // this is what the background gets rendered onto
+    // this is what the background gets rendered onto 
+    // FIXME: put these constants somewhere as constants.
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
 
     // create the map. in the future, we probably want some game-setup
@@ -115,14 +116,51 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 /* AWEDXZ for panning in hex directions */
                 Event::KeyDown { keycode: Some(Keycode::A), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
-                    if map_x > -128 {
-                        map_x -= 1;
+                    // West
+                    if map_x > -1024 {
+                        map_x -= 8;
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                    // East
+                    if map_x < 1024 {
+                        map_x += 8;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::W), .. } => {
+                    // North West
+                    if map_x > -128 {
+                        map_x -= 1;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::E), .. } => {
+                    // North East
                     if map_x < 128 {
                         map_x += 1;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
+                    // South West
+                    if map_x > -128 {
+                        map_x -= 1;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::X), .. } => {
+                    // South East
+                    if map_x < 128 {
+                        map_x += 1;
+                    }
+                },
+                /* Up and down for vertical scroll. Not sure I'll keep this. */
+                Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
+                    if map_y > -1024 {
+                        map_y -= 8;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
+                    if map_y < 1024 {
+                        map_y += 8;
                     }
                 },
                 /* S is in the middle, so center ("senter"?) */
@@ -209,11 +247,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
             let visible_w=1920*zoom; // FIXME: allow more zoom steps 
             let visible_h=1080*zoom;
-            let background_x = 16384/2-visible_w/2+(map_x*(16384-visible_w)/256);  // 256 is our scroll range
-            println!("Z: {} X: ({}-{})",zoom,background_x,background_x+visible_w );
+            let background_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
+            let background_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
+            println!("Z: {} X: ({}-{}) Y: ({}-{})",zoom,background_x,background_x+visible_w,background_y,background_y+visible_h);
             canvas.copy(&background_texture,
                         Rect::new(background_x as i32, 
-                                  9162/2-visible_h/2 as i32,
+                                  background_y as i32,
                                   visible_w as u32,
                                   visible_h as u32),
                         None).expect("Render failed");

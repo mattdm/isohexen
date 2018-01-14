@@ -19,7 +19,7 @@ pub struct Sprite {
     height: u32,
 }
 
-impl<'a> Sprite {
+impl Sprite {
     pub fn new(id: &str, atlas_y: i32, draw_offset_x: i32, draw_offset_y: i32, width: u32, height: u32) -> Sprite {
         Sprite {
             id: id.to_string(),

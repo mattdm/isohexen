@@ -17,6 +17,7 @@ use sdl2::pixels::Color;
 
 use std::time;
 use std::thread;
+use std::cmp;
 
 use landscape;
 use direction::Direction;
@@ -62,6 +63,11 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     }
     //println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
+    
+    //sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
+
+    //println!("  Compass:    {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+
 }
 
 
@@ -76,7 +82,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // load the sprite atlas
     let sprite_atlas = SpriteAtlas::new(&texture_creator);
 
-    // this is what the background gets rendered onto
+    // this is what the background gets rendered onto 
+    // FIXME: put these constants somewhere as constants.
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
 
     // create the map. in the future, we probably want some game-setup
@@ -91,7 +98,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
     let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
-    let mut zoom=16;
+    let mut map_x = 0;
+    let mut map_y = 0;
+    let mut zoom=13;
     
     
     let mut background_refresh_needed = true;
@@ -105,8 +114,64 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'mainloop
                 },
-                /* Planning to use AWEDXZ for panning in approriate
-                   direction, so let's use Q and R for rotation. */
+                /* AWEDXZ for panning in hex directions */
+                Event::KeyDown { keycode: Some(Keycode::A), .. } |
+                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
+                    // West
+                    map_x -= 10;
+                    map_x = cmp::max(map_x,-1024);
+                },
+                Event::KeyDown { keycode: Some(Keycode::D), .. } |
+                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                    // East
+                    map_x += 10;
+                    map_x = cmp::min(map_x, 1024);
+                },
+                Event::KeyDown { keycode: Some(Keycode::W), .. } => {
+                    // North West
+                    map_x -= 8;
+                    map_y -= 5;
+                    map_x = cmp::max(map_x,-1024);
+                    map_y = cmp::max(map_y,-1024);
+                },
+                Event::KeyDown { keycode: Some(Keycode::E), .. } => {
+                    // North East
+                    map_x += 8;
+                    map_y -= 5;
+                    map_x = cmp::min(map_x, 1024);
+                    map_y = cmp::max(map_y,-1024);
+                },
+                Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
+                    // South West
+                    map_x -= 8;
+                    map_y += 5;
+                    map_x = cmp::max(map_x,-1024);
+                    map_y = cmp::min(map_y, 1024);
+
+                },
+                Event::KeyDown { keycode: Some(Keycode::X), .. } => {
+                    // South East
+                    map_x += 8;
+                    map_y += 5;
+                    map_x = cmp::min(map_x, 1024);
+                    map_y = cmp::min(map_y, 1024);
+                },
+                /* Up and down for vertical scroll. Not sure I'll keep this. */
+                Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
+                    map_y -= 8;
+                    map_y = cmp::max(map_y,-1024);
+                },
+                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
+                    map_y += 8;
+                    map_y = cmp::min(map_y,1024);
+                },
+                /* S is in the middle, so center ("senter"?) */
+                Event::KeyDown { keycode: Some(Keycode::S), .. } => {
+                    map_x = 0;
+                    map_y = 0;
+                },
+                
+                /* use Q and R for rotation. */
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
@@ -127,7 +192,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 16 {
+                    if zoom < 29 {
                         zoom += 1;
                     } else if zoom < 24 {
                         zoom += 2
@@ -190,7 +255,16 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            canvas.copy(&background_texture, Rect::new(16384/2-240*zoom as i32,9162/2-135*zoom as i32,480*zoom as u32,270*zoom as u32), None).expect("Render failed");
+            let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
+            let visible_h=1080/4*(zoom+3);
+            let background_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
+            let background_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
+            canvas.copy(&background_texture,
+                        Rect::new(background_x as i32, 
+                                  background_y as i32,
+                                  visible_w as u32,
+                                  visible_h as u32),
+                        None).expect("Render failed");
             sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 

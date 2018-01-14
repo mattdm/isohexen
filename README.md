@@ -15,7 +15,8 @@ engine.
 
 Currently, draws an "island", which you can rotate with page up and page
 down keys or by clicking on the compass rose. You can regenerate the island
-by pressing `G`.
+by pressing `G`. Zoom with +/- and pan around with AWEDXZ in hex directions
+or arrow keys in cardinal directions. S to center. Oh, and F for fullscreen.
 
 See the [TODO list](TODO.md) for plans and vague thoughts.
 

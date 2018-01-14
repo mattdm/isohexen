@@ -3,8 +3,6 @@ Engine
 
 Short Term
 ----------
-- experiment with zoom -- should that be in the draw routine, or should
-  we draw to a big texture and scale down?
 - read sprite info from spritesheet.toml instead of hardcoding
 - add grass and trees
   - done: palm trees on sand
@@ -14,30 +12,9 @@ Short Term
   - todo: pine trees onto mountains
   - todo: snow
 - I'm thinking the island should be about 100 hexes across rather than
-  30-ish. This implies need to implement zooming and scrolling sooner
-  rather than later. Maybe 60-ish will do, so just half size?
-  - texture width is 16384 on both of my laptops; that gives 256 tiles at 64
-    wide without any shenanigans. (So 128 wide seems very manageable.)
-  - anyway, do this:
+  30-ish. 64 fits in 16384 at my current big background texture size of 256
     - bigger map (start with smaller tiles)
-    - zooming
-     - prescale graphics tiles to different resolutions because SDL's
-       render 
-    - scrolling
     - change island generation routine to work with variable sizes
-- investigate cost of:
-    - drawing everything every time (update: ~25ms with tiles alone)
-    -  separating largely-static layers (background, decorations) 
-       + having a second pass of drawing potential obstructions:
-         - draw map + decorations
-         - draw items and actors + map & decoration in front of those
-         - draw obstructing 
-            - when sprite drawn, mark column (and +/- 1) dirty
-            - on next rows
-              - if height of object or hex stack reaches
-                into previous row, draw _and leave dirty mark
-              - if height does not reach previous row, clear mark
-- probably: do the draw-everything loop first, then optimize
 - error handling if texture type not found
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - Add objects (start with boxes?)
@@ -56,6 +33,7 @@ Medium Term
    unreadably ugly
 - make a Trait for maps and island map be a type which implements that?
 - minimap?
+- make it so you can hold multiple keys at once to pan
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
  - proper position of mouse clicks in different screen sizes

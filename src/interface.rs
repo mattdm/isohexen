@@ -22,13 +22,13 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction, zoom: i32) {
+fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
     canvas.set_draw_color(Color::RGB(0,112,160));
     canvas.clear();
 
     // these should be actual center minus half a hex
-    let center_x=960-32;
-    let center_y=540-24;
+    let center_x=8192-128;
+    let center_y=4608-96;
     
     let drawstart = time::Instant::now();
 
@@ -47,16 +47,14 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
             for tile in hexstack.unwrap().iter() {
                 //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,texturerow.unwrap()*160,256,160), Rect::new(center_x+offset.0*32,center_y+offset.1*24-elevation*8,64,40)).expect("Render failed");
                 //fixme: don't hardcode elevation (or scale!)
-                // zoom is easy!
-                sprite_atlas.draw(canvas, tile, zoom as u32, center_x+offset.0*128/zoom,center_y+offset.1*96/zoom-elevation*32/zoom,orientation);
+                sprite_atlas.draw(canvas, tile, 1, center_x+offset.0*128,center_y+offset.1*96-elevation*32,orientation);
                 elevation += 1;
             }
         }
         if decorstack.is_some() {
             for decor in decorstack.unwrap().iter() {
                 // FIXME: "draw-offset should be in sprite (but private to that sprite)
-                //sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom+16/zoom,center_y+offset.1*96/zoom-elevation*32/zoom-160/zoom,orientation);
-                sprite_atlas.draw(canvas, decor, zoom as u32, center_x+offset.0*128/zoom,center_y+offset.1*96/zoom-elevation*32/zoom,orientation);
+                sprite_atlas.draw(canvas, decor, 1, center_x+offset.0*128,center_y+offset.1*96-elevation*32,orientation);
                 elevation += 1;
             }
         }
@@ -65,29 +63,26 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
     
-    // Draw compass rose.    
-    // FIXME: I _think_ this should be part of an "interface" layer, not the background.
-    // (But I might be wrong)
-    // FIXME: same deal about hardcoding the location here
-    //canvas.copy(&sprite_sheet, Rect::new(texturecol*256,1536,256,96), Rect::new(1664,968,256,96)).expect("Render failed");
-    sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
+    //sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
-    println!("  Compass:    {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+    //println!("  Compass:    {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
 }
 
 
+
 pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
+
+    canvas.set_logical_size(1920,1080).unwrap();
 
 
     let texture_creator = canvas.texture_creator();
 
     // load the sprite atlas
-    //let sprite_atlas = SpriteAtlas::new(&texture_creator);
     let sprite_atlas = SpriteAtlas::new(&texture_creator);
-        
+
     // this is what the background gets rendered onto
-    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 1920, 1080).unwrap();
+    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
 
     // create the map. in the future, we probably want some game-setup
     // function first before we go right into the game loop
@@ -95,7 +90,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     // start 100 ms ago, so that we go right into drawing at the
     // bottom of the loop    
-    let mut event_ticker = time::Instant::now() - time::Duration::from_millis(100);
+    let mut event_ticker = time::Instant::now() - time::Duration::from_millis(1000);
     let mut frame_ticker = event_ticker;
     
     // FIXME: add more sophisticated data structure for interface state
@@ -129,14 +124,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
                     if zoom > 1 {
-                        zoom = zoom/2;
-                        background_refresh_needed = true;
+                        zoom -= 1;
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 32 {
-                        zoom = zoom*2;
-                        background_refresh_needed = true;
+                    if zoom < 16 {
+                        zoom += 1;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
@@ -161,15 +154,15 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
                         video::FullscreenType::True => unreachable!(),
                     };
-                    //canvas.set_viewport(Rect::new(0,0,960,540));
                 },
                 Event::Window {win_event,..} => {
                     match win_event {
-                        WindowEvent::SizeChanged(wx,_wy) => {
+                        WindowEvent::SizeChanged(_wx,_wy) => {
                             // Keep 16×9 aspect ratio
                             // FIXME: this doesn't really work (leaves strip of desktop in fullscreen!)
-                            // Nneed to change the copy call instead
-                            canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
+                            // Need to change the copy call instead
+                            //canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
+                            canvas.set_logical_size(1920,1080).unwrap();
                         },
                         _ => { /* println!("{:?}",win_event); */ }
                     }
@@ -182,24 +175,25 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         }
         
         // The rest of the game loop goes here...
-
         // Approximately 20fps        
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation, zoom);
+                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
-                println!("Background Refesh Total: {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            canvas.copy(&background_texture, None, None).expect("Render failed");
+            canvas.copy(&background_texture, Rect::new(16384/2-(960*zoom)/2 as i32,9162/2-(540*zoom)/2 as i32,960*zoom as u32,540*zoom as u32), None).expect("Render failed");
+            sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
+
 
             // FIXME draw animations here
             canvas.present();
-            
+
             println!("Present: {}",(time::Instant::now()-now).subsec_nanos()/1000);
 
             frame_ticker = next_tick;

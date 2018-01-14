@@ -91,7 +91,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
     let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
-    let mut zoom=4;
+    let mut zoom=16;
     
     
     let mut background_refresh_needed = true;
@@ -118,13 +118,21 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     background_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
-                    if zoom > 1 {
+                    if zoom > 24 {
+                        zoom -= 4;
+                    } else if zoom > 16 {
+                        zoom -= 2;
+                    } else if zoom > 4 {
                         zoom -= 1;
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
                     if zoom < 16 {
                         zoom += 1;
+                    } else if zoom < 24 {
+                        zoom += 2
+                    } else if zoom < 32 {
+                        zoom += 4;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
@@ -182,7 +190,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            canvas.copy(&background_texture, Rect::new(16384/2-(960*zoom)/2 as i32,9162/2-(540*zoom)/2 as i32,960*zoom as u32,540*zoom as u32), None).expect("Render failed");
+            canvas.copy(&background_texture, Rect::new(16384/2-240*zoom as i32,9162/2-135*zoom as i32,480*zoom as u32,270*zoom as u32), None).expect("Render failed");
             sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 

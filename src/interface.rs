@@ -199,6 +199,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
             // FIXME draw animations here
             canvas.present();
+            
+            println!("Present: {}",(time::Instant::now()-now).subsec_nanos()/1000);
+
             frame_ticker = next_tick;
         }
 

@@ -1,0 +1,50 @@
+atlas_format = 1
+spritesheet_png = "images/spritesheet.png"
+
+[[sprite]]
+id = "stone"
+atlas_y = 0
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 160
+
+[[sprite]]
+id = "sand"
+atlas_y = 160
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 160
+
+[[sprite]]
+id = "dirt"
+atlas_y = 320
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 160
+
+[[sprite]]
+id = "grass"
+atlas_y = 480
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 160
+
+[[sprite]]
+id = "tree-palm"
+atlas_y = 640
+draw_offset_x = 16
+draw_offset_y = -160
+width = 256
+height = 256
+
+[[sprite]]
+id = "compass"
+atlas_y = 1536
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 256

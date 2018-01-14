@@ -1,5 +1,9 @@
 extern crate sdl2;
 extern crate rand;
+extern crate toml;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
 //use std::thread;
 

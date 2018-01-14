@@ -1,15 +1,20 @@
 //use sdl2::rect::Point;
 use std::collections::HashMap;
 use std::path;
+use std::fs::File;
+use std::io::prelude::*;
 
 use sdl2::render;
 use sdl2::video;
 use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 
+use toml;
+
+
 use direction::Direction;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct Sprite {
     pub id: String,
     atlas_y: i32,
@@ -33,9 +38,15 @@ impl Sprite {
 
 }
 
+#[derive(Debug, Deserialize)]
+struct SpriteAtlasConfig {
+    sprites_png: Option<String>,
+    atlas_format: Option<u64>,
+    sprite: Option<Vec<Sprite>>,
+}
 
 pub struct SpriteAtlas<'a> {
-    sprites: HashMap<&'a str,Sprite>,
+    sprites: HashMap<String,Sprite>,
     sprite_sheet: render::Texture<'a>,
 }
 
@@ -44,17 +55,33 @@ impl<'a> SpriteAtlas<'a> {
     // read from a description file
     //pub fn new(texture_creator: &'a render::TextureCreator<render::Texture>) -> SpriteAtlas<'a> {
     pub fn new(texture_creator: &'a render::TextureCreator<video::WindowContext>) -> SpriteAtlas<'a> {
-        let mut s=SpriteAtlas {
+    
+        
+        let mut f = File::open("images/spritesheet.toml").expect("Sprite Sheet");
+
+        let mut buffer = String::new();
+        f.read_to_string(&mut buffer).expect("Error reading sprite sheet");
+
+        let atlas_config: SpriteAtlasConfig = toml::from_str(&buffer).unwrap();
+
+        let mut a=SpriteAtlas {
             sprites: HashMap::new(),
             sprite_sheet: texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap(),
         };
-        s.sprites.insert("stone",Sprite::new("stone",   0, 0, 0, 256, 160));
-        s.sprites.insert("sand" ,Sprite::new("sand",  160, 0, 0, 256, 160));
-        s.sprites.insert("dirt" ,Sprite::new("dirt",  320, 0, 0, 256, 160));
-        s.sprites.insert("grass",Sprite::new("grass", 480, 0, 0, 256, 160));
-        s.sprites.insert("tree-palm",Sprite::new("tree-palm", 640, 16, -160, 256, 256));
-        s.sprites.insert("compass",Sprite::new("compass", 1536, 0, 0, 256, 96));
-        s
+
+        
+        for s in atlas_config.sprite.unwrap() {
+            println!("S {:#?}", s.id);
+            //a.sprites.insert(&s.id[..],s);
+        }
+    
+        a.sprites.insert(String::from("stone"),Sprite::new("stone",   0, 0, 0, 256, 160));
+        a.sprites.insert(String::from("sand"),Sprite::new("sand",  160, 0, 0, 256, 160));
+        a.sprites.insert(String::from("dirt"),Sprite::new("dirt",  320, 0, 0, 256, 160));
+        a.sprites.insert(String::from("grass"),Sprite::new("grass", 480, 0, 0, 256, 160));
+        a.sprites.insert(String::from("tree-palm"),Sprite::new("tree-palm", 640, 16, -160, 256, 256));
+        a.sprites.insert(String::from("compass"),Sprite::new("compass", 1536, 0, 0, 256, 96));
+        a
     }
     
     pub fn draw(&self, canvas: &mut render::WindowCanvas, sprite_id: &str, scale: u32, x: i32, y: i32, orientation: Direction) {
@@ -73,3 +100,4 @@ impl<'a> SpriteAtlas<'a> {
                    ).expect("Render failed");
     }
 }
+    

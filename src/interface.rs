@@ -30,10 +30,10 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     let center_x=8192-128;
     let center_y=4608-96;
     
-    let drawstart = time::Instant::now();
+    //let drawstart = time::Instant::now();
 
     let map = map.get_ranked(orientation);
-    println!("  Got Ranked {:?}: {}",orientation,(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+    //println!("  Got Ranked {:?}: {}",orientation,(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
 
     for &(offset,hexstack,decorstack) in map.iter() {
@@ -60,12 +60,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
         }
         
     }
-    println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
-
-    
-    //sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
-
-    //println!("  Compass:    {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+    //println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
 }
 
@@ -184,7 +179,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
-                println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             canvas.copy(&background_texture, Rect::new(16384/2-(960*zoom)/2 as i32,9162/2-(540*zoom)/2 as i32,960*zoom as u32,540*zoom as u32), None).expect("Render failed");

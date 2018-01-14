@@ -31,10 +31,10 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
     let center_x=8192-128;
     let center_y=4608-96;
     
-    let drawstart = time::Instant::now();
+    //let drawstart = time::Instant::now();
 
     let map = map.get_ranked(orientation);
-    println!("  Got Ranked {:?}: {}",orientation,(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+    //println!("  Got Ranked {:?}: {}",orientation,(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
 
     for &(offset,hexstack,decorstack) in map.iter() {
@@ -61,7 +61,7 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
         }
         
     }
-    println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
+    //println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
 
     
     //sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
@@ -118,26 +118,43 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::A), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
                     // West
-                    map_x -= 8;
+                    map_x -= 10;
                     map_x = cmp::max(map_x,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
                     // East
-                    map_x += 8;
-                    map_x = cmp::min(map_x,1024);
+                    map_x += 10;
+                    map_x = cmp::min(map_x, 1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), .. } => {
                     // North West
+                    map_x -= 8;
+                    map_y -= 5;
+                    map_x = cmp::max(map_x,-1024);
+                    map_y = cmp::max(map_y,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::E), .. } => {
                     // North East
+                    map_x += 8;
+                    map_y -= 5;
+                    map_x = cmp::min(map_x, 1024);
+                    map_y = cmp::max(map_y,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
                     // South West
+                    map_x -= 8;
+                    map_y += 5;
+                    map_x = cmp::max(map_x,-1024);
+                    map_y = cmp::min(map_y, 1024);
+
                 },
                 Event::KeyDown { keycode: Some(Keycode::X), .. } => {
                     // South East
+                    map_x += 8;
+                    map_y += 5;
+                    map_x = cmp::min(map_x, 1024);
+                    map_y = cmp::min(map_y, 1024);
                 },
                 /* Up and down for vertical scroll. Not sure I'll keep this. */
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
@@ -227,14 +244,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 background_refresh_needed = false;
-                println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             let visible_w=1920*zoom; // FIXME: allow more zoom steps 
             let visible_h=1080*zoom;
             let background_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
             let background_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
-            println!("Z: {} X: ({}-{}) Y: ({}-{})",zoom,background_x,background_x+visible_w,background_y,background_y+visible_h);
             canvas.copy(&background_texture,
                         Rect::new(background_x as i32, 
                                   background_y as i32,

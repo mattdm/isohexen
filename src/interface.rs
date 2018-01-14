@@ -191,10 +191,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
             sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 
-            // FIXME draw animations here
             canvas.present();
-
-            println!("Present: {}",(time::Instant::now()-now).subsec_nanos()/1000);
 
             frame_ticker = next_tick;
         }

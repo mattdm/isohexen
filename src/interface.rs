@@ -121,13 +121,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=Direction::SE;
     let mut map_x = 0;
     let mut map_y = 0;
-    let mut zoom=13;
+    let mut zoom=29;
     
     
     let mut world_refresh_needed = true;
     let mut background_refresh_needed = true;
     
-    islandmap.generate();
+    islandmap.generate(64);
 
     'mainloop: loop {
         let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
@@ -228,20 +228,20 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
-                    if zoom > 24 {
+                    if zoom > 17 {
                         zoom -= 4;
-                    } else if zoom > 16 {
+                    } else if zoom > 9 {
                         zoom -= 2;
-                    } else if zoom > 4 {
+                    } else if zoom > 1 {
                         zoom -= 1;
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 29 {
+                    if zoom < 9 {
                         zoom += 1;
-                    } else if zoom < 24 {
+                    } else if zoom < 17 {
                         zoom += 2
-                    } else if zoom < 32 {
+                    } else if zoom < 28 {
                         zoom += 4;
                     }
                 },
@@ -258,7 +258,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::G), .. } => {
-                    islandmap.generate();
+                    islandmap.generate(64);
                     world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::F), .. } => {

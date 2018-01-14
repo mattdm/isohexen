@@ -17,6 +17,7 @@ Short Term
     - change island generation routine to work with variable sizes
 - error handling if texture type not found
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
+- make draw_offset_[xy] optional in spritesheet.toml
 - Add objects (start with boxes?)
 - make tiles prettier (Clear water?)
 - make struct holding information like orientation and stuff

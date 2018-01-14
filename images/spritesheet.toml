@@ -27,15 +27,15 @@ height = 160
 
 [[sprite]]
 id = "grass"
-atlas_y = 480
+atlas_y = 640
 draw_offset_x = 0
-draw_offset_y = 0
+draw_offset_y = 32
 width = 256
-height = 160
+height = 128
 
 [[sprite]]
 id = "tree-palm"
-atlas_y = 640
+atlas_y = 896
 draw_offset_x = 16
 draw_offset_y = -160
 width = 256

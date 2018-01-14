@@ -24,23 +24,9 @@ pub struct Sprite {
     height: u32,
 }
 
-impl Sprite {
-    pub fn new(id: &str, atlas_y: i32, draw_offset_x: i32, draw_offset_y: i32, width: u32, height: u32) -> Sprite {
-        Sprite {
-            id: id.to_string(),
-            atlas_y,
-            draw_offset_x,
-            draw_offset_y,
-            width,
-            height,
-        }
-    }
-
-}
-
 #[derive(Debug, Deserialize)]
 struct SpriteAtlasConfig {
-    sprites_png: Option<String>,
+    spritesheet_png: Option<String>,
     atlas_format: Option<u64>,
     sprite: Option<Vec<Sprite>>,
 }
@@ -51,12 +37,9 @@ pub struct SpriteAtlas<'a> {
 }
 
 impl<'a> SpriteAtlas<'a> {
-    // FIXME: instead of hard-coding all this stuff, 
-    // read from a description file
-    //pub fn new(texture_creator: &'a render::TextureCreator<render::Texture>) -> SpriteAtlas<'a> {
+
     pub fn new(texture_creator: &'a render::TextureCreator<video::WindowContext>) -> SpriteAtlas<'a> {
     
-        
         let mut f = File::open("images/spritesheet.toml").expect("Sprite Sheet");
 
         let mut buffer = String::new();
@@ -66,21 +49,14 @@ impl<'a> SpriteAtlas<'a> {
 
         let mut a=SpriteAtlas {
             sprites: HashMap::new(),
-            sprite_sheet: texture_creator.load_texture(path::Path::new("images/spritesheet.png")).unwrap(),
+            // FIXME: error handling!
+            sprite_sheet: texture_creator.load_texture(path::Path::new(&atlas_config.spritesheet_png.unwrap())).unwrap(),
         };
 
-        
         for s in atlas_config.sprite.unwrap() {
-            println!("S {:#?}", s.id);
-            //a.sprites.insert(&s.id[..],s);
+            //println!("Read sprite {:#?}", s.id);
+            a.sprites.insert(s.id.clone(),s);
         }
-    
-        a.sprites.insert(String::from("stone"),Sprite::new("stone",   0, 0, 0, 256, 160));
-        a.sprites.insert(String::from("sand"),Sprite::new("sand",  160, 0, 0, 256, 160));
-        a.sprites.insert(String::from("dirt"),Sprite::new("dirt",  320, 0, 0, 256, 160));
-        a.sprites.insert(String::from("grass"),Sprite::new("grass", 480, 0, 0, 256, 160));
-        a.sprites.insert(String::from("tree-palm"),Sprite::new("tree-palm", 640, 16, -160, 256, 256));
-        a.sprites.insert(String::from("compass"),Sprite::new("compass", 1536, 0, 0, 256, 96));
         a
     }
     

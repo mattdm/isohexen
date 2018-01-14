@@ -32,7 +32,8 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     canvas.set_draw_color(Color::RGB(80,176,208));
     canvas.clear();
 
-    // see
+    // sea
+    /*
     let horizon=2722;
     for y in 0..34 {    
         for x in 0..64 {
@@ -42,6 +43,7 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
             sprite_atlas.draw(canvas, "grass", 1, x*256-128,y*192+horizon+96,orientation);
         }
     }
+    */
 }    
 
 fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {

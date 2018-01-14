@@ -17,6 +17,7 @@ use sdl2::pixels::Color;
 
 use std::time;
 use std::thread;
+use std::cmp;
 
 use landscape;
 use direction::Direction;
@@ -117,51 +118,35 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::A), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
                     // West
-                    if map_x > -1024 {
-                        map_x -= 8;
-                    }
+                    map_x -= 8;
+                    map_x = cmp::max(map_x,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
                     // East
-                    if map_x < 1024 {
-                        map_x += 8;
-                    }
+                    map_x += 8;
+                    map_x = cmp::min(map_x,1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), .. } => {
                     // North West
-                    if map_x > -128 {
-                        map_x -= 1;
-                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::E), .. } => {
                     // North East
-                    if map_x < 128 {
-                        map_x += 1;
-                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
                     // South West
-                    if map_x > -128 {
-                        map_x -= 1;
-                    }
                 },
                 Event::KeyDown { keycode: Some(Keycode::X), .. } => {
                     // South East
-                    if map_x < 128 {
-                        map_x += 1;
-                    }
                 },
                 /* Up and down for vertical scroll. Not sure I'll keep this. */
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    if map_y > -1024 {
-                        map_y -= 8;
-                    }
+                    map_y -= 8;
+                    map_y = cmp::max(map_y,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    if map_y < 1024 {
-                        map_y += 8;
-                    }
+                    map_y += 8;
+                    map_y = cmp::min(map_y,1024);
                 },
                 /* S is in the middle, so center ("senter"?) */
                 Event::KeyDown { keycode: Some(Keycode::S), .. } => {

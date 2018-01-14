@@ -19,4 +19,4 @@ by pressing `G`.
 
 See the [TODO list](TODO.md) for plans and vague thoughts.
 
-![State of the Art](screenshots/20180108-85d8aba.png)
+![State of the Art](screenshots/20180113-660a6db.png)

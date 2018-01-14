@@ -34,6 +34,7 @@ Medium Term
    unreadably ugly
 - make a Trait for maps and island map be a type which implements that?
 - minimap?
+- rework pan/scroll key handling to allow more combos
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
  - proper position of mouse clicks in different screen sizes

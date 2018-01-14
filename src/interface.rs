@@ -100,7 +100,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
     let mut map_x = 0;
     let mut map_y = 0;
-    let mut zoom=4;
+    let mut zoom=13;
     
     
     let mut background_refresh_needed = true;
@@ -188,7 +188,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 8 {
+                    if zoom < 29 {
                         zoom += 1;
                     }
                 },
@@ -247,8 +247,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            let visible_w=1920*zoom; // FIXME: allow more zoom steps 
-            let visible_h=1080*zoom;
+            let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
+            let visible_h=1080/4*(zoom+3);
             let background_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
             let background_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
             canvas.copy(&background_texture,

@@ -117,7 +117,6 @@ impl<'a> Island<'a> {
                         } else if inner_ocean == 0 {
                             if ! rng.gen_weighted_bool(4) {
                                 self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
-                                self.map.decor.insert(tile, vec!["tree-palm"]);
                             }
                         }
                         
@@ -127,14 +126,30 @@ impl<'a> Island<'a> {
                     } else {
                         // inland: just dirt and grass
                         self.map.hexes.insert(tile, vec!["dirt";height]);
-                        self.map.decor.insert(tile, vec!["grass"]);
                     }
                     
                 }
             }
         }
         
+        // add grass and trees
+        for ring in 1..15 { // FIXME: scale based on passed-in size parameter
+            for tile in Hexpoint::new(ring,0).ring() {
 
+                let hex = self.map.hexes.get(&tile);
+                if hex.is_some() {		
+                    let hex_id = hex.unwrap()[hex.unwrap().len()-1];
+                    if hex_id=="dirt" {
+                        self.map.decor.insert(tile, vec!["grass"]);
+                    } else if hex_id=="sand" {
+                        if rng.gen_weighted_bool(8) {
+                            self.map.decor.insert(tile, vec!["tree-palm"]);
+                        }
+                    }
+                }
+            }
+        }
+        
     }
     
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {

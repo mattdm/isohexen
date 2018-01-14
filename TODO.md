@@ -4,7 +4,6 @@ Engine
 Short Term
 ----------
 - sky!
-- read sprite info from spritesheet.toml instead of hardcoding
 - add grass and trees
   - done: palm trees on sand
   - done: grass as decoration
@@ -23,7 +22,6 @@ Short Term
 - make struct holding information like orientation and stuff
   rather than dumping in an unattached variable in the event
   loop
-- read texture tile metadata (position, size) from text file
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
 
@@ -48,7 +46,6 @@ Medium Term
 - structures:
   - Q: rimworld-style wall building, or prefab tile-sized buildings?
     - quarries
-- read terrain _type_ from text file rather than hard-coding
 - possibly separate sides and top of hexes, so they can more easily be
   variable height
 - make a game setup function rather than dumping that at the beginning

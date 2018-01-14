@@ -38,9 +38,9 @@ pub struct SpriteAtlas<'a> {
 
 impl<'a> SpriteAtlas<'a> {
 
-    pub fn new(texture_creator: &'a render::TextureCreator<video::WindowContext>) -> SpriteAtlas<'a> {
+    pub fn new(texture_creator: &'a render::TextureCreator<video::WindowContext>, spritesheet_toml: &str) -> SpriteAtlas<'a> {
     
-        let mut f = File::open("images/spritesheet.toml").expect("Sprite Sheet");
+        let mut f = File::open(spritesheet_toml).expect("Sprite Sheet");
 
         let mut buffer = String::new();
         f.read_to_string(&mut buffer).expect("Error reading sprite sheet");

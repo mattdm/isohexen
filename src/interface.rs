@@ -102,7 +102,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let texture_creator = canvas.texture_creator();
 
     // load the sprite atlas
-    let sprite_atlas = SpriteAtlas::new(&texture_creator);
+    let sprite_atlas = SpriteAtlas::new(&texture_creator,"images/spritesheet.toml");
 
     // this is what the scene gets rendered onto 
     // FIXME: put these constants somewhere as constants.

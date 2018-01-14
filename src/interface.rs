@@ -26,7 +26,7 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
+fn draw_background(canvas: &mut render::WindowCanvas, _sprite_atlas: &SpriteAtlas, _orientation: Direction) {
 
     // sky
     canvas.set_draw_color(Color::RGB(80,176,208));

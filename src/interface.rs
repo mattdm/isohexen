@@ -26,24 +26,22 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn draw_background(canvas: &mut render::WindowCanvas, _sprite_atlas: &SpriteAtlas, _orientation: Direction) {
+fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
 
     // sky
     canvas.set_draw_color(Color::RGB(80,176,208));
     canvas.clear();
 
     // sea
-    /*
     let horizon=2722;
     for y in 0..34 {    
         for x in 0..64 {
-            sprite_atlas.draw(canvas, "grass", 1, x*256,y*192+horizon,orientation);
+            sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,orientation);
         }
         for x in 0..65 {
-            sprite_atlas.draw(canvas, "grass", 1, x*256-128,y*192+horizon+96,orientation);
+            sprite_atlas.draw(canvas, "ocean", 1, x*256-128,y*192+horizon+96,orientation);
         }
     }
-    */
 }    
 
 fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {

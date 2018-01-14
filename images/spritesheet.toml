@@ -34,6 +34,14 @@ width = 256
 height = 128
 
 [[sprite]]
+id = "ocean"
+atlas_y = 768
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 128
+
+[[sprite]]
 id = "tree-palm"
 atlas_y = 896
 draw_offset_x = 16

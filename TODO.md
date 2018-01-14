@@ -5,30 +5,14 @@ Short Term
 ----------
 - experiment with zoom -- should that be in the draw routine, or should
   we draw to a big texture and scale down?
+- read sprite info from spritesheet.toml instead of hardcoding
 - add grass and trees
-  - still 50/50 on whether grass is better as terrain tile or decoration
-   so start with trees
-      - investigate cost of:
-          - drawing everything every time (update: ~25ms with tiles alone)
-          -  separating largely-static layers (background, decorations) 
-             + having a second pass of drawing potential obstructions:
-               - draw map + decorations
-               - draw items and actors + map & decoration in front of those
-               - draw obstructing 
-                  - when sprite drawn, mark column (and +/- 1) dirty
-                  - on next rows
-                    - if height of object or hex stack reaches
-                      into previous row, draw _and leave dirty mark
-                    - if height does not reach previous row, clear mark
-      - probably: do the draw-everything loop first, then optimize
-  - need a things.rs
-    - generate palm trees onto sand 
-    - read in a spritesheet.toml
-    - generate apple trees onto grass
-      - possibly generate grass onto dirt? if so, are trees at a different
-        "elevation"?
-    - generate pine trees onto mountains
-      - um, snow?
+  - done: palm trees on sand
+  - done: grass as decoration
+  - todo: make grass thin rather than tile-shaped
+  - todo apple trees onto grass
+  - todo: pine trees onto mountains
+  - todo: snow
 - I'm thinking the island should be about 100 hexes across rather than
   30-ish. This implies need to implement zooming and scrolling sooner
   rather than later. Maybe 60-ish will do, so just half size?
@@ -41,6 +25,19 @@ Short Term
        render 
     - scrolling
     - change island generation routine to work with variable sizes
+- investigate cost of:
+    - drawing everything every time (update: ~25ms with tiles alone)
+    -  separating largely-static layers (background, decorations) 
+       + having a second pass of drawing potential obstructions:
+         - draw map + decorations
+         - draw items and actors + map & decoration in front of those
+         - draw obstructing 
+            - when sprite drawn, mark column (and +/- 1) dirty
+            - on next rows
+              - if height of object or hex stack reaches
+                into previous row, draw _and leave dirty mark
+              - if height does not reach previous row, clear mark
+- probably: do the draw-everything loop first, then optimize
 - error handling if texture type not found
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - Add objects (start with boxes?)
@@ -49,14 +46,8 @@ Short Term
   rather than dumping in an unattached variable in the event
   loop
 - read texture tile metadata (position, size) from text file
-- function for drawing backgroud rather than ugly block of code
-  in game loop
-- add a struct to hold all the textures together, too
-- get sensible about integer datatypes instead of randomly using i32 for no
-    good reason
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
-- fix: still some issues with drawing at some island sizes (even/odd issues)
 
 
 Medium Term

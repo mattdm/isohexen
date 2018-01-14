@@ -3,11 +3,10 @@ Engine
 
 Short Term
 ----------
-- sky!
 - add grass and trees
   - done: palm trees on sand
   - done: grass as decoration
-  - todo: make grass thin rather than tile-shaped
+  - done: make grass thin rather than tile-shaped
   - todo apple trees onto grass
   - todo: pine trees onto mountains
   - todo: snow

@@ -8,7 +8,6 @@ use sdl2::keyboard::Keycode;
 //use sdl2::keyboard::Scancode;
 use sdl2::mouse::MouseButton;
 
-
 use sdl2::video;
 use sdl2::render;
 
@@ -27,16 +26,13 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
+fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
 
-    // sea
-    //canvas.set_draw_color(Color::RGB(16,128,160));
-    //canvas.clear();
     // sky
     canvas.set_draw_color(Color::RGB(80,176,208));
     canvas.clear();
-    //canvas.fill_rect(Rect::new(0, 0, 16384, 2688)).unwrap();
 
+    // see
     let horizon=2722;
     for y in 0..34 {    
         for x in 0..64 {
@@ -46,8 +42,12 @@ fn drawmap(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, map: &
             sprite_atlas.draw(canvas, "grass", 1, x*256-128,y*192+horizon+96,orientation);
         }
     }
-    
-    
+}    
+
+fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
+
+    canvas.copy(background, None, None).expect("Render failed");
+
     // these should be actual center minus half a hex
     let center_x=8192-128;
     let center_y=4608-96;
@@ -97,7 +97,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     canvas.set_logical_size(1920,1080).unwrap();
 
-
     let texture_creator = canvas.texture_creator();
 
     // load the sprite atlas
@@ -106,6 +105,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // this is what the scene gets rendered onto 
     // FIXME: put these constants somewhere as constants.
     let mut world_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
+    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
 
     // create the map. in the future, we probably want some game-setup
     // function first before we go right into the game loop
@@ -118,13 +118,14 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
-    let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
+    let mut orientation=Direction::SE;
     let mut map_x = 0;
     let mut map_y = 0;
     let mut zoom=13;
     
     
     let mut world_refresh_needed = true;
+    let mut background_refresh_needed = true;
     
     islandmap.generate();
 
@@ -291,12 +292,19 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
         if now >= next_tick {
+            if background_refresh_needed {
+                canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
+                    draw_background(texture_canvas, &sprite_atlas, orientation);
+                }).unwrap();
+                background_refresh_needed = false;
+                println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+            }
             if world_refresh_needed {
                 canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
-                    drawmap(texture_canvas, &sprite_atlas, &islandmap, orientation);
+                    draw_map(texture_canvas, &background_texture, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 world_refresh_needed = false;
-                //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                println!("World Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats

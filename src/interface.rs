@@ -96,6 +96,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
     let mut orientation=Direction::SE; // FIXME: use a diagonal to start?
+    let mut map_x = 0;
+    let mut map_y = 0;
     let mut zoom=4;
     
     
@@ -110,8 +112,24 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'mainloop
                 },
-                /* Planning to use AWEDXZ for panning in approriate
-                   direction, so let's use Q and R for rotation. */
+                /* AWEDXZ for panning in hex directions */
+                Event::KeyDown { keycode: Some(Keycode::A), .. } => {
+                    if map_x > -128 {
+                        map_x -= 1;
+                    }
+                },
+                Event::KeyDown { keycode: Some(Keycode::D), .. } => {
+                    if map_x < 128 {
+                        map_x += 1;
+                    }
+                },
+                /* S is in the middle, so center ("senter"?) */
+                Event::KeyDown { keycode: Some(Keycode::S), .. } => {
+                    map_x = 0;
+                    map_y = 0;
+                },
+                
+                /* use Q and R for rotation. */
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
@@ -128,7 +146,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 16 {
+                    if zoom < 8 {
                         zoom += 1;
                     }
                 },
@@ -187,7 +205,16 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            canvas.copy(&background_texture, Rect::new(16384/2-(960*zoom)/2 as i32,9162/2-(540*zoom)/2 as i32,960*zoom as u32,540*zoom as u32), None).expect("Render failed");
+            let visible_w=1920*zoom; // FIXME: allow more zoom steps 
+            let visible_h=1080*zoom;
+            let background_x = 16384/2-visible_w/2+(map_x*(16384-visible_w)/256);  // 256 is our scroll range
+            println!("Z: {} X: ({}-{})",zoom,background_x,background_x+visible_w );
+            canvas.copy(&background_texture,
+                        Rect::new(background_x as i32, 
+                                  9162/2-visible_h/2 as i32,
+                                  visible_w as u32,
+                                  visible_h as u32),
+                        None).expect("Render failed");
             sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 

@@ -26,7 +26,7 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
-fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
+fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
 
     // sky
     canvas.set_draw_color(Color::RGB(80,176,208));
@@ -36,10 +36,10 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     let horizon=2722;
     for y in 0..34 {    
         for x in 0..64 {
-            sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,orientation);
+            sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,Direction::E);
         }
         for x in 0..65 {
-            sprite_atlas.draw(canvas, "ocean", 1, x*256-128,y*192+horizon+96,orientation);
+            sprite_atlas.draw(canvas, "ocean", 1, x*256-128,y*192+horizon+96,Direction::E);
         }
     }
 }    
@@ -294,7 +294,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         if now >= next_tick {
             if background_refresh_needed {
                 canvas.with_texture_canvas(&mut background_texture, |texture_canvas| {
-                    draw_background(texture_canvas, &sprite_atlas, orientation);
+                    draw_background(texture_canvas, &sprite_atlas);
                 }).unwrap();
                 background_refresh_needed = false;
                 println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);

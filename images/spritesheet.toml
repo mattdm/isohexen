@@ -34,7 +34,7 @@ width = 256
 height = 128
 
 [[sprite]]
-id = "ocean"
+id = "river"
 atlas_y = 768
 draw_offset_x = 0
 draw_offset_y = 0
@@ -49,6 +49,7 @@ draw_offset_y = -160
 width = 256
 height = 256
 
+
 [[sprite]]
 id = "compass"
 atlas_y = 1536
@@ -56,3 +57,12 @@ draw_offset_x = 0
 draw_offset_y = 0
 width = 256
 height = 96
+
+
+[[sprite]]
+id = "ocean"
+atlas_y = 1632
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 128

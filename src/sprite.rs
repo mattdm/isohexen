@@ -9,9 +9,9 @@ use sdl2::rect::Rect;
 
 use direction::Direction;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub struct Sprite<'a> {
-    pub id: &'a str,
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Sprite {
+    pub id: String,
     atlas_y: i32,
     draw_offset_x: i32,
     draw_offset_y: i32,
@@ -19,10 +19,10 @@ pub struct Sprite<'a> {
     height: u32,
 }
 
-impl<'a> Sprite<'a> {
-    pub fn new(id: &'a str, atlas_y: i32, draw_offset_x: i32, draw_offset_y: i32, width: u32, height: u32) -> Sprite<'a> {
+impl<'a> Sprite {
+    pub fn new(id: &str, atlas_y: i32, draw_offset_x: i32, draw_offset_y: i32, width: u32, height: u32) -> Sprite {
         Sprite {
-            id,
+            id: id.to_string(),
             atlas_y,
             draw_offset_x,
             draw_offset_y,
@@ -30,11 +30,12 @@ impl<'a> Sprite<'a> {
             height,
         }
     }
+
 }
 
 
 pub struct SpriteAtlas<'a> {
-    sprites: HashMap<&'a str,Sprite<'a>>,
+    sprites: HashMap<&'a str,Sprite>,
     sprite_sheet: render::Texture<'a>,
 }
 

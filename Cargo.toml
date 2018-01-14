@@ -11,6 +11,7 @@ license= "GPL-3.0"
 
 [dependencies]
 rand = "0.3"
+toml = "0.4"
 
 [dependencies.sdl2]
 version = "0.31.0"

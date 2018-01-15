@@ -11,7 +11,6 @@ Short Term
   - todo: apple trees onto grass
   - todo: pine trees onto mountains
   - todo: snow
-- title/loading screen
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
   - and then figure out decorations
@@ -43,6 +42,8 @@ Medium Term
  - allow multiple preset non-fullscreen sizes?
  - allow lower and higher resolutions?
  - proper position of mouse clicks in different screen sizes
+- move splash screen to its own function
+ - make customizable
 - dynamic decorations:
  - spreading grass
  - growing trees

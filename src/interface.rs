@@ -29,12 +29,12 @@ use sprite::SpriteAtlas;
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
 
     // sky
-    canvas.set_draw_color(Color::RGB(80,176,208));
+    canvas.set_draw_color(Color::RGB(96,192,208));
     canvas.clear();
 
     // sea
-    let horizon=2722;
-    for y in 0..34 {    
+    let horizon=1186;
+    for y in 0..42 {
         for x in 0..64 {
             sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,Direction::E);
         }
@@ -143,23 +143,23 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::A), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
                     // West
-                    map_x -= 10;
+                    map_x -= 10*zoom;
                     map_x = cmp::max(map_x,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), .. } |
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
                     // East
-                    map_x += 10;
+                    map_x += 10*zoom;
                     map_x = cmp::min(map_x, 1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), .. } => {
                     // North West
                     if keys.contains(&Keycode::E) { // straight down
-                        map_y -= 8;
+                        map_y -= 8*zoom;
                         map_y = cmp::max(map_y,-1024);
                     } else {
-                        map_x -= 8;
-                        map_y -= 5;
+                        map_x -= 8*zoom;
+                        map_y -= 5*zoom;
                         map_x = cmp::max(map_x,-1024);
                         map_y = cmp::max(map_y,-1024);
                     }
@@ -167,11 +167,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::E), .. } => {
                     // North East
                     if keys.contains(&Keycode::W) { // straight down
-                        map_y -= 8;
+                        map_y -= 8*zoom;
                         map_y = cmp::max(map_y,-1024);
                     } else {
-                        map_x += 8;
-                        map_y -= 5;
+                        map_x += 8*zoom;
+                        map_y -= 5*zoom;
                         map_x = cmp::min(map_x, 1024);
                         map_y = cmp::max(map_y,-1024);
                     }
@@ -179,11 +179,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
                     // South West
                     if keys.contains(&Keycode::X) { // straight up
-                        map_y += 8;
+                        map_y += 8*zoom;
                         map_y = cmp::min(map_y, 1024);
                     } else {
-                        map_x -= 8;
-                        map_y += 5;
+                        map_x -= 8*zoom;
+                        map_y += 5*zoom;
                         map_x = cmp::max(map_x,-1024);
                         map_y = cmp::min(map_y, 1024);
                     }
@@ -191,11 +191,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::X), .. } => {
                     // South East
                     if keys.contains(&Keycode::Z) { // straight up
-                        map_y += 8;
+                        map_y += 8*zoom;
                         map_y = cmp::min(map_y, 1024);
                     } else {
-                        map_x += 8;
-                        map_y += 5;
+                        map_x += 8*zoom;
+                        map_y += 5*zoom;
                      
                         map_x = cmp::min(map_x, 1024);
                         map_y = cmp::min(map_y, 1024);
@@ -203,11 +203,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 /* Up and down for vertical scroll. Not sure I'll keep this. */
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    map_y -= 8;
+                    map_y -= 8*zoom;
                     map_y = cmp::max(map_y,-1024);
                 },
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    map_y += 8;
+                    map_y += 8*zoom;
                     map_y = cmp::min(map_y,1024);
                 },
                 /* S is in the middle, so center ("senter"?) */

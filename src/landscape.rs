@@ -29,16 +29,19 @@ impl<'a> Island<'a> {
         }
     }
 
-    pub fn generate(&mut self) {
-        //self.size = 31; // FIXME: make this function scalable
-        self.size= 32;
+    pub fn generate(&mut self, size: i32) {
+        self.size= size;
         self.map = Hexmap::new(self.size);
         
         let mut rng = rand::thread_rng();
-        
+
+
+        /* Mountain */
+                
         // center peak
         let center_tile = Hexpoint::new(0,0);
-        let center_height = rng.gen::<isize>()%12+24; // FIXME: magic numbers!
+        let mountain_height = (size as isize)/2; // FIXME: make configurable
+        let center_height = rng.gen::<isize>()%(mountain_height)/2+mountain_height;
         self.map.hexes.insert(center_tile, vec!["stone";center_height as usize]);
         
         // mountain arms
@@ -46,7 +49,7 @@ impl<'a> Island<'a> {
                                                // rust and recursion don't seem to be friends.
             let mut height = center_height;     // maybe... something with pushing onto vectors?
             let mut parent = center_tile;
-            let mut tile = arm; 
+            let mut tile = arm;
 
             // FIXME: this is spaghetti mess.
             // FIXME: recursive version had possibility of arms branching (fractal-style!)
@@ -74,14 +77,15 @@ impl<'a> Island<'a> {
         }
         
         // fill in dirt and sand between arms of mountain
-        for ring in 1..15 { // FIXME: scale based on passed-in size parameter
+        for ring in 1..size/2 {
             for tile in Hexpoint::new(ring,0).ring() {
 
                 if self.map.hexes.get(&tile).is_none() {
                 
                     let mut neighbor_height = 0;
                     let mut neighbor_count = 0;
-                    let mut inner_sand = false;
+                    let mut inner_sand = 0;
+                    let mut inner_stone = 0;
                     let mut inner_ocean = 0;
                     
                     // get average height of inward neighbors
@@ -91,7 +95,9 @@ impl<'a> Island<'a> {
                                     neighbor_height += neighbor_hex.len();
                                     neighbor_count += 1;
                                     if neighbor_hex[0] == "sand" {
-                                        inner_sand = true;
+                                        inner_sand += 1;
+                                    } else if neighbor_hex[0] == "stone" {
+                                        inner_stone +=1;
                                     }
                                 }
                             None => inner_ocean += 1,
@@ -100,47 +106,87 @@ impl<'a> Island<'a> {
                     // half of average of inward heights.
                     let mut height = cmp::max(1,neighbor_height/(cmp::max(1,neighbor_count*2)));
                     // add some variation
-                    if height > 2 {
-                        height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
-                    }
+                    //if height > 2 {
+                    //    height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
+                    //}
+                    let terrain: Option<&str>;
                     
-                    
-                    // FIXME: 7, 11, and 16 are magic numbers (scale to size parameter)
-                    if ring > 11 {
+                    if ring > (size*3)/8 {
                         // outer ring: water and height 1 or 2 sand
                         // if both inner neighbors are water, leave this as water.
                         // otherwise, chance of sand
-                        if inner_ocean == 1 {
-                            if rng.gen_weighted_bool(3) {
-                                self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
+                        if rng.gen_weighted_bool(4) {
+                            // ocean
+                            terrain=None;
+                        } else if inner_ocean > 0 {
+                            // more ocean
+                            if rng.gen_weighted_bool(3-inner_ocean) {
+                                terrain=None;
+                            } else {
+                                terrain=Some("sand");
                             }
-                        } else if inner_ocean == 0 {
-                            if ! rng.gen_weighted_bool(4) {
-                                self.map.hexes.insert(tile, vec!["sand";rng.gen::<usize>()%2+1]);
+                        } else if inner_sand == 0 {
+                            // inside dirt
+                            if rng.gen_weighted_bool(3) {
+                                terrain=Some("dirt");
+                            } else {
+                                terrain=Some("sand");
+                            }
+                            height = 1 + rng.gen::<usize>()%2;
+                        } else {
+                            terrain=Some("sand");
+                            height = 1;
+                        }
+
+                    } else if ring > size/8 {
+                        // middle band
+                        if rng.gen_weighted_bool(size as u32*3) || (inner_stone > 0 && rng.gen_weighted_bool(2)) {
+                            // throw some boulders around
+                            terrain=Some("stone");
+                            height += rng.gen::<usize>()%(size as usize/8) + rng.gen::<usize>()%(size as usize/8);
+                        } else if rng.gen_weighted_bool(((size-ring) as u32)/3) {
+                            // scatter sand piles, too
+                            terrain=Some("sand");
+                            height += rng.gen::<usize>()%3 + rng.gen::<usize>()%3;
+                        } else if inner_sand > 0 {
+                            if rng.gen_weighted_bool(3-inner_sand) {
+                                terrain=Some("sand");
+                            } else {
+                                terrain=Some("dirt");
+                            }
+                        } else {
+                            terrain=Some("dirt");
+                            if ring<size/5 {
+                                height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
                             }
                         }
                         
-                    } else if ring  > 7 && (inner_sand || rng.gen_weighted_bool(16-ring as u32)) {
-                        // chance of sand
-                        self.map.hexes.insert(tile, vec!["sand";height+rng.gen::<usize>()%3]);
                     } else {
-                        // inland: just dirt and grass
-                        self.map.hexes.insert(tile, vec!["dirt";height]);
+                        // inland: just dirt/grass
+                        terrain=Some("dirt");
+                        // some varation
+                        height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
                     }
-                    
+                    if terrain.is_some() {
+                        self.map.hexes.insert(tile, vec![terrain.unwrap();height]);
+                        
+                    }
                 }
             }
         }
         
         // add grass and trees
-        for ring in 1..15 { // FIXME: scale based on passed-in size parameter
+        for ring in 1..size { // FIXME: scale based on passed-in size parameter
             for tile in Hexpoint::new(ring,0).ring() {
 
                 let hex = self.map.hexes.get(&tile);
                 if hex.is_some() {		
                     let hex_id = hex.unwrap()[hex.unwrap().len()-1];
                     if hex_id=="dirt" {
-                        self.map.decor.insert(tile, vec!["grass"]);
+                    
+                        if ring<size/8 || hex.unwrap().len() > 1 || ! rng.gen_weighted_bool(5) {
+                            self.map.decor.insert(tile, vec!["grass"]);
+                        }
                     } else if hex_id=="sand" {
                         if rng.gen_weighted_bool(8) {
                             self.map.decor.insert(tile, vec!["tree-palm"]);

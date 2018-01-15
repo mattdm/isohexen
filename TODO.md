@@ -31,6 +31,7 @@ Short Term
   loop
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
+- set an icon
 
 Medium Term
 -----------
@@ -39,6 +40,8 @@ Medium Term
 - rework pan/scroll key handling to allow more combos
 - commit to fullscreen
  - deal with multiple aspect ratios and stuff
+ - allow multiple preset non-fullscreen sizes?
+ - allow lower and higher resolutions?
  - proper position of mouse clicks in different screen sizes
 - dynamic decorations:
  - spreading grass

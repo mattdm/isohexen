@@ -34,7 +34,7 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
 
     // sea
     let horizon=1186;
-    for y in 0..42 {
+    for y in 0..39 {
         for x in 0..64 {
             sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,Direction::E);
         }
@@ -48,9 +48,9 @@ fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, spr
 
     canvas.copy(background, None, None).expect("Render failed");
 
-    // these should be actual center minus half a hex
+    // x is the actual center; y is pushed down for the sky
     let center_x=8192-128;
-    let center_y=4608-96;
+    let center_y=4796-96; // 4220-96;
     
     //let drawstart = time::Instant::now();
 
@@ -104,8 +104,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // this is what the scene gets rendered onto 
     // FIXME: put these constants somewhere as constants.
-    let mut world_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
-    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 9216).unwrap();
+    let mut world_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 8640).unwrap();
+    let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 8640).unwrap();
 
     // create the map. in the future, we probably want some game-setup
     // function first before we go right into the game loop
@@ -297,20 +297,20 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     draw_background(texture_canvas, &sprite_atlas);
                 }).unwrap();
                 background_refresh_needed = false;
-                println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
             if world_refresh_needed {
                 canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
                     draw_map(texture_canvas, &background_texture, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 world_refresh_needed = false;
-                println!("World Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
             let visible_h=1080/4*(zoom+3);
             let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
-            let world_y = 9216/2 -visible_h/2+((map_y*(9216 -visible_h))/2048);
+            let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
             canvas.copy(&world_texture,
                         Rect::new(world_x as i32, 
                                   world_y as i32,

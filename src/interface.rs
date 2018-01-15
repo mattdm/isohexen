@@ -131,9 +131,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // function first before we go right into the game loop
     let mut islandmap = landscape::Island::new();
     
-    // start 100 ms ago, so that we go right into drawing at the
-    // bottom of the loop    
-    let mut event_ticker = time::Instant::now() - time::Duration::from_millis(1000);
+    let mut event_ticker = time::Instant::now();
     let mut frame_ticker = event_ticker;
     
     // FIXME: add more sophisticated data structure for interface state

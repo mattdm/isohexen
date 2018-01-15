@@ -11,6 +11,7 @@ Short Term
   - todo: pine trees onto mountains
   - todo: snow
 - error handling if texture type not found
+- keep to zoomed-in location when rotating
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - make draw_offset_[xy] optional in spritesheet.toml
 - Add objects (start with boxes?)

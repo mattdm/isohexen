@@ -187,7 +187,7 @@ impl<'a> Island<'a> {
                         if ring<size/8 || hex.unwrap().len() > 1 || ! rng.gen_weighted_bool(5) {
                             self.map.decor.insert(tile, vec!["grass"]);
                         }
-                    } else if hex_id=="sand" {
+                    } else if hex_id=="sand" && hex.unwrap().len() < 4 {
                         if rng.gen_weighted_bool(8) {
                             self.map.decor.insert(tile, vec!["tree-palm"]);
                         }

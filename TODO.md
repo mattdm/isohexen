@@ -23,6 +23,7 @@ Short Term
  - interaction-available (hover over active)
  - drag/carry
 - error handling if texture type not found
+- keep to zoomed-in location when rotating
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - make draw_offset_[xy] optional in spritesheet.toml
 - make struct holding information like orientation and stuff

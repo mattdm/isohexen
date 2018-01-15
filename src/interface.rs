@@ -15,6 +15,8 @@ use sdl2::rect::Rect;
 
 use sdl2::pixels::Color;
 
+use sdl2::ttf;
+
 use std::time;
 use std::thread;
 use std::cmp;
@@ -98,6 +100,22 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     canvas.set_logical_size(1920,1080).unwrap();
 
     let texture_creator = canvas.texture_creator();
+    
+    {
+        // FIXME: move this to "splash" function rather than front of game loop
+        let ttf_context = ttf::init().unwrap();
+        let overpass_regular = ttf_context.load_font("fonts/overpass-regular.otf", 144).unwrap();
+        let overpass_light   = ttf_context.load_font("fonts/overpass-light.otf",    72).unwrap();
+        let words = overpass_regular.render("LITTLE ISLAND")
+                            .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
+        let splash = texture_creator.create_texture_from_surface(&words).unwrap();
+        canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,380,words.width(),words.height())).unwrap();
+        let words = overpass_light.render("A DEMO FOR ISOHEXEN BY MATTHEW MILLER")
+                            .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
+        let splash = texture_creator.create_texture_from_surface(&words).unwrap();
+        canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,580,words.width(),words.height())).unwrap();
+        canvas.present();
+    }
 
     // load the sprite atlas
     let sprite_atlas = SpriteAtlas::new(&texture_creator,"images/spritesheet.toml");
@@ -335,3 +353,4 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         event_ticker = next_tick;
     }
 }
+

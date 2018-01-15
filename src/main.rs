@@ -45,6 +45,7 @@ pub fn main() {
         .present_vsync()
         .build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
-
+    
+    //interface::splash(&mut canvas);
     interface::gameloop(&mut canvas,&mut event_pump)
 }

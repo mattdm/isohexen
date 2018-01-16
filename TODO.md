@@ -15,12 +15,6 @@ Short Term
   - first without elevation, then figure out elevation
   - and then figure out decorations
 - fix rotation when zoomed in (stay centered on same tile)
-- pretty mouse cursors
- - overall
- - "control" -- compass, menus, minimap
- - edge scroll
- - interaction-available (hover over active)
- - drag/carry
 - error handling if texture type not found
 - keep to zoomed-in location when rotating
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
@@ -41,6 +35,11 @@ Medium Term
 - proper position of mouse clicks in different screen sizes
 - move splash screen to its own function
  - make customizable
+- more mouse cursors
+ - "control" -- compass, menus, minimap
+ - edge scroll
+ - interaction-available (hover over active)
+ - drag/carry
 - dynamic decorations:
  - spreading grass
  - growing trees

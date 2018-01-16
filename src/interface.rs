@@ -6,8 +6,11 @@ use sdl2::event::Event;
 use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
 //use sdl2::keyboard::Scancode;
+use sdl2::mouse;
 use sdl2::mouse::MouseButton;
 
+use sdl2::surface;
+use sdl2::image::LoadSurface;
 use sdl2::video;
 use sdl2::render;
 
@@ -118,6 +121,18 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,580,words.width(),words.height())).unwrap();
         canvas.present();
     }
+
+    // FIXME: move to mouse-cursor specific functions
+    let cursor_surface = match surface::Surface::from_file("images/cursor.png") {
+        // OH LOOK ERROR HANDLING
+        Ok(cursor_surface) => cursor_surface,
+        Err(err)    => panic!("Couldn't find cursor image file: {}", err)
+    };
+    let cursor = match mouse::Cursor::from_surface(cursor_surface, 0, 0) {
+        Ok(cursor) => cursor,
+        Err(err) => panic!("Could not set cursor: {}", err)
+    };
+    cursor.set();
     
 
     // load the sprite atlas

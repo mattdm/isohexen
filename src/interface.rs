@@ -15,6 +15,7 @@ use sdl2::video;
 use sdl2::render;
 
 use sdl2::rect::Rect;
+use sdl2::rect::Point;
 
 use sdl2::pixels::Color;
 
@@ -131,7 +132,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     mouse_util.show_cursor(false);
 
     let mut draw_rect = letterbox(canvas.window().size().0 as i32,canvas.window().size().1 as i32);
-    println!("{:?}",draw_rect);
 
     let texture_creator = canvas.texture_creator();
     
@@ -191,7 +191,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let mouse_x = (event_pump.mouse_state().x()*1920)/draw_rect.width()  as i32 - draw_rect.x();
         let mouse_y = (event_pump.mouse_state().y()*1080)/draw_rect.height() as i32 - draw_rect.y();
         */
-        
         //println!("{:?}",keys.contains(&Keycode::O));
         //println!("{},{}",mouse_x,mouse_y);
 
@@ -307,13 +306,21 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
-                    if mx > 1112 && my > 688 {
+                    let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
+                                                 (my*1080)/draw_rect.height() as i32 - draw_rect.y());
+                    println!("{:?}",click_point);
+                    // FIXME: describe in TOML (see TODO)
+                    if Rect::new(1664,968,256,96).contains_point(click_point) { // compass
                         orientation = orientation.counterclockwise();
                         world_refresh_needed = true;
                     }
                 },
                 Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
-                    if mx > 1112 && my > 688 {
+                    let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
+                                                 (my*1080)/draw_rect.height() as i32 - draw_rect.y());
+                    println!("{:?}",click_point);
+                    // FIXME: describe in TOML (see TODO)
+                    if Rect::new(1664,968,256,96).contains_point(click_point) { // compass                       
                         orientation = orientation.clockwise();
                         world_refresh_needed = true;
                     }

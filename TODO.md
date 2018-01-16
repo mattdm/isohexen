@@ -34,7 +34,6 @@ Medium Term
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
 - rework pan/scroll key handling to allow more combos
-- proper position of mouse clicks in different screen sizes
 - move splash screen to its own function
  - make customizable
 - more mouse cursors
@@ -65,6 +64,8 @@ Medium Term
   - exit
   - save/load game
   - game speed
+- describe UI items (compass, menu controls) in toml, including
+  location on screen
 - Optimize map redraw so animations don't require a full-universe
   redraw. ("Dirty columns?")
 - Add objects (start with turtle eggs?)

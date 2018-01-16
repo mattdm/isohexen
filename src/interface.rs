@@ -277,16 +277,19 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     map_y = 0;
                 },
                 /* use Q and R for rotation. */
+                Event::MouseWheel { x: -1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
                     orientation = orientation.counterclockwise();
                     world_refresh_needed = true;
                 },
+                Event::MouseWheel { x: 1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::R), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageDown), .. } => {
                     orientation = orientation.clockwise();
                     world_refresh_needed = true;
                 },
+                Event::MouseWheel { y: -1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
                     if zoom > 17 {
                         zoom -= 4;
@@ -296,6 +299,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         zoom -= 1;
                     }
                 },
+                Event::MouseWheel { y: 1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
                     if zoom < 9 {
                         zoom += 1;
@@ -318,7 +322,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::MouseButtonUp { mouse_btn: MouseButton::Right, x: mx, y: my,.. } => {
                     let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
                                                  (my*1080)/draw_rect.height() as i32 - draw_rect.y());
-                    println!("{:?}",click_point);
+                    // FIXME: separate handling for all of the mouse clicks
+                    // because this is gonna be so big.                        
+                    //println!("{:?}",click_point);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass                       
                         orientation = orientation.counterclockwise();
@@ -351,8 +357,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     //println!("{:?}",win_event);
                 
                 },
-
-                _ => {}
+                Event::MouseMotion{..} => { /* ignore */ },
+                _ => { /* println!("{:?}",event); */ }
             }
         }
         

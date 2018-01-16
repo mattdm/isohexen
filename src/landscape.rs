@@ -40,7 +40,7 @@ impl<'a> Island<'a> {
                 
         // center peak
         let center_tile = Hexpoint::new(0,0);
-        let mountain_height = (size as isize)/2; // FIXME: make configurable
+        let mountain_height = (size as isize*3)/4; // FIXME: make configurable
         let center_height = rng.gen::<isize>()%(mountain_height)/2+mountain_height;
         self.map.hexes.insert(center_tile, vec!["stone";center_height as usize]);
         
@@ -103,12 +103,15 @@ impl<'a> Island<'a> {
                             None => inner_ocean += 1,
                         }
                     }
-                    // half of average of inward heights.
-                    let mut height = cmp::max(1,neighbor_height/(cmp::max(1,neighbor_count*2)));
-                    // add some variation
-                    //if height > 2 {
-                    //    height += rng.gen::<usize>()%2 + rng.gen::<usize>()%2;
-                    //}
+                    // if no neighbors (ocean), height 1
+                    // if one neighbor, half that height
+                    // if two neigbors, 3/4 their average
+                    let mut height = match neighbor_count {
+                        0 => 1,
+                        1 => cmp::max(1,neighbor_height/2),
+                        _ => cmp::max(1,((neighbor_height*3)/(cmp::max(1,neighbor_count)))/4),
+                    };
+                        
                     let terrain: Option<&str>;
                     
                     if ring > (size*3)/8 {

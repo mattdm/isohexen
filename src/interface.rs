@@ -336,10 +336,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     world_refresh_needed = true;
                 },
                 Event::KeyDown { keycode: Some(Keycode::F), .. } => {
-                    match canvas.window().fullscreen_state() {
-                        video::FullscreenType::Off => canvas.window_mut().set_fullscreen(video::FullscreenType::Desktop).unwrap(),
-                        video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
-                        video::FullscreenType::True => unreachable!(),
+                    // avoid race condition with redraw window state change
+                    if fullscreen_refresh_needed==0 {
+                        match canvas.window().fullscreen_state() {
+                            video::FullscreenType::Off => canvas.window_mut().set_fullscreen(video::FullscreenType::Desktop).unwrap(),
+                            video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
+                            video::FullscreenType::True => unreachable!(),
+                        };
                     };
                 },
                 Event::Window {win_event,..} => {
@@ -348,7 +351,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                             draw_rect = letterbox(wx,wy);
                             match canvas.window().fullscreen_state() {
                                 video::FullscreenType::Off => {}, // if we allow resizing, snap?
-                                video::FullscreenType::Desktop => fullscreen_refresh_needed=2,
+                                video::FullscreenType::Desktop => fullscreen_refresh_needed=3,
                                 video::FullscreenType::True => unreachable!(),
                             };
                         },

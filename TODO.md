@@ -40,6 +40,7 @@ Medium Term
  - edge scroll
  - interaction-available (hover over active)
  - drag/carry
+ - make scale with window size?
 - dynamic decorations:
  - spreading grass
  - growing trees

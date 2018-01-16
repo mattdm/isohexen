@@ -179,7 +179,7 @@ impl<'a> Island<'a> {
         }
         
         // add grass and trees
-        for ring in 1..size { // FIXME: scale based on passed-in size parameter
+        for ring in 1..size {
             for tile in Hexpoint::new(ring,0).ring() {
 
                 let hex = self.map.hexes.get(&tile);
@@ -199,6 +199,42 @@ impl<'a> Island<'a> {
             }
         }
         
+    }
+
+    pub fn generate_debug(&mut self, size: i32) {
+        self.size= size;
+        self.map = Hexmap::new(self.size);
+        
+        for ring in 0..size/2 {
+            for tile in Hexpoint::new(ring,0).ring() {
+                let terrain;
+                if ring==1 {
+                    terrain=Some("stone");
+                } else if ring==2 {
+                    terrain=Some("dirt");                
+                } else if ring==3 {
+                    terrain=Some("sand");
+                } else {
+                    terrain = match (tile.x+tile.y).abs() % 3 {
+                        0 => Some("stone"),
+                        1 => Some("dirt"),
+                        2 => Some("sand"),
+                        _ => None,
+                    };
+                }
+                if terrain.is_some() {
+                    let height=1;
+                    self.map.hexes.insert(tile, vec![terrain.unwrap();height]);
+                }
+                println!("{:?}",tile);
+            }
+        }
+        self.map.hexes.insert(Hexpoint::new(size/2-1,size/2-1), vec!["stone";1]);
+        self.map.hexes.insert(Hexpoint::new(-(size/2-1),-(size/2-1)), vec!["sand";1]);
+
+        self.map.hexes.insert(Hexpoint::new(size/2-1,-(size/2-1)), vec!["dirt";1]);
+        self.map.hexes.insert(Hexpoint::new(-(size/2-1),size/2-1), vec!["dirt";1]);
+
     }
     
     pub fn get_ranked(&self, orientation: Direction) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {

@@ -146,7 +146,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         Ok(cursor) => cursor,
         Err(err) => panic!("Could not set cursor: {}", err)
     };
-    cursor.set();
+    //cursor.set();
     
 
     // load the sprite atlas
@@ -312,7 +312,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
                     let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
                                                  (my*1080)/draw_rect.height() as i32 - draw_rect.y());
-                    //println!("{:?}",click_point);
+                    println!("Click ({},{})",click_point.x,click_point.y);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass
                         orientation = orientation.clockwise();
@@ -335,6 +335,21 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     islandmap.generate(64);
                     world_refresh_needed = true;
                 },
+                Event::KeyDown { keycode: Some(Keycode::Num1), .. } => {
+                    islandmap.generate_debug(16);
+                    world_refresh_needed = true;
+                },
+                Event::KeyDown { keycode: Some(Keycode::Num2), .. } => {
+                    islandmap.generate_debug(32);
+                    world_refresh_needed = true;
+                },
+                Event::KeyDown { keycode: Some(Keycode::Num3), .. } => {
+                    islandmap.generate_debug(64);
+                    world_refresh_needed = true;
+                },
+                
+                
+
                 Event::KeyDown { keycode: Some(Keycode::F), .. } => {
                     match canvas.window().fullscreen_state() {
                         video::FullscreenType::Off => { 

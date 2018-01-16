@@ -311,7 +311,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     println!("{:?}",click_point);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass
-                        orientation = orientation.counterclockwise();
+                        orientation = orientation.clockwise();
                         world_refresh_needed = true;
                     }
                 },
@@ -321,7 +321,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     println!("{:?}",click_point);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass                       
-                        orientation = orientation.clockwise();
+                        orientation = orientation.counterclockwise();
                         world_refresh_needed = true;
                     }
                 },

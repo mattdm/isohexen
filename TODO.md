@@ -73,6 +73,7 @@ Medium Term
 
 Longer Term
 -----------
+- different sprites for each scale level for prettiness
 - object-interaction menus (decorations, actors, objects)
 - possible terrain-info window (useful for civ or MoM-type games)
 - split engine from game; game starts taking shape as a _game_
@@ -117,6 +118,8 @@ Far Out but Planned
   - civ-like city builder
   - roguelike generative hack-and-slash RPG
 - shadows
+- optimization: dynamic map drawing instead of onto one 
+   big texture. I know how to do this from the 1990s. :)
 - add flat-top hex orientation (and six more directions)
 - transition hexes (from one terrain type to another)
 - sound effects

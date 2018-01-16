@@ -145,6 +145,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     let mut world_refresh_needed = true;
     let mut background_refresh_needed = true;
+    // There's some kind of race condition 
+    // which apparently makes repeating this necessary
+    let mut fullscreen_refresh_needed = 1;
     
     islandmap.generate(64);
 
@@ -233,8 +236,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::S), .. } => {
                     map_x = 0;
                     map_y = 0;
-                                    },
-                
+                },
                 /* use Q and R for rotation. */
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
                 Event::KeyDown { keycode: Some(Keycode::PageUp), .. } => {
@@ -289,15 +291,16 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::Window {win_event,..} => {
                     match win_event {
-                        WindowEvent::SizeChanged(wx,wy) => {
+                        WindowEvent::Resized(_wx,_wy) => {
                             // Keep 16×9 aspect ratio
                             // FIXME: this doesn't really work (leaves strip of desktop in fullscreen!)
                             // Need to change the copy call instead
                             //canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
-                            canvas.set_logical_size(wx as u32,wy as u32).unwrap();
-                            canvas.set_draw_color(Color::RGB(0,0,0));
-                            canvas.clear();
-                            canvas.set_logical_size(1920,1080).unwrap();
+                            //canvas.set_logical_size(wx as u32,wy as u32).unwrap();
+                            //canvas.set_draw_color(Color::RGB(0,0,0));
+                            //canvas.clear();
+                            //canvas.set_logical_size(1920,1080).unwrap();
+                            fullscreen_refresh_needed=2;
                         },
                         _ => { /* println!("{:?}",win_event); */ }
                     }
@@ -310,6 +313,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         }
         
         // The rest of the game loop goes here...
+        
         // Approximately 20fps        
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
@@ -334,12 +338,22 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
             let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
             let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
 
+            if fullscreen_refresh_needed>0 {
+                let (window_w,window_h)=canvas.window().size();
+                canvas.set_logical_size(window_w,window_h).unwrap();
+                canvas.set_draw_color(Color::RGB(0,0,0));
+                canvas.clear();
+                canvas.set_logical_size(1920,1080).unwrap();
+                fullscreen_refresh_needed -= 1;
+            }
+
             canvas.copy(&world_texture,
                         Rect::new(world_x as i32, 
                                   world_y as i32,
                                   visible_w as u32,
                                   visible_h as u32),
-                        None).expect("Render failed");
+                        Rect::new(0,0,1920,1080))
+                        .expect("Render failed");
             sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
 
 

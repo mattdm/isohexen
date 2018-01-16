@@ -33,7 +33,7 @@ pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let _image_context = sdl2::image::init(sdl2::image::INIT_PNG).unwrap();
-
+    
     let mut window_builder = video_subsystem.window("Little Island", 960, 540);
     if args.get_bool("--fullscreen") {
         window_builder.fullscreen_desktop();
@@ -47,5 +47,5 @@ pub fn main() {
     let mut event_pump = sdl_context.event_pump().unwrap();
     
     //interface::splash(&mut canvas);
-    interface::gameloop(&mut canvas,&mut event_pump)
+    interface::gameloop(&mut canvas,&mut event_pump, &sdl_context.mouse())
 }

@@ -98,8 +98,9 @@ fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, spr
 
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil) {
 
+    mouse_util.show_cursor(false);
     canvas.set_logical_size(1920,1080).unwrap();
 
     let texture_creator = canvas.texture_creator();
@@ -140,6 +141,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
     // this is what the scene gets rendered onto 
     // FIXME: put these constants somewhere as constants.
+    // FIXME: all of this goes into the setup function
+    //   ... and then we can leave the mouse stuff all in main()
     let mut world_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 8640).unwrap();
     let mut background_texture = texture_creator.create_texture_target(texture_creator.default_pixel_format(), 16384, 8640).unwrap();
 
@@ -147,7 +150,9 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // function first before we go right into the game loop
     let mut islandmap = landscape::Island::new();
     
-    let mut event_ticker = time::Instant::now();
+    
+    
+    let mut event_ticker = time::Instant::now()  - time::Duration::from_millis(1000);
     let mut frame_ticker = event_ticker;
     
     // FIXME: add more sophisticated data structure for interface state
@@ -165,6 +170,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut fullscreen_refresh_needed = 1;
     
     islandmap.generate(64);
+
+    
 
     'mainloop: loop {
         let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
@@ -373,8 +380,14 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
 
             canvas.present();
+            
+            // it's silly to do this here every time in the loop, but
+            // somewhere around here (maybe _outside_ of the fps check here)
+            // we will test for changing the cursor
+            mouse_util.show_cursor(true);
 
             frame_ticker = next_tick;
+        
         }
 
 
@@ -385,6 +398,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
             thread::sleep(next_tick-now);
         }
         event_ticker = next_tick;
+
     }
 }
 

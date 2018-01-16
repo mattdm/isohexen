@@ -31,6 +31,18 @@ use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
 
+fn letterbox(w: i32, h: i32) -> Rect {
+    if w/16 < h/9 { //letterbox
+        let nh = (w*9)/16;
+        return Rect::new(0,(h-nh)/2,w as u32,nh as u32);
+    } if w/16 > h/9 { // pillarbox
+        let nw = (h*16)/9;
+        return Rect::new((w-nw)/2,0,nw as u32,h as u32);
+    } else { // 16:9, so take the whole thign
+        return Rect::new(0,0,w as u32,h as u32);
+   }
+}
+
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
 
     // sky
@@ -88,40 +100,41 @@ fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, spr
         
     }
     //println!("  Map drawn:  {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
-
-    
-    //sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
-
-    //println!("  Compass:    {}",(time::Instant::now()-drawstart).subsec_nanos()/1000000);
-
 }
 
+pub fn splash(canvas: &mut render::WindowCanvas) {
+    let (lw,lh)=canvas.logical_size();
+    canvas.set_logical_size(1920,1080).unwrap();
+    
+    let texture_creator = canvas.texture_creator();
+    canvas.set_draw_color(Color::RGB(50,116,153));
+    canvas.clear();
+    let ttf_context = ttf::init().unwrap();
+    let overpass_regular = ttf_context.load_font("fonts/overpass-regular.otf", 144).unwrap();
+    let overpass_light   = ttf_context.load_font("fonts/overpass-light.otf",    72).unwrap();
+    let words = overpass_regular.render("LITTLE ISLAND")
+                        .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
+    let splash = texture_creator.create_texture_from_surface(&words).unwrap();
+    canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,380,words.width(),words.height())).unwrap();
+    let words = overpass_light.render("A DEMO FOR ISOHEXEN BY MATTHEW MILLER")
+                        .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
+    let splash = texture_creator.create_texture_from_surface(&words).unwrap();
+    canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,580,words.width(),words.height())).unwrap();
+    canvas.present();
+    
+    canvas.set_logical_size(lw,lh).unwrap();
+}
 
 
 pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil) {
 
     mouse_util.show_cursor(false);
-    canvas.set_logical_size(1920,1080).unwrap();
+
+    let mut draw_rect = letterbox(canvas.window().size().0 as i32,canvas.window().size().1 as i32);
+    println!("{:?}",draw_rect);
 
     let texture_creator = canvas.texture_creator();
     
-    {
-        // FIXME: move this to "splash" function rather than front of game loop
-        canvas.set_draw_color(Color::RGB(50,116,153));
-        canvas.clear();
-        let ttf_context = ttf::init().unwrap();
-        let overpass_regular = ttf_context.load_font("fonts/overpass-regular.otf", 144).unwrap();
-        let overpass_light   = ttf_context.load_font("fonts/overpass-light.otf",    72).unwrap();
-        let words = overpass_regular.render("LITTLE ISLAND")
-                            .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
-        let splash = texture_creator.create_texture_from_surface(&words).unwrap();
-        canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,380,words.width(),words.height())).unwrap();
-        let words = overpass_light.render("A DEMO FOR ISOHEXEN BY MATTHEW MILLER")
-                            .blended(Color::RGBA(255, 255, 255, 255)).unwrap();
-        let splash = texture_creator.create_texture_from_surface(&words).unwrap();
-        canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,580,words.width(),words.height())).unwrap();
-        canvas.present();
-    }
 
     // FIXME: move to mouse-cursor specific functions
     let cursor_surface = match surface::Surface::from_file("images/cursor.png") {
@@ -163,19 +176,24 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut zoom=29;
     
     
+    let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
     let mut background_refresh_needed = true;
-    // There's some kind of race condition 
-    // which apparently makes repeating this necessary
-    let mut fullscreen_refresh_needed = 1;
     
     islandmap.generate(64);
 
-    
+
 
     'mainloop: loop {
         let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
+        /*
+        let mouse_buttons: HashSet<MouseButton> = event_pump.mouse_state().pressed_mouse_buttons().collect();
+        let mouse_x = (event_pump.mouse_state().x()*1920)/draw_rect.width()  as i32 - draw_rect.x();
+        let mouse_y = (event_pump.mouse_state().y()*1080)/draw_rect.height() as i32 - draw_rect.y();
+        */
+        
         //println!("{:?}",keys.contains(&Keycode::O));
+        //println!("{},{}",mouse_x,mouse_y);
 
         for event in event_pump.poll_iter() {
             match event {
@@ -313,15 +331,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::Window {win_event,..} => {
                     match win_event {
-                        WindowEvent::Resized(_wx,_wy) => {
-                            // Keep 16×9 aspect ratio
-                            // FIXME: this doesn't really work (leaves strip of desktop in fullscreen!)
-                            // Need to change the copy call instead
-                            //canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
-                            //canvas.set_logical_size(wx as u32,wy as u32).unwrap();
-                            //canvas.set_draw_color(Color::RGB(0,0,0));
-                            //canvas.clear();
-                            //canvas.set_logical_size(1920,1080).unwrap();
+                        WindowEvent::Resized(wx,wy) => {
+                            draw_rect = letterbox(wx,wy);
                             fullscreen_refresh_needed=2;
                         },
                         _ => { /* println!("{:?}",win_event); */ }
@@ -361,11 +372,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
             let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
 
             if fullscreen_refresh_needed>0 {
-                let (window_w,window_h)=canvas.window().size();
-                canvas.set_logical_size(window_w,window_h).unwrap();
                 canvas.set_draw_color(Color::RGB(0,0,0));
                 canvas.clear();
-                canvas.set_logical_size(1920,1080).unwrap();
                 fullscreen_refresh_needed -= 1;
             }
 
@@ -374,16 +382,23 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                   world_y as i32,
                                   visible_w as u32,
                                   visible_h as u32),
-                        Rect::new(0,0,1920,1080))
+                        draw_rect)
                         .expect("Render failed");
-            sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
-
-
+            
+            // FIXME -- move this to "ui overlay" function.
+            {
+                let (lw,lh)=canvas.logical_size();
+                canvas.set_logical_size(1920,1080).unwrap();
+                sprite_atlas.draw(canvas, "compass", 1, 1664, 968,orientation);    
+                canvas.set_logical_size(lw,lh).unwrap();
+            }
+            
             canvas.present();
             
             // it's silly to do this here every time in the loop, but
             // somewhere around here (maybe _outside_ of the fps check here)
             // we will test for changing the cursor
+            
             mouse_util.show_cursor(true);
 
             frame_ticker = next_tick;

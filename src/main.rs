@@ -38,14 +38,23 @@ pub fn main() {
     if args.get_bool("--fullscreen") {
         window_builder.fullscreen_desktop();
     }
+    window_builder.resizable();
     let window = window_builder.build().unwrap();
  
     let mut canvas = window.into_canvas()
         .target_texture()
         .present_vsync()
         .build().unwrap();
+    canvas.window_mut().set_minimum_size(240,135);
+    
     let mut event_pump = sdl_context.event_pump().unwrap();
     
-    //interface::splash(&mut canvas);
-    interface::gameloop(&mut canvas,&mut event_pump, &sdl_context.mouse())
+    let mouse_util = sdl_context.mouse();
+    
+//    thread::Builder::new().name("thread".to_string()).spawn(move || {
+//        do_whatever();
+//    }).unwrap();
+    mouse_util.show_cursor(false);
+    interface::splash(&mut canvas);
+    interface::gameloop(&mut canvas,&mut event_pump, &mouse_util);
 }

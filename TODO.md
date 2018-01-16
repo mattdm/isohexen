@@ -34,7 +34,6 @@ Medium Term
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
 - rework pan/scroll key handling to allow more combos
-- allow multiple preset non-fullscreen sizes?
 - proper position of mouse clicks in different screen sizes
 - move splash screen to its own function
  - make customizable
@@ -99,6 +98,7 @@ Longer Term
   - night day
   - sun, moon in sky
 - separate UI sprites from game-world sprites
+- save window size/position when going from windowed to fullscreen; restore if needed
 
 Far Out but Planned
 -------------------

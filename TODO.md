@@ -11,6 +11,9 @@ Short Term
   - todo: apple trees onto grass
   - todo: pine trees onto mountains
   - todo: snow
+- clouds in sky
+  - inverse perspective
+  - animate
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
   - and then figure out decorations

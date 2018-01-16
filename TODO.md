@@ -83,6 +83,7 @@ Longer Term
   - fish / dolphins / sharks
   - bees! (need flowers. beehives, then, of course)
 - the actual human characters for the game
+- map generator: build up layers of stone and dirt or sand
 - buildings. think I'm going to go for hex-sized huts rather than
    wall-building. Maybe leave room for both?
 - minimap?

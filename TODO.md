@@ -98,6 +98,7 @@ Longer Term
   - night day
   - sun, moon in sky
 - separate UI sprites from game-world sprites
+- selectable window sizes other than 960x540
 - save window size/position when going from windowed to fullscreen; restore if needed
 
 Far Out but Planned

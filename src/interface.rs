@@ -118,6 +118,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         canvas.copy(&splash,None,Rect::new(1920/2-words.width() as i32/2,580,words.width(),words.height())).unwrap();
         canvas.present();
     }
+    
 
     // load the sprite atlas
     let sprite_atlas = SpriteAtlas::new(&texture_creator,"images/spritesheet.toml");
@@ -232,7 +233,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::KeyDown { keycode: Some(Keycode::S), .. } => {
                     map_x = 0;
                     map_y = 0;
-                },
+                                    },
                 
                 /* use Q and R for rotation. */
                 Event::KeyDown { keycode: Some(Keycode::Q), .. } |
@@ -288,11 +289,14 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::Window {win_event,..} => {
                     match win_event {
-                        WindowEvent::SizeChanged(_wx,_wy) => {
+                        WindowEvent::SizeChanged(wx,wy) => {
                             // Keep 16×9 aspect ratio
                             // FIXME: this doesn't really work (leaves strip of desktop in fullscreen!)
                             // Need to change the copy call instead
                             //canvas.set_viewport(Rect::new(0,0,wx as u32,((wx as u32)*9)/16));
+                            canvas.set_logical_size(wx as u32,wy as u32).unwrap();
+                            canvas.set_draw_color(Color::RGB(0,0,0));
+                            canvas.clear();
                             canvas.set_logical_size(1920,1080).unwrap();
                         },
                         _ => { /* println!("{:?}",win_event); */ }
@@ -322,13 +326,14 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     draw_map(texture_canvas, &background_texture, &sprite_atlas, &islandmap, orientation);
                 }).unwrap();
                 world_refresh_needed = false;
-                println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
+                //println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
             let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
             let visible_h=1080/4*(zoom+3);
             let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
             let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
+
             canvas.copy(&world_texture,
                         Rect::new(world_x as i32, 
                                   world_y as i32,

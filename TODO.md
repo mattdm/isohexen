@@ -37,11 +37,8 @@ Medium Term
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
 - rework pan/scroll key handling to allow more combos
-- commit to fullscreen
- - deal with multiple aspect ratios and stuff
- - allow multiple preset non-fullscreen sizes?
- - allow lower and higher resolutions?
- - proper position of mouse clicks in different screen sizes
+- allow multiple preset non-fullscreen sizes?
+- proper position of mouse clicks in different screen sizes
 - move splash screen to its own function
  - make customizable
 - dynamic decorations:
@@ -105,6 +102,7 @@ Far Out but Planned
 - go from island to generic map stuff
 - change generation routine to an embedded script. (rhai? rlua?)
   - un-hardcode terrain types
+- handle multiple aspect ratios correctly
 - move island generation and the specific island terrain types
    to an add-on
 - target games:

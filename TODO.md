@@ -17,6 +17,7 @@ Short Term
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
   - and then figure out decorations
+- make map_x, map_y use Point for consistency
 - fix rotation when zoomed in (stay centered on same tile)
 - error handling if texture type not found
 - keep to zoomed-in location when rotating
@@ -28,6 +29,7 @@ Short Term
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
 - set an icon
+- muck with the zoom levels code -- it feels icky
 
 Medium Term
 -----------
@@ -91,6 +93,7 @@ Longer Term
 - animate zoom
 - animate rotation (hard because it needs to be in 3d... or at least
    pseudo-3d)
+- when zooming in with scroll wheel, center on mouse
 - dynamic terrain
   - "mine" or build tiles
   - ocean water levels -- tides!

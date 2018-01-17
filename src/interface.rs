@@ -44,6 +44,20 @@ fn letterbox(w: i32, h: i32) -> Rect {
    }
 }
 
+fn point_to_hex(p: Point,map_x: i32, map_y: i32, z: i32) {
+    // FIXME: the zoom level thing is gross
+    // basic algorithm: pixels per hex offset so the center is 0,0
+    let column_width = 512/(z+3);
+    let column_number;
+    if p.x>1920/2 { // avoid negative and positive zero
+        column_number=(p.x-1920/2)/column_width + 1;
+    } else {
+        column_number=(p.x-1920/2)/column_width;
+    }
+    
+    println!("Click ({},{}) -> c{} @z{}({}) @map {},{}",p.x,p.y,column_number,z,z+3,map_x,map_y);
+}
+
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
 
     // sky
@@ -51,7 +65,7 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     canvas.clear();
 
     // sea
-    let horizon=1186;
+    let horizon=1288;//1096;
     for y in 0..39 {
         for x in 0..64 {
             sprite_atlas.draw(canvas, "ocean", 1, x*256,y*192+horizon,Direction::E);
@@ -68,7 +82,7 @@ fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, spr
 
     // x is the actual center; y is pushed down for the sky
     let center_x=8192-128;
-    let center_y=4796-96; // 4220-96;
+    let center_y=4800;
     
     //let drawstart = time::Instant::now();
 
@@ -146,7 +160,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         Ok(cursor) => cursor,
         Err(err) => panic!("Could not set cursor: {}", err)
     };
-    //cursor.set();
+    cursor.set();
     
 
     // load the sprite atlas
@@ -175,7 +189,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut map_y = 0;
     let mut zoom=29;
     
-    
     let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
     let mut background_refresh_needed = true;
@@ -188,11 +201,13 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
         /*
         let mouse_buttons: HashSet<MouseButton> = event_pump.mouse_state().pressed_mouse_buttons().collect();
+        */
         let mouse_x = (event_pump.mouse_state().x()*1920)/draw_rect.width()  as i32 - draw_rect.x();
         let mouse_y = (event_pump.mouse_state().y()*1080)/draw_rect.height() as i32 - draw_rect.y();
-        */
         //println!("{:?}",keys.contains(&Keycode::O));
         //println!("{},{}",mouse_x,mouse_y);
+        point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom);
+
 
         for event in event_pump.poll_iter() {
             match event {
@@ -313,6 +328,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
                                                  (my*1080)/draw_rect.height() as i32 - draw_rect.y());
                     println!("Click ({},{})",click_point.x,click_point.y);
+                    point_to_hex(click_point,map_x,map_y,zoom);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass
                         orientation = orientation.clockwise();
@@ -403,16 +419,16 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 //println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            let visible_w=1920/4*(zoom+3); // the "divide by 4, add 3" bit allows more granularity without floats
-            let visible_h=1080/4*(zoom+3);
-            let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
-            let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
-
             if fullscreen_refresh_needed>0 {
                 canvas.set_draw_color(Color::RGB(0,0,0));
                 canvas.clear();
                 fullscreen_refresh_needed -= 1;
             }
+
+            let visible_w=(1920*(zoom+3))/4; // the "add 3, divide by 4" bit allows more granularity without floats
+            let visible_h=(1080*(zoom+3))/4;
+            let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
+            let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
 
             canvas.copy(&world_texture,
                         Rect::new(world_x as i32, 

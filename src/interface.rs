@@ -45,9 +45,8 @@ fn letterbox(w: i32, h: i32) -> Rect {
 }
 
 fn point_to_hex(p: Point,map_x: i32, map_y: i32, z: i32) {
-    // FIXME: the zoom level thing is gross
     // basic algorithm: pixels per hex offset so the center is 0,0
-    let column_width = 512/(z+3);
+    let column_width = 512/z;
     let column_number;
     if p.x>1920/2 { // avoid negative and positive zero
         column_number=(p.x-1920/2)/column_width + 1;
@@ -55,7 +54,7 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, z: i32) {
         column_number=(p.x-1920/2)/column_width;
     }
     
-    println!("Click ({},{}) -> c{} @z{}({}) @map {},{}",p.x,p.y,column_number,z,z+3,map_x,map_y);
+    println!("Click ({},{}) -> c{} @z{} @map {},{}",p.x,p.y,column_number,z,map_x,map_y);
 }
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
@@ -187,7 +186,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=Direction::SE;
     let mut map_x = 0;
     let mut map_y = 0;
-    let mut zoom=29;
+    let mut zoom=32;
     
     let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
@@ -306,21 +305,23 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 },
                 Event::MouseWheel { y: -1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::Equals), .. } => {
-                    if zoom > 17 {
+                    if zoom > 20 {
                         zoom -= 4;
-                    } else if zoom > 9 {
+                    } else if zoom > 12 {
                         zoom -= 2;
-                    } else if zoom > 1 {
+                    } else if zoom > 4 {
+                        zoom -= 1;
+                    } else if zoom > 2 && canvas.window().size().0 <= 1920/2 {
                         zoom -= 1;
                     }
                 },
                 Event::MouseWheel { y: 1, .. } |
                 Event::KeyDown { keycode: Some(Keycode::Minus), .. } => {
-                    if zoom < 9 {
+                    if zoom < 12 {
                         zoom += 1;
-                    } else if zoom < 17 {
+                    } else if zoom < 20 {
                         zoom += 2
-                    } else if zoom < 28 {
+                    } else if zoom < 29 {
                         zoom += 4;
                     }
                 },
@@ -374,7 +375,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                 canvas.window_mut().set_fullscreen(video::FullscreenType::Desktop).unwrap();
                             }
                         },
-                        video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
+                        video::FullscreenType::Desktop => {
+                            canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap();
+                            if zoom<4 {
+                                zoom=4;
+                            }; //FIXME this needs to be done better
+                        },
                         video::FullscreenType::True => unreachable!(),
                     };
                 },
@@ -425,8 +431,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 fullscreen_refresh_needed -= 1;
             }
 
-            let visible_w=(1920*(zoom+3))/4; // the "add 3, divide by 4" bit allows more granularity without floats
-            let visible_h=(1080*(zoom+3))/4;
+            let visible_w=1920/4*zoom;
+            let visible_h=1080/4*zoom;
             let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
             let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
 
@@ -437,6 +443,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                   visible_h as u32),
                         draw_rect)
                         .expect("Render failed");
+                        
+                
             
             // FIXME -- move this to "ui overlay" function.
             {

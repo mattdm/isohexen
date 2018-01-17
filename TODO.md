@@ -29,7 +29,6 @@ Short Term
 - add slight border to one side and top of tiles so they don't visually
     merge together when they shouldn't
 - set an icon
-- muck with the zoom levels code -- it feels icky
 
 Medium Term
 -----------

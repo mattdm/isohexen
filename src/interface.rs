@@ -44,17 +44,27 @@ fn letterbox(w: i32, h: i32) -> Rect {
    }
 }
 
-fn point_to_hex(p: Point,map_x: i32, map_y: i32, z: i32) {
+fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
     // basic algorithm: pixels per hex offset so the center is 0,0
-    let column_width = 512/z;
-    let column_number;
-    if p.x>1920/2 { // avoid negative and positive zero
-        column_number=(p.x-1920/2)/column_width + 1;
-    } else {
-        column_number=(p.x-1920/2)/column_width;
-    }
+
+
+    // same calculations as when actually drawing the map
+    let visible_w=1920/4*zoom;
+    let visible_h=1080/4*zoom;
+    let world_x = 16384/2-visible_w/2+((map_x*(16384-visible_w))/2048);  // 2048 is our scroll range
+    let world_y = 8640/2 -visible_h/2+((map_y*(8640 -visible_h))/2048);
     
-    println!("Click ({},{}) -> c{} @z{} @map {},{}",p.x,p.y,column_number,z,map_x,map_y);
+
+    // here, a zoomed-in hex is 256 pixels wide, and we want half that
+    // remember that zoom has a 4x multiplier, so that's why that is here
+    // and -64 so 0 is the center
+    let column_number=(((p.x*zoom)/4)+world_x)/128-64;
+    // zoomed-in hex is 160 pixels high. and we want full rows, not half
+    let row_number=(((p.y*zoom)/4)+world_y)/160-29;
+
+
+    
+    println!("Mouse ({},{}) -> c{} r{} @z{} @map {},{} {}×{}",p.x,p.y,column_number,row_number,zoom,world_x,world_y,visible_w,visible_h);
 }
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
@@ -311,8 +321,6 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         zoom -= 2;
                     } else if zoom > 4 {
                         zoom -= 1;
-                    } else if zoom > 2 && canvas.window().size().0 <= 1920/2 {
-                        zoom -= 1;
                     }
                 },
                 Event::MouseWheel { y: 1, .. } |
@@ -375,12 +383,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                 canvas.window_mut().set_fullscreen(video::FullscreenType::Desktop).unwrap();
                             }
                         },
-                        video::FullscreenType::Desktop => {
-                            canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap();
-                            if zoom<4 {
-                                zoom=4;
-                            }; //FIXME this needs to be done better
-                        },
+                        video::FullscreenType::Desktop => canvas.window_mut().set_fullscreen(video::FullscreenType::Off).unwrap(),
                         video::FullscreenType::True => unreachable!(),
                     };
                 },

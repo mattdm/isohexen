@@ -90,9 +90,9 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
         row_number=gridrow_number-50;
     }
     if row_number%2 == 0 {
-        offset_column_number = (subcolumn_number+1)/2-32;
+        offset_column_number = (subcolumn_number+1)/2-row_number/2-32;
     } else {
-        offset_column_number = subcolumn_number/2-32;
+        offset_column_number = subcolumn_number    /2-(row_number-1)/2-32;
     }
 
     //println!("M({},{}) -> C{}({}) R{}",p.x,p.y, offset_column_number, row_number, row_number);

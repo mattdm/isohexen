@@ -57,14 +57,44 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
 
     // here, a zoomed-in hex is 256 pixels wide, and we want half that
     // remember that zoom has a 4x multiplier, so that's why that is here
-    // and -64 so 0 is the center
-    let column_number=(((p.x*zoom)/4)+world_x)/128-64;
-    // zoomed-in hex is 160 pixels high. and we want full rows, not half
-    let row_number=(((p.y*zoom)/4)+world_y)/160-29;
+    let subcolumn_number=(((p.x*zoom)/4)+world_x)/128;
+    let subcolumn_offset=(((p.x*zoom)/4)+world_x)%128;
+    // zoomed-in hex is 160 pixels high, but we're offset, so 96 is the magic number
+    let gridrow_number=(((p.y*zoom)/4)+world_y)/96;
+    let row_offset=(((p.y*zoom)/4)+world_y)%96;
+    let mut column_number=0;
+    let row_number;
 
-
-    
-    println!("Mouse ({},{}) -> c{} r{} @z{} @map {},{} {}×{}",p.x,p.y,column_number,row_number,zoom,world_x,world_y,visible_w,visible_h);
+    if row_offset < 32 {
+        // This means we're in the area where two hex diagonals come together.
+        // And the following handy logic corresponds to the hex border slope 
+        // direction — true if sloped like \, false if like /
+        if gridrow_number%2 == subcolumn_number%2 { 
+            // slope goes down
+            if subcolumn_offset > 0 && 128*row_offset/subcolumn_offset < 32 {
+                row_number=gridrow_number-51;
+            } else {
+                row_number=gridrow_number-50;
+            }
+            
+        } else {
+            // slope goes up
+            if 128*row_offset/(128-subcolumn_offset) < 32 {
+                row_number=gridrow_number-51;
+            } else {
+                row_number=gridrow_number-50;
+            }
+        }
+    } else {
+        // The easy case of the "rectangle" part of each hex row
+        row_number=gridrow_number-50;
+        if gridrow_number%2 == 0 {
+            column_number = (subcolumn_number+1)/2-32;
+        } else {
+            column_number = subcolumn_number/2-32;
+        }
+    }
+    println!("M({},{}) -> C{} R{}",p.x,p.y, column_number, row_number);
 }
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
@@ -196,7 +226,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=Direction::SE;
     let mut map_x = 0;
     let mut map_y = 0;
-    let mut zoom=32;
+    let mut zoom=1; // fixme start at 32
     
     let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
@@ -319,7 +349,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         zoom -= 4;
                     } else if zoom > 12 {
                         zoom -= 2;
-                    } else if zoom > 4 {
+                    } else if zoom > 2 { // FIXME SHOULD BE 4
                         zoom -= 1;
                     }
                 },

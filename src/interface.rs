@@ -62,7 +62,7 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
     // zoomed-in hex is 160 pixels high, but we're offset, so 96 is the magic number
     let gridrow_number=(((p.y*zoom)/4)+world_y)/96;
     let row_offset=(((p.y*zoom)/4)+world_y)%96;
-    let mut column_number=0;
+    let mut offset_column_number=0;
     let row_number;
 
     if row_offset < 32 {
@@ -88,13 +88,15 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
     } else {
         // The easy case of the "rectangle" part of each hex row
         row_number=gridrow_number-50;
-        if gridrow_number%2 == 0 {
-            column_number = (subcolumn_number+1)/2-32;
-        } else {
-            column_number = subcolumn_number/2-32;
-        }
     }
-    println!("M({},{}) -> C{} R{}",p.x,p.y, column_number, row_number);
+    if row_number%2 == 0 {
+        offset_column_number = (subcolumn_number+1)/2-32;
+    } else {
+        offset_column_number = subcolumn_number/2-32;
+    }
+
+    //println!("M({},{}) -> C{}({}) R{}",p.x,p.y, offset_column_number, row_number, row_number);
+    println!("M({},{}) -> C{} R{}",p.x,p.y, offset_column_number, row_number);
 }
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {

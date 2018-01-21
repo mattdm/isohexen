@@ -13,6 +13,7 @@ Short Term
   - todo: snow
 - clouds in sky
   - inverse perspective - basic demo done but needs adjustment
+  - make look better with different orientations
   - animate
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
@@ -33,6 +34,7 @@ Medium Term
 -----------
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
+- make the stuff in interface into a gameloop struct
 - rework pan/scroll key handling to allow more combos
 - move splash screen to its own function
  - make customizable

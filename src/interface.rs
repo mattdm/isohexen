@@ -111,26 +111,6 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     canvas.set_draw_color(Color::RGB(96,192,208));
     canvas.clear();
     
-    // clouds (fixed demo clouds)
-
-    sprite_atlas.draw(canvas, "cloud", 1, 20*256    ,4*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 21*256    ,4*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 22*256    ,4*192   ,Direction::E);    
-    sprite_atlas.draw(canvas, "cloud", 1, 20*256+128,3*192+96,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 21*256+128,3*192+96,Direction::E);    
-
-    sprite_atlas.draw(canvas, "cloud", 1, 45*256    ,2*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 46*256    ,2*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 47*256    ,2*192   ,Direction::E);    
-    sprite_atlas.draw(canvas, "cloud", 1, 45*256+128,1*192+96,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 46*256+128,1*192+96,Direction::E);
-
-    sprite_atlas.draw(canvas, "cloud", 1, 50*256    ,4*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 51*256    ,4*192   ,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 52*256    ,4*192   ,Direction::E);    
-    sprite_atlas.draw(canvas, "cloud", 1, 50*256+128,3*192+96,Direction::E);
-    sprite_atlas.draw(canvas, "cloud", 1, 51*256+128,3*192+96,Direction::E);    
-
     // sea
     let horizon=1288;//1096;
     for y in 0..39 {
@@ -142,6 +122,33 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
         }
     }
 }    
+
+fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
+    // sky
+    canvas.set_draw_color(Color::RGB(96,192,208));
+    canvas.fill_rect(Rect::new(0,0,16384,1024)).unwrap();
+    
+    // clouds (fixed demo clouds)
+
+    sprite_atlas.draw(canvas, "cloud", 1, 20*256    ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 21*256    ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 22*256    ,4*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, 20*256+128,3*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 21*256+128,3*192+96,orientation);    
+
+    sprite_atlas.draw(canvas, "cloud", 1, 45*256    ,2*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 46*256    ,2*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 47*256    ,2*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, 45*256+128,1*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 46*256+128,1*192+96,orientation);
+
+    sprite_atlas.draw(canvas, "cloud", 1, 50*256    ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 51*256    ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 52*256    ,4*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, 50*256+128,3*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, 51*256+128,3*192+96,orientation);    
+
+}
 
 fn draw_map(canvas: &mut render::WindowCanvas, background: &render::Texture, sprite_atlas: &SpriteAtlas, map: &landscape::Island, orientation: Direction) {
 
@@ -487,7 +494,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                     draw_background(texture_canvas, &sprite_atlas);
                 }).unwrap();
                 background_refresh_needed = false;
-                //println!("Background Refresh     : {}",(time::Instant::now()-now).subsec_nanos()/1000000);
+                //println!("Background Refresh     : {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
             if world_refresh_needed {
                 canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
@@ -496,6 +503,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 world_refresh_needed = false;
                 //println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
+
+            // sky -- FIXME: only draw when needed
+            canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
+                draw_clouds(texture_canvas,	 &sprite_atlas, orientation);
+            }).unwrap();
+            //println!("Clouds Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
 
             if fullscreen_refresh_needed>0 {
                 canvas.set_draw_color(Color::RGB(0,0,0));

@@ -232,7 +232,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     let mut orientation=Direction::E;
     let mut map_x = 0;
     let mut map_y = 0;
-    let mut zoom=1; // fixme start at 32
+    let mut zoom = 32;
     
     let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
@@ -253,9 +253,17 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         //println!("{},{}",mouse_x,mouse_y);
         //println!("M({},{}) -> H{:?}",mouse_x,mouse_y,point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom));
         let debughex=point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom);
-        println!("{},{}: {:?}",debughex.x,
-                               debughex.y,
-                               islandmap.map.hexes[&debughex][0]);
+        let debugmap=islandmap.map.hexes.clone();
+        let debugstack=debugmap.get(&debughex);
+        if debugstack.is_some() {
+            println!("{},{}: {:?}",debughex.x,
+                                   debughex.y,
+                                   debugstack.unwrap()[0]);
+        } else {                                
+            println!("{},{}: {:?}",debughex.x,
+                                   debughex.y,
+                                   "ocean");
+        }
 
 
         for event in event_pump.poll_iter() {
@@ -359,7 +367,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                         zoom -= 4;
                     } else if zoom > 12 {
                         zoom -= 2;
-                    } else if zoom > 2 { // FIXME SHOULD BE 4
+                    } else if zoom > 4 {
                         zoom -= 1;
                     }
                 },

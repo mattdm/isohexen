@@ -226,7 +226,6 @@ impl<'a> Island<'a> {
                     let height=1;
                     self.map.hexes.insert(tile, vec![terrain.unwrap();height]);
                 }
-                println!("{:?}",tile);
             }
         }
         self.map.hexes.insert(Hexpoint::new(size/2-1,size/2-1), vec!["stone";1]);

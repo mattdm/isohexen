@@ -31,7 +31,7 @@ use std::collections::HashSet;
 use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
-use hexgeometry::Hexpoint; // FIXME: abstract this back out?
+//use hexgeometry::Hexpoint; // FIXME: abstract this back out?
 
 fn letterbox(w: i32, h: i32) -> Rect {
     if w/16 < h/9 { //letterbox
@@ -46,6 +46,7 @@ fn letterbox(w: i32, h: i32) -> Rect {
 }
 
 // fixme: needs to understand orientation.
+/*
 fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) -> Hexpoint {
     // basic algorithm: pixels per hex offset so the center is 0,0
 
@@ -102,6 +103,7 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) -> Hexpoint {
     //println!("M({},{}) -> C{} R{}",p.x,p.y, column_number, row_number);
     Hexpoint::new(column_number, row_number)
 }
+*/
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
 
@@ -246,12 +248,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let keys: HashSet<Keycode> = event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
         /*
         let mouse_buttons: HashSet<MouseButton> = event_pump.mouse_state().pressed_mouse_buttons().collect();
-        */
         let mouse_x = (event_pump.mouse_state().x()*1920)/draw_rect.width()  as i32 - draw_rect.x();
         let mouse_y = (event_pump.mouse_state().y()*1080)/draw_rect.height() as i32 - draw_rect.y();
+        */
         //println!("{:?}",keys.contains(&Keycode::O));
         //println!("{},{}",mouse_x,mouse_y);
-        //println!("M({},{}) -> H{:?}",mouse_x,mouse_y,point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom));
+        /*
         let debughex=point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom);
         let debugmap=islandmap.map.hexes.clone();
         let debugstack=debugmap.get(&debughex);
@@ -264,7 +266,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                    debughex.y,
                                    "ocean");
         }
-
+        */
 
         for event in event_pump.poll_iter() {
             match event {

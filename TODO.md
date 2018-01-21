@@ -110,6 +110,7 @@ Longer Term
 Far Out but Planned
 -------------------
 - go from island to generic map stuff
+- make the sky optional for non-island maps
 - change generation routine to an embedded script. (rhai? rlua?)
   - un-hardcode terrain types
 - handle multiple aspect ratios correctly

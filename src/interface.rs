@@ -110,6 +110,26 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     // sky
     canvas.set_draw_color(Color::RGB(96,192,208));
     canvas.clear();
+    
+    // clouds (fixed demo clouds)
+
+    sprite_atlas.draw(canvas, "cloud", 1, 20*256    ,4*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 21*256    ,4*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 22*256    ,4*192   ,Direction::E);    
+    sprite_atlas.draw(canvas, "cloud", 1, 20*256+128,3*192+96,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 21*256+128,3*192+96,Direction::E);    
+
+    sprite_atlas.draw(canvas, "cloud", 1, 45*256    ,2*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 46*256    ,2*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 47*256    ,2*192   ,Direction::E);    
+    sprite_atlas.draw(canvas, "cloud", 1, 45*256+128,1*192+96,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 46*256+128,1*192+96,Direction::E);
+
+    sprite_atlas.draw(canvas, "cloud", 1, 50*256    ,4*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 51*256    ,4*192   ,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 52*256    ,4*192   ,Direction::E);    
+    sprite_atlas.draw(canvas, "cloud", 1, 50*256+128,3*192+96,Direction::E);
+    sprite_atlas.draw(canvas, "cloud", 1, 51*256+128,3*192+96,Direction::E);    
 
     // sea
     let horizon=1288;//1096;

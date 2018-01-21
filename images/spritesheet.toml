@@ -26,6 +26,14 @@ width = 256
 height = 160
 
 [[sprite]]
+id = "cloud"
+atlas_y = 480
+draw_offset_x = 0
+draw_offset_y = 0
+width = 256
+height = 160
+
+[[sprite]]
 id = "grass"
 atlas_y = 640
 draw_offset_x = 0

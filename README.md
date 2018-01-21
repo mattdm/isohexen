@@ -20,4 +20,4 @@ or arrow keys in cardinal directions. S to center. Oh, and F for fullscreen.
 
 See the [TODO list](TODO.md) for plans and vague thoughts.
 
-![State of the Art](screenshots/20180115-83db9de.png)
+![State of the Art](screenshots/20180121-8ee7d34.png)

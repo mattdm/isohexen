@@ -12,7 +12,7 @@ Short Term
   - todo: pine trees onto mountains
   - todo: snow
 - clouds in sky
-  - inverse perspective
+  - inverse perspective - basic demo done but needs adjustment
   - animate
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
@@ -20,7 +20,6 @@ Short Term
 - make map_x, map_y use Point for consistency
 - fix rotation when zoomed in (stay centered on same tile)
 - error handling if texture type not found
-- keep to zoomed-in location when rotating
 - break from ideas and do some cleanup and *gasp* commenting (use ///)
 - make draw_offset_[xy] optional in spritesheet.toml
 - make struct holding information like orientation and stuff

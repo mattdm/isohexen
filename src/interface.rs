@@ -31,6 +31,7 @@ use std::collections::HashSet;
 use landscape;
 use direction::Direction;
 use sprite::SpriteAtlas;
+use hexgeometry::Hexpoint; // FIXME: abstract this back out?
 
 fn letterbox(w: i32, h: i32) -> Rect {
     if w/16 < h/9 { //letterbox
@@ -44,7 +45,8 @@ fn letterbox(w: i32, h: i32) -> Rect {
    }
 }
 
-fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
+// fixme: needs to understand orientation.
+fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) -> Hexpoint {
     // basic algorithm: pixels per hex offset so the center is 0,0
 
 
@@ -62,7 +64,7 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
     // zoomed-in hex is 160 pixels high, but we're offset, so 96 is the magic number
     let gridrow_number=(((p.y*zoom)/4)+world_y)/96;
     let row_offset=(((p.y*zoom)/4)+world_y)%96;
-    let mut offset_column_number=0;
+    let column_number;
     let row_number;
 
     if row_offset < 32 {
@@ -90,13 +92,15 @@ fn point_to_hex(p: Point,map_x: i32, map_y: i32, zoom: i32) {
         row_number=gridrow_number-50;
     }
     if row_number%2 == 0 {
-        offset_column_number = (subcolumn_number+1)/2-row_number/2-32;
+        column_number = (subcolumn_number+1)/2-row_number/2-32;
     } else {
-        offset_column_number = subcolumn_number    /2-(row_number-1)/2-32;
+        column_number = subcolumn_number    /2-(row_number-1)/2-32;
     }
 
-    //println!("M({},{}) -> C{}({}) R{}",p.x,p.y, offset_column_number, row_number, row_number);
-    println!("M({},{}) -> C{} R{}",p.x,p.y, offset_column_number, row_number);
+
+    //println!("M({},{}) -> C{}({}) R{}",p.x,p.y, column_number, row_number, row_number);
+    //println!("M({},{}) -> C{} R{}",p.x,p.y, column_number, row_number);
+    Hexpoint::new(column_number, row_number)
 }
 
 fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas) {
@@ -225,7 +229,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     // FIXME: add more sophisticated data structure for interface state
     // like zoom and stuff too
-    let mut orientation=Direction::SE;
+    let mut orientation=Direction::E;
     let mut map_x = 0;
     let mut map_y = 0;
     let mut zoom=1; // fixme start at 32
@@ -247,7 +251,11 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         let mouse_y = (event_pump.mouse_state().y()*1080)/draw_rect.height() as i32 - draw_rect.y();
         //println!("{:?}",keys.contains(&Keycode::O));
         //println!("{},{}",mouse_x,mouse_y);
-        point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom);
+        //println!("M({},{}) -> H{:?}",mouse_x,mouse_y,point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom));
+        let debughex=point_to_hex(Point::new(mouse_x,mouse_y),map_x,map_y,zoom);
+        println!("{},{}: {:?}",debughex.x,
+                               debughex.y,
+                               islandmap.map.hexes[&debughex][0]);
 
 
         for event in event_pump.poll_iter() {
@@ -368,8 +376,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 Event::MouseButtonUp { mouse_btn: MouseButton::Left, x: mx, y: my, .. } => {
                     let click_point = Point::new((mx*1920)/draw_rect.width()  as i32 - draw_rect.x(),
                                                  (my*1080)/draw_rect.height() as i32 - draw_rect.y());
-                    println!("Click ({},{})",click_point.x,click_point.y);
-                    point_to_hex(click_point,map_x,map_y,zoom);
+                    //println!("Click ({},{})",click_point.x,click_point.y);
                     // FIXME: describe in TOML (see TODO)
                     if Rect::new(1664,968,256,96).contains_point(click_point) { // compass
                         orientation = orientation.clockwise();

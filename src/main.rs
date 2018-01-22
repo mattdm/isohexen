@@ -15,7 +15,7 @@ mod direction;
 mod hexgeometry;
 mod landscape;
 mod sprite;
-
+mod weather;
 
 const USAGE: &'static str = "
 IsoHexEn Island Demo
@@ -56,7 +56,7 @@ pub fn main() {
     // except I want to learn about that in Rust
     let (tx, rx) = mpsc::sync_channel(0);
     thread::Builder::new().name("cloud_controller".to_string()).spawn(move || {
-        interface::cloud_controller(tx);
+        weather::cloud_controller(tx);
     }).unwrap();
     mouse_util.show_cursor(false);
     interface::splash(&mut canvas);

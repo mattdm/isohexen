@@ -105,6 +105,8 @@ Longer Term
 - time passing
   - night day
   - sun, moon in sky
+- make clouds go in different directions
+- weather -- different kinds of clouds
 - separate UI sprites from game-world sprites
 - selectable window sizes other than 960x540
 - save window size/position when going from windowed to fullscreen; restore if needed

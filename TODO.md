@@ -12,9 +12,8 @@ Short Term
   - todo: pine trees onto mountains
   - todo: snow
 - clouds in sky
-  - inverse perspective - basic demo done but needs adjustment
+  - smaller and larger clouds
   - make look better with different orientations
-  - need to sort by altitude for draw
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
   - and then figure out decorations
@@ -113,6 +112,7 @@ Longer Term
 - separate UI sprites from game-world sprites
 - selectable window sizes other than 960x540
 - save window size/position when going from windowed to fullscreen; restore if needed
+- optimization: dirty rects for clouds rather than repainting whole sky
 
 Far Out but Planned
 -------------------

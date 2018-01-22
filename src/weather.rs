@@ -34,7 +34,7 @@ pub fn cloud_controller(tx: mpsc::SyncSender<Vec<Cloud>>) {
         let mut nextclouds = Vec::new();    
 
         for cloud in &cloudlist {
-            let new_pos = cloud.position - (cloud.altitude/192+1); // fix -- adjustable speeds
+            let new_pos = cloud.position - (cloud.altitude/256+1); // fix -- adjustable speeds
             if new_pos > -256*3 {
                 // still on screen
                         
@@ -49,15 +49,22 @@ pub fn cloud_controller(tx: mpsc::SyncSender<Vec<Cloud>>) {
         
         // small chance of a new cloud, scaled by existing number of clouds
         // FIXME: the magic weight numbers are an easy way to adjust the weather
-        if rng.gen_weighted_bool((20 as i32).pow(nextclouds.len() as u32) as u32 + 10000) {
+        if rng.gen_weighted_bool(200) &&
+           rng.gen_weighted_bool((4 as i32).pow(nextclouds.len() as u32) as u32) {
             nextclouds.push( Cloud {
                                      size: 2,
                                      position: 16384,
                                      altitude: (rng.gen::<u32>()%768) as i32,
                                    });
         }
-        
+
+
+        //println!("Clouds: {}",nextclouds.len());
+
+        nextclouds.sort_unstable_by_key(|k| -k.altitude);
         cloudlist = nextclouds.clone();
+
+
         match tx.send(nextclouds) {
             _ => {}, // we super, super, super-duper don't care if this fails :)	
         }

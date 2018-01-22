@@ -139,11 +139,11 @@ fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, cl
 
             // this is a "size 2" cloud
             for c in cloudlist {
-                sprite_atlas.draw(canvas, "cloud", 1, c.position           ,768-c.altitude   ,orientation);
-                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256    ,768-c.altitude   ,orientation);
-                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 2*256    ,768-c.altitude   ,orientation);
-                sprite_atlas.draw(canvas, "cloud", 1, c.position       +128,768-c.altitude-96,orientation);
-                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256+128,768-c.altitude-96,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position           ,768-c.altitude+96,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256    ,768-c.altitude+96,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 2*256    ,768-c.altitude+96,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position       +128,768-c.altitude   ,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256+128,768-c.altitude   ,orientation);
             }
 
         },

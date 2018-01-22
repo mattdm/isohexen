@@ -36,6 +36,7 @@ Medium Term
 -----------
 - better data structure for hex stacks, 'cause the current thing is
    unreadably ugly
+  - investigate not using hashes, or using FnvHashMap
 - make the stuff in interface into a gameloop struct
 - rework pan/scroll key handling to allow more combos
 - move splash screen to its own function

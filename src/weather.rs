@@ -3,7 +3,7 @@ use rand::Rng;
 
 use std::time;
 use std::thread;
-
+use std::cmp;
 use std::sync::mpsc;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -17,6 +17,7 @@ pub fn cloud_controller(tx: mpsc::SyncSender<Vec<Cloud>>) {
     let mut rng = rand::thread_rng();
 
     let mut cloud_ticker = time::Instant::now();        
+    let mut speed_control = 0;
 
     let mut cloudlist = Vec::new();
     //start with 0, 1, 2, or 3 clouds
@@ -34,24 +35,30 @@ pub fn cloud_controller(tx: mpsc::SyncSender<Vec<Cloud>>) {
         let mut nextclouds = Vec::new();    
 
         for cloud in &cloudlist {
-            let new_pos = cloud.position - (cloud.altitude/256+1); // fix -- adjustable speeds
-            if new_pos > -256*3 {
-                // still on screen
-                        
-                nextclouds.push( Cloud {
-                                          size: 2,
-                                          position: new_pos,
-                                          altitude: cloud.altitude,
-                                       });
-                
+            // fix -- adjustable wind speeds
+
+            // lower clouds move more slowly
+            if speed_control % ((768-cloud.altitude)/256+1) == 0 {
+                let new_pos = cloud.position - 1;
+                if new_pos > -256*3 {
+                    // still on screen
+                    nextclouds.push( Cloud {
+                                              size: 2,
+                                              position: new_pos,
+                                              altitude: cloud.altitude,
+                                           });
+                }
+            } else {
+                nextclouds.push(cloud.clone());
             }
-        };
+                
+        }
         
         // small chance of a new cloud, scaled by existing number of clouds
         // FIXME: the magic weight numbers are an easy way to adjust the weather
         if rng.gen_weighted_bool(200) &&
-           rng.gen_weighted_bool((4 as i32).pow(nextclouds.len() as u32) as u32) {
-            nextclouds.push( Cloud {
+           rng.gen_weighted_bool((4 as i32).pow(cmp::min(15,nextclouds.len() as u32)) as u32) {
+           nextclouds.push( Cloud {
                                      size: 2,
                                      position: 16384,
                                      altitude: (rng.gen::<u32>()%768) as i32,
@@ -69,11 +76,15 @@ pub fn cloud_controller(tx: mpsc::SyncSender<Vec<Cloud>>) {
             _ => {}, // we super, super, super-duper don't care if this fails :)	
         }
 
-        let next_tick = cloud_ticker + time::Duration::from_millis(1000);
+        let next_tick = cloud_ticker + time::Duration::from_millis(200);
         let now = time::Instant::now();
         if now < next_tick {
             thread::sleep(next_tick-now);
         }
         cloud_ticker = next_tick;
+        speed_control += 1;
+        if speed_control >= 12 {
+            speed_control = 0;
+        }
     }    
 }

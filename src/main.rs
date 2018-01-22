@@ -54,7 +54,7 @@ pub fn main() {
     
     // there's no real reason for this to be a separate thread,
     // except I want to learn about that in Rust
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::sync_channel(0);
     thread::Builder::new().name("cloud_controller".to_string()).spawn(move || {
         interface::cloud_controller(tx);
     }).unwrap();

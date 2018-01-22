@@ -591,7 +591,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 }
 
 // FIXME should be in the game controller module
-pub fn cloud_controller(tx: mpsc::Sender<(i32,i32,i32)>) {
+pub fn cloud_controller(tx: mpsc::SyncSender<(i32,i32,i32)>) {
     let mut rng = rand::thread_rng();
 
     let mut cloud_ticker = time::Instant::now();        

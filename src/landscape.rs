@@ -58,7 +58,6 @@ impl<'a> Island<'a> {
             while height > 2 {
                 // change height -3 + random(-6..6), but make it at least 1
                 height = cmp::max(1,height + rng.gen::<isize>()%6 -3);
-                println!("{}",rng.gen::<isize>()%6);
                 self.map.hexes.insert(tile, vec!["stone";height as usize]);
                 // One-in-six chance of arm ending here.
                 if rng.gen_weighted_bool(6) {

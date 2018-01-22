@@ -41,6 +41,7 @@ impl<'a> Island<'a> {
         // center peak
         let center_tile = Hexpoint::new(0,0);
         let mountain_height = (size as isize*3)/4; // FIXME: make configurable
+        // note "isize  %" can be negative
         let center_height = rng.gen::<isize>()%(mountain_height)/2+mountain_height;
         self.map.hexes.insert(center_tile, vec!["stone";center_height as usize]);
         
@@ -55,8 +56,9 @@ impl<'a> Island<'a> {
             // FIXME: recursive version had possibility of arms branching (fractal-style!)
             // and we lost that... add back.
             while height > 2 {
-                // change height -3 + random(0..5), max 1
-                height = cmp::max(1,height + rng.gen::<isize>()%6 - 3);
+                // change height -3 + random(-6..6), but make it at least 1
+                height = cmp::max(1,height + rng.gen::<isize>()%6 -3);
+                println!("{}",rng.gen::<isize>()%6);
                 self.map.hexes.insert(tile, vec!["stone";height as usize]);
                 // One-in-six chance of arm ending here.
                 if rng.gen_weighted_bool(6) {

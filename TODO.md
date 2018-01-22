@@ -11,7 +11,6 @@ Short Term
   - todo: apple trees onto grass
   - todo: pine trees onto mountains
   - todo: snow
-- fix my random generators which use signed ints and %
 - clouds in sky
   - inverse perspective - basic demo done but needs adjustment
   - make look better with different orientations

@@ -31,8 +31,11 @@ use std::sync::mpsc;
 
 
 use landscape;
+
 use direction::Direction;
 use sprite::SpriteAtlas;
+use weather;
+
 //use hexgeometry::Hexpoint; // FIXME: abstract this back out?
 
 fn letterbox(w: i32, h: i32) -> Rect {
@@ -125,33 +128,26 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     }
 }    
 
-fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, positions: &(i32,i32,i32), orientation: Direction) {
-    // sky
-    canvas.set_draw_color(Color::RGB(96,192,208));
-    canvas.fill_rect(Rect::new(0,0,16384,1024)).unwrap();
-    
-    // clouds (fixed demo clouds)
-    let (cloud1,cloud2,cloud3) = *positions;
+fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, clouds: &Option<Vec<weather::Cloud>>, orientation: Direction) {
 
+    match clouds {
+        &None => {},
+        &Some(ref cloudlist) => {
+            // sky
+            canvas.set_draw_color(Color::RGB(96,192,208));
+            canvas.fill_rect(Rect::new(0,0,16384,1024)).unwrap();
 
-    sprite_atlas.draw(canvas, "cloud", 1, cloud1           ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 1*256    ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 2*256    ,4*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, cloud1       +128,3*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 1*256+128,3*192+96,orientation);    
+            // this is a "size 2" cloud
+            for c in cloudlist {
+                sprite_atlas.draw(canvas, "cloud", 1, c.position           ,768-c.altitude   ,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256    ,768-c.altitude   ,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 2*256    ,768-c.altitude   ,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position       +128,768-c.altitude-96,orientation);
+                sprite_atlas.draw(canvas, "cloud", 1, c.position+ 1*256+128,768-c.altitude-96,orientation);
+            }
 
-    sprite_atlas.draw(canvas, "cloud", 1, cloud2           ,3*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 1*256    ,3*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 2*256    ,3*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, cloud2       +128,2*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 1*256+128,2*192+96,orientation);    
-
-    sprite_atlas.draw(canvas, "cloud", 1, cloud3           ,1*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 1*256    ,1*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 2*256    ,1*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, cloud3       +128,0*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 1*256+128,0*192+96,orientation);    
-
+        },
+    }
 
 }
 
@@ -220,7 +216,7 @@ pub fn splash(canvas: &mut render::WindowCanvas) {
 }
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil, rx: mpsc::Receiver<(i32,i32,i32)>) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil, rx: mpsc::Receiver<Vec<weather::Cloud>>) {
 
     mouse_util.show_cursor(false);
 
@@ -256,7 +252,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // function first before we go right into the game loop
     let mut islandmap = landscape::Island::new();
     
-    let mut cloud_positions = (0,0,0);
+    let mut clouds = None;
     
     let mut event_ticker = time::Instant::now()  - time::Duration::from_millis(1000);
     let mut frame_ticker = event_ticker;
@@ -494,7 +490,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
         /* Received from controllers ------------------------------------------------------------------ */
         match rx.try_recv() {
             Ok(val) => { 
-                cloud_positions = val; 
+                clouds = Some(val); 
                 sky_refresh_needed = true;
             },
             Err(mpsc::TryRecvError::Empty) => {},
@@ -527,7 +523,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
 
             if sky_refresh_needed {
                 canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
-                    draw_clouds(texture_canvas,	 &sprite_atlas, &cloud_positions, orientation);
+                    draw_clouds(texture_canvas,	 &sprite_atlas, &clouds, orientation);
                 }).unwrap();
                 //println!("Clouds Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }

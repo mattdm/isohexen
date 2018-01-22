@@ -14,8 +14,7 @@ Short Term
 - clouds in sky
   - inverse perspective - basic demo done but needs adjustment
   - make look better with different orientations
-  - demo animation in place
-  - need to make clouds random
+  - need to sort by altitude for draw
 - routines for mouse click to tile
   - first without elevation, then figure out elevation
   - and then figure out decorations
@@ -55,6 +54,10 @@ Medium Term
 - lava? obsidian? (obsidian is good for sharp tools?)
 - possibly separate sides and top of hexes, so they can more easily be
   variable height -- performance optimization
+- move cloud data types out of weather controller -- that way,
+  both weather controller and interface include cloud, but interface
+  does not have to include the controller
+- make wind direction variable, and allow clouds to go "behind the horizon"
 - make a game setup function rather than dumping that at the beginning
     of the event loop
 - architectural decision re universal event loop with different states

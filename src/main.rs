@@ -6,7 +6,8 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-//use std::thread;
+use std::thread;
+use std::sync::mpsc;
 use docopt::Docopt;
 
 mod interface;
@@ -51,10 +52,13 @@ pub fn main() {
     
     let mouse_util = sdl_context.mouse();
     
-//    thread::Builder::new().name("thread".to_string()).spawn(move || {
-//        do_whatever();
-//    }).unwrap();
+    // there's no real reason for this to be a separate thread,
+    // except I want to learn about that in Rust
+    let (tx, rx) = mpsc::channel();
+    thread::Builder::new().name("cloud_controller".to_string()).spawn(move || {
+        interface::cloud_controller(tx);
+    }).unwrap();
     mouse_util.show_cursor(false);
     interface::splash(&mut canvas);
-    interface::gameloop(&mut canvas,&mut event_pump, &mouse_util);
+    interface::gameloop(&mut canvas, &mut event_pump, &mouse_util, rx);
 }

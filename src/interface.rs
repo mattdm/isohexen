@@ -1,5 +1,11 @@
 extern crate sdl2;
 
+
+// fixme -- this is only used for the cloud controller,
+// which does not belong in this module
+extern crate rand;
+use rand::Rng;
+
 // The event loop handles... events -- and also basic drawing.
     
 use sdl2::event::Event;
@@ -26,6 +32,8 @@ use std::thread;
 use std::cmp;
 
 use std::collections::HashSet;
+
+use std::sync::mpsc;
 
 
 use landscape;
@@ -123,30 +131,33 @@ fn draw_background(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas
     }
 }    
 
-fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, orientation: Direction) {
+fn draw_clouds(canvas: &mut render::WindowCanvas, sprite_atlas: &SpriteAtlas, positions: &(i32,i32,i32), orientation: Direction) {
     // sky
     canvas.set_draw_color(Color::RGB(96,192,208));
     canvas.fill_rect(Rect::new(0,0,16384,1024)).unwrap();
     
     // clouds (fixed demo clouds)
+    let (cloud1,cloud2,cloud3) = *positions;
 
-    sprite_atlas.draw(canvas, "cloud", 1, 20*256    ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 21*256    ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 22*256    ,4*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, 20*256+128,3*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 21*256+128,3*192+96,orientation);    
 
-    sprite_atlas.draw(canvas, "cloud", 1, 45*256    ,2*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 46*256    ,2*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 47*256    ,2*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, 45*256+128,1*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 46*256+128,1*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud1           ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 1*256    ,4*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 2*256    ,4*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, cloud1       +128,3*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud1+ 1*256+128,3*192+96,orientation);    
 
-    sprite_atlas.draw(canvas, "cloud", 1, 50*256    ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 51*256    ,4*192   ,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 52*256    ,4*192   ,orientation);    
-    sprite_atlas.draw(canvas, "cloud", 1, 50*256+128,3*192+96,orientation);
-    sprite_atlas.draw(canvas, "cloud", 1, 51*256+128,3*192+96,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, cloud2           ,3*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 1*256    ,3*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 2*256    ,3*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, cloud2       +128,2*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud2+ 1*256+128,2*192+96,orientation);    
+
+    sprite_atlas.draw(canvas, "cloud", 1, cloud3           ,1*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 1*256    ,1*192   ,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 2*256    ,1*192   ,orientation);    
+    sprite_atlas.draw(canvas, "cloud", 1, cloud3       +128,0*192+96,orientation);
+    sprite_atlas.draw(canvas, "cloud", 1, cloud3+ 1*256+128,0*192+96,orientation);    
+
 
 }
 
@@ -215,7 +226,7 @@ pub fn splash(canvas: &mut render::WindowCanvas) {
 }
 
 
-pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil) {
+pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventPump, mouse_util: &mouse::MouseUtil, rx: mpsc::Receiver<(i32,i32,i32)>) {
 
     mouse_util.show_cursor(false);
 
@@ -251,7 +262,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     // function first before we go right into the game loop
     let mut islandmap = landscape::Island::new();
     
-    
+    let mut cloud_positions = (0,0,0);
     
     let mut event_ticker = time::Instant::now()  - time::Duration::from_millis(1000);
     let mut frame_ticker = event_ticker;
@@ -265,6 +276,7 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     
     let mut fullscreen_refresh_needed = 1; // need to repeat because of some weird race condition
     let mut world_refresh_needed = true;
+    let mut sky_refresh_needed = true;
     let mut background_refresh_needed = true;
     
     islandmap.generate(64);
@@ -294,6 +306,8 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                                    "ocean");
         }
         */
+        
+        /* Events ------------------------------------------------------------------ */
 
         for event in event_pump.poll_iter() {
             match event {
@@ -483,8 +497,21 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
             }
         }
         
+        /* Received from controllers ------------------------------------------------------------------ */
+        match rx.try_recv() {
+            Ok(val) => { 
+                cloud_positions = val; 
+                sky_refresh_needed = true;
+            },
+            Err(mpsc::TryRecvError::Empty) => {},
+            Err(mpsc::TryRecvError::Disconnected) => panic!("Lost the cloud controller!")
+        };
+        
+        
         // The rest of the game loop goes here...
         
+        /* Drawing ------------------------------------------------------------------ */
+
         // Approximately 20fps        
         let next_tick = frame_ticker + time::Duration::from_millis(50);
         let now = time::Instant::now(); // fixme: better to call this only once per loop, but
@@ -504,12 +531,12 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
                 //println!("World Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
             }
 
-            // sky -- FIXME: only draw when needed
-            canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
-                draw_clouds(texture_canvas,	 &sprite_atlas, orientation);
-            }).unwrap();
-            //println!("Clouds Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
-
+            if sky_refresh_needed {
+                canvas.with_texture_canvas(&mut world_texture, |texture_canvas| {
+                    draw_clouds(texture_canvas,	 &sprite_atlas, &cloud_positions, orientation);
+                }).unwrap();
+                //println!("Clouds Refresh Time: {}ms",(time::Instant::now()-now).subsec_nanos()/1000000);
+            }
             if fullscreen_refresh_needed>0 {
                 canvas.set_draw_color(Color::RGB(0,0,0));
                 canvas.clear();
@@ -563,3 +590,42 @@ pub fn gameloop(canvas: &mut render::WindowCanvas, event_pump: &mut sdl2::EventP
     }
 }
 
+// FIXME should be in the game controller module
+pub fn cloud_controller(tx: mpsc::Sender<(i32,i32,i32)>) {
+    let mut rng = rand::thread_rng();
+
+    let mut cloud_ticker = time::Instant::now();        
+
+    let mut cloud1 = (rng.gen::<u32>()%(16384+256*6)) as i32-256*3;
+    let mut cloud2 = (rng.gen::<u32>()%(16384+256*6)) as i32-256*3;
+    let mut cloud3 = (rng.gen::<u32>()%(16384+256*6)) as i32-256*3;
+    
+    loop {
+
+    
+        match tx.send((cloud1,cloud2,cloud3)) {
+            _ => {}, // we super, super, super-duper don't care if this fails :)	
+        }
+        //tx.send((cloud1,cloud2,cloud3)).unwrap();
+
+        let next_tick = cloud_ticker + time::Duration::from_millis(500);
+        cloud1 -= 1;
+        if cloud1 < -256*3 {
+            cloud1 = 16384+256*3;
+        }
+        cloud2 -= 2;
+        if cloud3 < -256*3 {
+            cloud3 = 16384+256*3;
+        }
+        cloud3 -= 3;
+        if cloud3 < -256*3 {
+            cloud3 = 16384+256*3;
+        }
+
+        let now = time::Instant::now();
+        if now < next_tick {
+            thread::sleep(next_tick-now);
+        }
+        cloud_ticker = next_tick;
+    }    
+}

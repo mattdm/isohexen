@@ -162,7 +162,7 @@ impl<'a> Hexmap<'a> {
     
     fn get_ranked_horizontal(&self,flip: i32) -> Vec<((	i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> = Vec::new();
 
         // This looks super-complicated but basically it's
         // https://www.redblobgames.com/grids/hexagons/#map-storage
@@ -182,7 +182,7 @@ impl<'a> Hexmap<'a> {
 
     fn get_ranked_vertical(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> = Vec::new();
 
         // Same as above, but we're going through columns
         // first instead of rows (effectively a 90° rotation from
@@ -201,7 +201,7 @@ impl<'a> Hexmap<'a> {
 
     fn get_ranked_diagonal(&self,flip: i32) -> Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> {
     
-        let mut v: (Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)>) = Vec::new();
+        let mut v: Vec<((i32,i32),Option<&Vec<&str>>,Option<&Vec<&str>>)> = Vec::new();
 
         // for orientation SouthEast, top row down
         // flip for NW.
